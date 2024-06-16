@@ -5,5 +5,7 @@ typedef enum {
     TOKEN_MULTIPLY,
     TOKEN_DIVIDE,
     TOKEN_IDENTIFIER,
-    TOKEN_ASSIGN
+    TOKEN_ASSIGN,
+    TOKEN_INTEGER,
+    TOKEN_FLOAT
 } token_type;

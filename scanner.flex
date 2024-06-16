@@ -7,13 +7,15 @@ NUMBER  [0-9]
 LETTER  [a-zA-Z]
 %%
 " "     /* We will skip spaces but track newlines and tabs since Python is whitespace sensitive */
-{LETTER}+       { return TOKEN_IDENTIFIER; }
+{LETTER}+               { return TOKEN_IDENTIFIER; }
+{NUMBER}+               { return TOKEN_INTEGER; }
+({NUMBER}+"."{NUMBER}+) { return TOKEN_FLOAT; }
     /* Operators */
-\+              { return TOKEN_ADD; }
-\-              { return TOKEN_MINUS; }
-\*              { return TOKEN_MULTIPLY; }
-\/              { return TOKEN_DIVIDE; }
-\=              { return TOKEN_ASSIGN; }
+\+                      { return TOKEN_ADD; }
+\-                      { return TOKEN_MINUS; }
+\*                      { return TOKEN_MULTIPLY; }
+\/                      { return TOKEN_DIVIDE; }
+\=                      { return TOKEN_ASSIGN; }
     /* Operators */
 %%
-int yywrap()    { return 1; } /* Requirement of flex, function that indicates end of file so scanner stops scanning */
+int yywrap()            { return 1; } /* Requirement of flex, function that indicates end of file so scanner stops scanning */
