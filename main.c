@@ -29,6 +29,6 @@ int main() {
         if(t==TOKEN_EOF) {
             break;
         }
-        printf("Text: %s \t\t Token: %d", yytext, t);   /* Print outputs for debugging purposes */
+        printf("Text: %s \t Token: %d\t", yytext, t);   /* Print outputs for debugging purposes */
     }
 }
