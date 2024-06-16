@@ -14,7 +14,43 @@ extern int yylex();     /* yylex() is our lexical analyzer (flex). As output ret
 /* http://westes.github.io/flex/manual/Matching.html#Matching */
 extern char *yytext;    /* points to character of the current token */ 
 
+const char* verboseToken(int i) {
+    const char* output;
 
+    switch(i) {
+        case 0:
+            output = "EOF";
+            break;
+        case 1:
+            output = "ADD";
+            break;
+        case 2:
+            output = "MINUS";
+            break;
+        case 3:
+            output = "MULTIPLY";
+            break;
+        case 4:
+            output = "DIVIDE";
+            break;
+        case 5:
+            output = "IDENTIFIER";
+            break;
+        case 6:
+            output = "ASSIGN";
+            break;
+        case 7:
+            output = "INTEGER";
+            break;
+        case 8:
+            output = "FLOAT";
+            break;
+        default:
+            output = "NOT DEFINED";
+            break;
+    }
+    return output;
+}
 int main() {
     yyin = fopen("inputfile.py", "r");                  /* opens as read only inputfile.py for scanning */
 
@@ -29,6 +65,6 @@ int main() {
         if(t==TOKEN_EOF) {
             break;
         }
-        printf("Text: %s \t Token: %d\t", yytext, t);   /* Print outputs for debugging purposes */
+        printf("Text: %s \t Token: %s\n", yytext, verboseToken(t));   /* Print outputs for debugging purposes */
     }
 }
