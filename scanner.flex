@@ -7,11 +7,11 @@ NUMBER  [0-9]
 LETTER  [a-zA-Z]
 %%
 " "     /* We will skip spaces but track newlines and tabs since Python is whitespace sensitive */
-/* Operators */
+    /* Operators */
 \+              { return TOKEN_ADD; }
 \-              { return TOKEN_MINUS; }
 \*              { return TOKEN_MULTIPLY; }
 \/              { return TOKEN_DIVIDE; }
-/* Operators */
+    /* Operators */
 %%
 int yywrap()    { return 1; } /* Requirement of flex, function that indicates end of file so scanner stops scanning */
