@@ -7,6 +7,10 @@ This program is meant to take as input a *high level* python program and produce
 *low level* x86 assembly which can then be assembled, linked, and loaded into memory to emit
 a functional program.
 
+### SPECIFIC GOALS
+
+- Write a Python program that initializes two variables. Assign these variables integer values and add them together,
+  returning the result.
 
 ## DESIGN
 
@@ -25,5 +29,4 @@ a functional program.
 - Strings.
 
 ### Generate:
-- scanner.c
-- parser.c
+- parser
