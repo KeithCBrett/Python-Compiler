@@ -7,10 +7,15 @@ This program is meant to take as input a *high level* python program and produce
 *low level* x86 assembly which can then be assembled, linked, and loaded into memory to emit
 a functional program.
 
+
 ### SPECIFIC GOALS
 
-- Write a Python program that initializes two variables. Assign these variables integer values and add them together,
-  returning the result.
+1. Write a Python program that initializes two variables. Assign these variables integer values and add them together,
+and assign the result to another variable. Call the print function on this last variable to print the result.
+    - Variable assignment.
+    - Integer addition.
+    - Function calling.
+
 
 ## DESIGN
 
