@@ -4,10 +4,10 @@
 %}
 /* Declaration of character set. */
 NUMBER  [0-9]
-LETTER  [a-zA-Z]
+LETTER  [a-zA-Z_]
 %%
 " "     /* We will skip spaces but track newlines and tabs since Python is whitespace sensitive */
-{LETTER}+               { return TOKEN_IDENTIFIER; }
+({LETTER}+|{LETTER}+{NUMBER})               { return TOKEN_IDENTIFIER; }
 {NUMBER}+               { return TOKEN_INTEGER; }
 ({NUMBER}+"."{NUMBER}+) { return TOKEN_FLOAT; }
     /* Operators */
@@ -17,5 +17,6 @@ LETTER  [a-zA-Z]
 \/                      { return TOKEN_DIVIDE; }
 \=                      { return TOKEN_ASSIGN; }
     /* Operators */
+.                       { return TOKEN_ERROR; }
 %%
 int yywrap()            { return 1; } /* Requirement of flex, function that indicates end of file so scanner stops scanning */

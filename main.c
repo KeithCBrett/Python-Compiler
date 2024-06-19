@@ -45,8 +45,11 @@ const char* verboseToken(int i) {
         case 8:
             output = "FLOAT";
             break;
+        case 9:
+            output = "ERROR";
+            break;
         default:
-            output = "NOT DEFINED";
+            output = "NOT DEFINED IN VERBOSE TOKEN";
             break;
     }
     return output;

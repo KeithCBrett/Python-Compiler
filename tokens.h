@@ -7,5 +7,6 @@ typedef enum {
     TOKEN_IDENTIFIER,
     TOKEN_ASSIGN,
     TOKEN_INTEGER,
-    TOKEN_FLOAT
+    TOKEN_FLOAT,
+    TOKEN_ERROR
 } token_type;
