@@ -77,5 +77,5 @@
         - 3.    $S \rightarrow$ if $E$ then $S$ else $S$
         - 4.    $S \rightarrow$ other
     - Of course we have problems with such a simple grammar. One such problem is ambiguity, which we can easily show by finding two valid parse trees for a sentence within our language.
-        - Our target sentence will be "if $E$ then if $E$ then other else other".
+        - Our target sentence will be "if $E$ then if $E$ then other else other".\
 ![image](./Images/Pasted-image-20240623164639.png)
