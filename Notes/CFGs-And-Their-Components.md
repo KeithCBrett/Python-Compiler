@@ -35,10 +35,10 @@
         - Our target sentence will be: 
             - $Identifier + Int + Int$
     - We will now apply rules until we reach this sentence as shown below:
-![[Pasted image 20240623130408.png]]
+![image](./Images/Pasted-image-20240623130408.png)
 - This is wonderful, it shows that the target sentence is a valid one in our language. The only problem is that it is not the only route we can take to get to this understanding.
     - Let us look at another route we could take to get to the 'same' answer:
-![[Pasted image 20240623131013.png]]
+![image](./Images/Pasted-image-20240623131013.png)
 ---
 ## Why And How To Avoid Ambiguity
 - In the above example ambiguity is not too important because we have very few rules. Even so, the above example uses addition which is commonly used for things other that addition between numbers. 
@@ -56,7 +56,7 @@
         - 4.   $T \rightarrow Identifier$
         - 5.   $T \rightarrow Int$
     - Let us run down the parse tree for our previous target sentence with this new grammar:
-![[Pasted image 20240623133140.png]]
+![image](./Images/Pasted-image-20240623133140.png)
 ---
 ## Parsing Order Of Operations
 - If we were to try to add more operators, we wouldn't parse the order of operations correctly as we would only parse from left to right.
@@ -78,4 +78,4 @@
         - 4.    $S \rightarrow$ other
     - Of course we have problems with such a simple grammar. One such problem is ambiguity, which we can easily show by finding two valid parse trees for a sentence within our language.
         - Our target sentence will be "if $E$ then if $E$ then other else other".
-![[Pasted image 20240623164639.png]]
+![image](./Images/Pasted-image-20240623164639.png)
