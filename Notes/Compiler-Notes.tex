@@ -3,202 +3,189 @@
 
 \usepackage{xcolor}
 \usepackage{graphicx}
+\usepackage{fontspec}
 \graphicspath{ {./Images/} }
 \definecolor{background}{HTML}{1A1B26}  
 \pagecolor{background}
 \color{white}
+\setmainfont{SauceCodePro Nerd Font}
 
 
 \begin{document}
 
 \section{Overview}
 \begin{itemize}
-	\item CFGs are a list of rules that describe which sentences are valid within our language. 
-	\begin{itemize}
-		\item On the left hand side;
-		\begin{itemize}
-			\item there will always be a single non-terminal
-			\begin{itemize}
-				\item declaration
-				\item statement
-				\item expression
-			\end{itemize}
-		\end{itemize}
-		\item On the right hand side;
-		\begin{itemize}
-			\item there will always be an expression that describes a valid form the non-terminal will take.
-		\end{itemize}
-	\end{itemize}
+    \item CFGs are a list of rules that describe which sentences are valid within our language. 
+    \begin{itemize}
+        \item On the left hand side;
+        \begin{itemize}
+            \item there will always be a single non-terminal
+            \begin{itemize}
+                \item declaration
+                \item statement
+                \item expression
+            \end{itemize}
+        \end{itemize}
+        \item On the right hand side;
+        \begin{itemize}
+            \item there will always be an expression that describes a valid form the non-terminal will take.
+        \end{itemize}
+    \end{itemize}
 \end{itemize}
-
-{\hrule}
 
 \section{An Example Rule}
 \begin{itemize}
-	\item We know that a CFG is merely a list of rules. In order to better understand CFGs let us examine the form of one such
-		rule:
-	\begin{itemize}
-		\item $A\rightarrow xXy|\epsilon$
-	\end{itemize}
-	\item $A$ represents our non-terminal (declaration, statement, or expression)
-	\item $\rightarrow$ is equivalent to "can take the form of"
-	\item $x$ and $y$ are terminal since they are lowercase
-	\item $X$ is non-terminal as it is represented by a uppercase letter
-	\item $|$ is equal to "or" and $\epsilon$ is equivalent to nothing or null.
+    \item We know that a CFG is merely a list of rules. In order to better understand CFGs let us examine the form of one such
+        rule:
+    \begin{itemize}
+        \item $A\rightarrow xXy|\epsilon$
+    \end{itemize}
+    \item $A$ represents our non-terminal (declaration, statement, or expression)
+    \item $\rightarrow$ is equivalent to "can take the form of"
+    \item $x$ and $y$ are terminal since they are lowercase
+    \item $X$ is non-terminal as it is represented by a uppercase letter
+    \item $|$ is equal to "or" and $\epsilon$ is equivalent to nothing or null.
 \end{itemize}
-
-\hrule
 
 \section{An Example CFG}
 \begin{itemize}
-	\item Remember, our first rule is special in that it represents the top level definition of what a valid program is in our
-		language.
-	\begin{itemize}
-		\item This is what a abstract CFG looks like:
-	\end{itemize}
-	\begin{center}
-		\begin{tabular}{ |c c c c| }
-			\hline
-			$1.$ & $P$ & ${\rightarrow}$ & $E$ \\
-			$2.$ & $E$ & ${\rightarrow}$ & $E+E$ \\
-			$3.$ & $E$ & ${\rightarrow}$ & $Identifier$ \\
-			$4.$ & $E$ & ${\rightarrow}$ & $Int$ \\
-			\hline
-		\end{tabular}
-	\end{center}
-	\begin{itemize}
-		\item There is however a problem with this above CFG. If we look closer at a use case we will see this clearly.
-	\end{itemize}
+    \item Remember, our first rule is special in that it represents the top level definition of what a valid program is in our language.
+    \begin{itemize}
+        \item This is what a abstract CFG looks like:
+    \end{itemize}
+    \begin{center}
+        \begin{tabular}{ |c c c c| }
+            \hline
+            $1.$ & $P$ & ${\rightarrow}$ & $E$ \\
+            $2.$ & $E$ & ${\rightarrow}$ & $E+E$ \\
+            $3.$ & $E$ & ${\rightarrow}$ & $Identifier$ \\
+            $4.$ & $E$ & ${\rightarrow}$ & $Int$ \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \begin{itemize}
+        \item There is however a problem with this above CFG. If we look closer at a use case we will see this clearly.
+    \end{itemize}
 \end{itemize}
-
-\hrule
 
 \section{CFG Ambiguity}
 \begin{itemize}
-	\item Now we will examine what ambiguity is in the context of CFGs and why it is to be avoided.
-	\begin{itemize}
-		\item Let us try to parse a sentence using our grammar to see what is going wrong.
-		\begin{itemize}
-			\item Our target sentence will be: 
-			\begin{itemize}
-				\item $Identifier + Int + Int$
-			\end{itemize}
-		\end{itemize}
-		\item We will now apply rules until we reach this sentence as shown below:
-	\end{itemize}
+    \item Now we will examine what ambiguity is in the context of CFGs and why it is to be avoided.
+    \begin{itemize}
+        \item Let us try to parse a sentence using our grammar to see what is going wrong.
+        \begin{itemize}
+            \item Our target sentence will be: 
+            \begin{itemize}
+                \item $Identifier + Int + Int$
+            \end{itemize}
+        \end{itemize}
+        \item We will now apply rules until we reach this sentence as shown below:
+    \end{itemize}
 \end{itemize}
 \begin{center}
-	\includegraphics[scale=0.35]{image1.png}
+    \includegraphics[scale=0.35]{image1.png}
 \end{center}
-
-
 \begin{itemize}
-	\item This is wonderful, it shows that the target sentence is a valid one in our language. The only problem is that it is
-		not the only route we can take to get to this understanding.
-	\begin{itemize}
-		\item Let us look at another route we could take to get to the 'same' answer:
-	\end{itemize}
+    \item This is wonderful, it shows that the target sentence is a valid one in our language. The only problem is that it is not the only route we can take to get to this understanding.
+    \begin{itemize}
+        \item Let us look at another route we could take to get to the 'same' answer:
+    \end{itemize}
 \end{itemize}
 \begin{center}
-	\includegraphics[scale=0.35]{image2.png}
+    \includegraphics[scale=0.35]{image2.png}
 \end{center}
-
-\hrule
 
 \section{Why And How To Avoid Ambiguity}
-
 \begin{itemize}
-	\item In the above example ambiguity is not too important because we have very few rules. Even so, the above example uses addition which is commonly used for things other that addition between numbers. 
-	\item Often, we like to use the addition sign to denote concatenation between to strings.
-	\begin{itemize}
-		\item This leads to blunders like the parser interpreting addition between two integers as the addition between two strings.
-		\begin{itemize}
-			\item For example: $10+10$ can be interpreted to equal either $20$ or $1010$ depending on which branch the parser goes down (or up).
-		\end{itemize}
-		\item This problem specifically is rather easy to fix, we need only to tweak our grammar a bit. Look below at our superior grammar.
-	\end{itemize}
+    \item In the above example ambiguity is not too important because we have very few rules. Even so, the above example uses addition which is commonly used for things other that addition between numbers. 
+    \item Often, we like to use the addition sign to denote concatenation between to strings.
+    \begin{itemize}
+        \item This leads to blunders like the parser interpreting addition between two integers as the addition between two strings.
+        \begin{itemize}
+            \item For example: $10+10$ can be interpreted to equal either $20$ or $1010$ depending on which branch the parser goes down (or up).
+        \end{itemize}
+        \item This problem specifically is rather easy to fix, we need only to tweak our grammar a bit. Look below at our superior grammar.
+    \end{itemize}
 \end{itemize}
-
-\hrule
 
 \section{A Less Ambiguous Grammar}
 \begin{itemize}
-	\item We can easily fix this by declaring that one side of the expression should be a atomic term, T.
-	\begin{itemize}
-		\item This will yield us a grammar that has the same valid sentences as our first grammar, but only allows for the left most derivation, eliminating ambiguity:
-	\end{itemize}
-	\begin{center}
-		\begin{tabular}{ |c c c c| }
-			\hline
-			$1.$ & $P$ & ${\rightarrow}$ & $E$ \\
-			$2.$ & $E$ & ${\rightarrow}$ & $E+T$ \\
-			$3.$ & $E$ & ${\rightarrow}$ & $T$ \\
-			$4.$ & $T$ & ${\rightarrow}$ & $Identifier$ \\
-			$5.$ & $T$ & ${\rightarrow}$ & $Int$ \\
-			\hline
-		\end{tabular}
-	\end{center}
-	\begin{itemize}
-		\item Let us run down the parse tree for our previous target sentence with this new grammar:
-	\end{itemize}
+    \item We can easily fix this by declaring that one side of the expression should be a atomic term, T.
+    \begin{itemize}
+        \item This will yield us a grammar that has the same valid sentences as our first grammar, but only allows for the left most derivation, eliminating ambiguity:
+    \end{itemize}
+    \begin{center}
+        \begin{tabular}{ |c c c c| }
+            \hline
+            $1.$ & $P$ & ${\rightarrow}$ & $E$ \\
+            $2.$ & $E$ & ${\rightarrow}$ & $E+T$ \\
+            $3.$ & $E$ & ${\rightarrow}$ & $T$ \\
+            $4.$ & $T$ & ${\rightarrow}$ & $Identifier$ \\
+            $5.$ & $T$ & ${\rightarrow}$ & $Int$ \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \begin{itemize}
+        \item Let us run down the parse tree for our previous target sentence with this new grammar:
+    \end{itemize}
 \end{itemize}
 \begin{center}
-	\includegraphics[scale=0.35]{image3.png}
+    \includegraphics[scale=0.35]{image3.png}
 \end{center}
-
-\hrule
 
 \section{Parsing Order of Operations}
 
 \begin{itemize}
-	\item If we were to try to add more operators, we wouldn't parse the order of operations correctly as we would only parse from left to right.
-	\begin{itemize}
-		\item We can fix this by have multiple levels in our grammar to reflect the order of operations we desire. Here is one such example were we add multiplication to our grammar:
-	\end{itemize}
-	\begin{center}
-		\begin{tabular}{ |c c c c| }
-			\hline
-			$1.$ & $P$ & ${\rightarrow}$ & $E$ \\
-			$2.$ & $E$ & ${\rightarrow}$ & $E+T$ \\
-			$3.$ & $E$ & ${\rightarrow}$ & $T$ \\
-			$4.$ & $T$ & ${\rightarrow}$ & $T*F$ \\
-			$5.$ & $T$ & ${\rightarrow}$ & $F$ \\
-			$6.$ & $F$ & ${\rightarrow}$ & $Identifier$ \\
-			$7.$ & $F$ & ${\rightarrow}$ & $Int$ \\
-			\hline
-		\end{tabular}
-	\end{center}
+    \item If we were to try to add more operators, we wouldn't parse the order of operations correctly as we would only parse from left to right.
+    \begin{itemize}
+        \item We can fix this by have multiple levels in our grammar to reflect the order of operations we desire. Here is one such example were we add multiplication to our grammar:
+    \end{itemize}
+    \begin{center}
+        \begin{tabular}{ |c c c c| }
+            \hline
+            $1.$ & $P$ & ${\rightarrow}$ & $E$ \\
+            $2.$ & $E$ & ${\rightarrow}$ & $E+T$ \\
+            $3.$ & $E$ & ${\rightarrow}$ & $T$ \\
+            $4.$ & $T$ & ${\rightarrow}$ & $T*F$ \\
+            $5.$ & $T$ & ${\rightarrow}$ & $F$ \\
+            $6.$ & $F$ & ${\rightarrow}$ & $Identifier$ \\
+            $7.$ & $F$ & ${\rightarrow}$ & $Int$ \\
+            \hline
+        \end{tabular}
+    \end{center}
 \end{itemize}
-
-\hrule
 
 \section{Parsing Control Structures}
 \begin{itemize}
-	\item A common use case is parsing control structures like if-then and if-then-else.
-	\begin{itemize}
-		\item We can express this with simple grammar, as shown below:
-	\end{itemize}
-	\begin{center}
-		\begin{tabular}{ |c c c c| }
-			\hline
-			$1.$ & $P$ & ${\rightarrow}$ & $S$ \\
-			$2.$ & $S$ & ${\rightarrow}$ & if $E$ then $S$ \\
-			$3.$ & $S$ & ${\rightarrow}$ & if $E$ then $S$ else $S$ \\
-			$4.$ & $S$ & ${\rightarrow}$ & other \\
-			\hline
-		\end{tabular}
-	\end{center}
-	\begin{itemize}
-		\item Of course we have problems with such a simple grammar. One such problem is ambiguity, which we can easily show by finding two valid parse trees for a sentence within our language.
-		\begin{itemize}
-			\item Our target sentence will be "if $E$ then if $E$ then other else other".\
-		\end{itemize}
-	\end{itemize}
+    \item A common use case is parsing control structures like if-then and if-then-else.
+    \begin{itemize}
+        \item We can express this with simple grammar, as shown below:
+    \end{itemize}
+    \begin{center}
+        \begin{tabular}{ |c c c c| }
+            \hline
+            $1.$ & $P$ & ${\rightarrow}$ & $S$ \\
+            $2.$ & $S$ & ${\rightarrow}$ & if $E$ then $S$ \\
+            $3.$ & $S$ & ${\rightarrow}$ & if $E$ then $S$ else $S$ \\
+            $4.$ & $S$ & ${\rightarrow}$ & other \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \begin{itemize}
+        \item Of course we have problems with such a simple grammar. One such problem is ambiguity, which we can easily show by finding two valid parse trees for a sentence within our language.
+        \begin{itemize}
+            \item Our target sentence will be "if $E$ then if $E$ then other else other".\
+        \end{itemize}
+    \end{itemize}
+    \pagebreak
+    \item Parse Tree 1:
+    \begin{center}
+        \includegraphics[scale=0.35]{image4.png}
+    \end{center}
+    \item Parse Tree 2:
+    \begin{center}
+        \includegraphics[scale=0.35]{image5.png}
+    \end{center}
 \end{itemize}
-\begin{center}
-	\includegraphics[scale=0.35]{image4.png}
-\end{center}
-
-\hrule
 
 \end{document}
