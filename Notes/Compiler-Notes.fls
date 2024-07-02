@@ -1,4 +1,4 @@
-PWD /home/Connor/Compiler/Notes
+PWD /home/connor/Python-Compiler/Notes
 INPUT /usr/local/texlive/2024/texmf.cnf
 INPUT /usr/local/texlive/2024/texmf-dist/web2c/texmf.cnf
 INPUT /usr/local/texlive/2024/texmf-var/web2c/xetex/xelatex.fmt
@@ -9,6 +9,20 @@ INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/base/article.cls
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/base/size10.clo
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/base/size10.clo
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/base/size10.clo
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/parskip/parskip.sty
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/parskip/parskip.sty
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/graphics/keyval.sty
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/graphics/keyval.sty
+INPUT /usr/local/texlive/2024/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+INPUT /usr/local/texlive/2024/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/tools/indentfirst.sty
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/tools/indentfirst.sty
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/xcolor/xcolor.sty
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/xcolor/xcolor.sty
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/graphics-cfg/color.cfg
@@ -22,8 +36,6 @@ INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/graphics/mathcolor.ltx
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/graphics/mathcolor.ltx
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/graphics/graphicx.sty
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/graphics/graphicx.sty
-INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/graphics/keyval.sty
-INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/graphics/keyval.sty
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/graphics/graphics.sty
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/graphics/graphics.sty
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/graphics/trig.sty

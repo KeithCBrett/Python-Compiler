@@ -1,6 +1,7 @@
 \documentclass{article}
 
-
+\usepackage[indent=14pt]{parskip}
+\usepackage{indentfirst}
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{fontspec}
@@ -9,7 +10,6 @@
 \pagecolor{background}
 \color{white}
 \setmainfont{SauceCodePro Nerd Font}
-
 
 \begin{document}
 
@@ -108,7 +108,7 @@
     \end{itemize}
 \end{itemize}
 
-\section{A Less Ambiguous Grammar}
+\section{A Less Ambiguous Grammar} \label{a-less-ambiguous-grammar}
 \begin{itemize}
     \item We can easily fix this by declaring that one side of the expression should be a atomic term, T.
     \begin{itemize}
@@ -186,6 +186,36 @@
     \begin{center}
         \includegraphics[scale=0.35]{image5.png}
     \end{center}
+    \begin{itemize}
+        \item As we know, two parse trees for one target sentence means that we have an ambiguious grammar.
+        \pagebreak
+        \begin{itemize}
+            \item We can remove this ambiguity the same way we did as before, simply add an intermediate terminal like T in the previous example.
+        \end{itemize}
+    \end{itemize}
 \end{itemize}
+
+\section{Subsets of CFGs}
+\subsection{LL Grammars}
+LL grammars are a special subset of context free grammars that can be parsed easily through a homemade recursive descent parser.
+
+Obviously not all CFGs qualify as LL grammars. All LL grammars share certain qualities which are listed below:
+\begin{itemize}
+    \item A LL grammar has no ambiguity. We have already went over eliminating ambiguity in section \ref{a-less-ambiguous-grammar}.
+    \item We must also eliminate left recursion, which we will go over in just a moment.
+    \item Finally we must eliminate any common left prefixes which we will also go over in just a moment.
+\end{itemize}
+
+LL grammars are great because we can somewhat easily make parsers for them, but this comes at a cost. Not all languages can be expressed as using a LL grammar, and so different options may need to be weighed for more general-purpose languages. This is typically where LR grammars must be discussed.
+\subsection{LR Grammars}
+LR grammars can be used to expresses esentially any programming language, but building a parser from scratch that can parse said grammar may prove difficult. This is often where parser generators are used to generate these parsers based on regular expressions like the ones we wrote in flex.
+
+Parser generators like Bison are a super easy way to parse any programming language due to them generating LR grammars from regular expressions. I will be using Bison until a minimum viable product is reached. After which I will look into more personalized solution.
+
+
+
+
+
+
 
 \end{document}
