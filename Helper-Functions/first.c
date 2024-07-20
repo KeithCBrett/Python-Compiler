@@ -52,6 +52,13 @@ char *kcb_store_file_as_array(FILE *input_file){
 	return output_array;
 }
 
+// Returns 0 or 1 depending on whether its terminal or non-terminal
+size_t kcb_term_or_nonterm(char *input_char){
+	size_t is_it_terminal;
+
+	return is_it_terminal;
+}
+
 
 // Isolates nonterminals so that we may exclude them from first set
 void kcb_print_nonterminals(char *input_array){
@@ -70,14 +77,87 @@ void kcb_print_nonterminals(char *input_array){
 }
 
 
+// Isolates terminals which will be apart of our first set.
+void kcb_print_terminals(char *input_array){
+	printf("\n");
+	printf("Terminals:\n");
+	for (size_t i = 0; i < strlen(input_array); i++) {
+		if (input_array[i] == '>') {
+			putchar(input_array[i+1]);
+			printf("\n");
+		}
+	}
+	printf("\n");
+}
+
+
+// Returns a array of characters representing our non-terminals
+char *kcb_non_terminal_set(char *grammar){
+	int c;
+	size_t array_index = 0, buffer = BUFFER_SIZE;
+	char *output_array = malloc(sizeof(*output_array) * buffer);
+	if (!output_array) {
+		fprintf(stderr, "Error: Malloc failed");
+	}
+	for (size_t i = 0; i < strlen(grammar); i++) {
+		if (grammar[i] == '.') {
+			output_array[array_index] = grammar[i+1];
+			array_index++;
+			if (grammar[i+2] == '\'') {
+				output_array[array_index] = grammar[i+2];
+				array_index++;
+			}
+		}
+		if (array_index == buffer) {
+			void *temp = realloc(output_array, buffer + BUFFER_SIZE);
+			if (!temp) {
+				fprintf(stderr, "Error: Realloc failed, out of memory");
+				break;
+			}
+			output_array = temp;
+			buffer += BUFFER_SIZE;
+		}
+	}
+	output_array[array_index] = 0;
+	return output_array; 
+}
+
+
+void kcb_print_char_array(char *input_array){
+	for (size_t i = 0; i < strlen(input_array); i++) {
+		putchar(input_array[i]);
+	}
+}
+
+
 int main(int argc, char **argv){
 	FILE *file = fopen(argv[1], "r");
 
+
 	// Free this array when done
 	char *grammar = kcb_store_file_as_array(file);
+	char *non_terminals = kcb_non_terminal_set(grammar);
 
-	kcb_print_nonterminals(grammar);
+
+	char *non_terminals_array[BUFFER_SIZE];
+	size_t non_term_index = 0;
+	char word[BUFFER_SIZE];
+
+
+	for (size_t i = 0; i < strlen(non_terminals); i++) {
+		if (non_terminals[i] == '\'') {
+			word = strcat(non_terminals[i-1], non_terminals[i]);
+		}
+	}
+
+
+
+
+
+
+
 	free(grammar);
+	free(non_terminals);
 
 	return 0;
 }
