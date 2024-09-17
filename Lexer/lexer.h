@@ -2,7 +2,7 @@
 #define lexer_h
 
 
-#include <stdio.h>
+#include "common.h"
 
 
 typedef struct {
@@ -15,8 +15,9 @@ typedef struct {
 typedef enum {
     TOKEN_ADD, TOKEN_MINUS, TOKEN_MULTIPLICATION,
     TOKEN_DIVISION, TOKEN_EOF, TOKEN_ERROR,
-    TOKEN_NEWLINE, TOKEN_EQUALS, TOKEN_LEFT_PAREN,
-    TOKEN_RIGHT_PAREN
+    TOKEN_NEWLINE, TOKEN_LEFT_PAREN, TOKEN_RIGHT_PAREN,
+    TOKEN_EQUALS, TOKEN_EQUAL_EQUAL
+    
 } TokenType;
 
 
@@ -34,7 +35,8 @@ static Token get_next_token ();
 static Token spawn_token (TokenType);
 static Token spawn_error (const char *);
 static void initialize_lexer (const char *);
-static int is_at_end ();
+static bool is_at_end ();
+static bool look_ahead (char);
 
 
 #endif

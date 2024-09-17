@@ -1,6 +1,5 @@
 #include "lexer.h"
 #include "common.h"
-#include <stdio.h>
 
 
 Lexer lex;
@@ -12,11 +11,12 @@ int main (int argc, char **argv) {
     initialize_lexer(source);
     for (;;) {
         Token token = get_next_token();
-        printf("Line Number: %d \t", token.line_number);
-        if (token.type != TOKEN_NEWLINE) {
-            printf("Lexeme: '%.*s' \t", token.length, token.first_char);
+        /* printf("Line Number: %d \t", token.line_number); */
+        if (token.type == TOKEN_NEWLINE) {
+            /* printf("Lexeme: '%.*s' \t", token.length, token.first_char); */
+            lex.line_number++;
         }
-        printf("Type: %d \n", token.type);
+        /* printf("Type: %d \n", token.type); */
         if (token.type == TOKEN_EOF) {
             break;
         }
@@ -32,11 +32,11 @@ static void initialize_lexer(const char *source){
 }
 
 
-static int is_at_end() {
+static bool is_at_end() {
     if (*lex.current_char == '\0') {
-        return 1;
+        return true;
     } else {
-        return 0;
+        return false;
     }
 }
 
@@ -67,24 +67,39 @@ static char consume_char () {
 }
 
 
+static bool look_ahead (char check) {
+    if (is_at_end() == true) {
+        return false;
+    }
+    if (lex.current_char[1] != check) {
+        return false;
+    }
+    lex.current_char++;
+    return true;
+}
+
+
 static Token get_next_token() {
     lex.start_char = lex.current_char;
 
-    if (is_at_end() == 1) {
+    if (is_at_end() == true) {
         return spawn_token(TOKEN_EOF);
     }
 
     char c = consume_char();
 
     switch (c) {
+        // Single character tokens
         case '+':       return spawn_token(TOKEN_ADD);
         case '-':       return spawn_token(TOKEN_MINUS);
         case '*':       return spawn_token(TOKEN_MULTIPLICATION);
         case '/':       return spawn_token(TOKEN_DIVISION);
         case '(':       return spawn_token(TOKEN_LEFT_PAREN);
         case ')':       return spawn_token(TOKEN_RIGHT_PAREN);
-        case '=':       return spawn_token(TOKEN_EQUALS);
         case '\n':      return spawn_token(TOKEN_NEWLINE);
+        // Single lookahead tokens (one or two characters)
+        case '=':       return spawn_token(
+                                look_ahead('=') == true ? TOKEN_EQUAL_EQUAL : TOKEN_EQUALS);
         default:        return spawn_token(TOKEN_ERROR);
     }
     return spawn_error("Unknown token encountered");
