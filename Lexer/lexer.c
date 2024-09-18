@@ -112,24 +112,36 @@ static Token get_next_token() {
 
     switch (c) {
         // Single character tokens
-        case '+':       return spawn_token(TOKEN_ADD);
         case '-':       return spawn_token(TOKEN_MINUS);
         case '(':       return spawn_token(TOKEN_LEFT_PAREN);
         case ')':       return spawn_token(TOKEN_RIGHT_PAREN);
-        case '%':       return spawn_token(TOKEN_MODULUS);
-        case '<':       return spawn_token(TOKEN_LESS_THAN);
-        case '>':       return spawn_token(TOKEN_GREATER_THAN);
+        case '{':       return spawn_token(TOKEN_LEFT_CURLY);
+        case '}':       return spawn_token(TOKEN_RIGHT_CURLY);
+        case '[':       return spawn_token(TOKEN_LEFT_SQUARE);
+        case ']':       return spawn_token(TOKEN_RIGHT_SQUARE);
+        case ',':       return spawn_token(TOKEN_COMMA);
+        case '.':       return spawn_token(TOKEN_PERIOD);
+        case ';':       return spawn_token(TOKEN_SEMI_COLON);
         case '\n':      return spawn_token(TOKEN_NEWLINE);
         // Single lookahead tokens (one or two characters)
         case '=':       
             return spawn_token(
                 look_ahead('=') == true ? TOKEN_EQUAL_EQUAL : TOKEN_EQUALS);
-        case '*':       
+        case '+':       
             return spawn_token(
-                look_ahead('*') == true ? TOKEN_EXPONENTIATION : TOKEN_MULTIPLICATION);
-        case '/':       
+                look_ahead('=') == true ? TOKEN_ADD_ASSIGN : TOKEN_ADD);
+        case '%':       
             return spawn_token(
-                look_ahead('/') == true ? TOKEN_FLOOR_DIVISION : TOKEN_DIVISION);
+                look_ahead('=') == true ? TOKEN_MODULUS_ASSIGN : TOKEN_MODULUS);
+        case '&':       
+            return spawn_token(
+                look_ahead('=') == true ? TOKEN_AMPERSAND_ASSIGN : TOKEN_AMPERSAND);
+        case '@':       
+            return spawn_token(
+                look_ahead('=') == true ? TOKEN_MATRIX_MULT_ASSIGN : TOKEN_MATRIX_MULT);
+        case '^':       
+            return spawn_token(
+                look_ahead('=') == true ? TOKEN_XOR_ASSIGN : TOKEN_XOR);
         // Double lookahead tokens (one - three characters)
         default:        return spawn_token(TOKEN_ERROR);
     }
