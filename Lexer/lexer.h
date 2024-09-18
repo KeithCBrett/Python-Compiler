@@ -16,8 +16,9 @@ typedef enum {
     TOKEN_ADD, TOKEN_MINUS, TOKEN_MULTIPLICATION,
     TOKEN_DIVISION, TOKEN_EOF, TOKEN_ERROR,
     TOKEN_NEWLINE, TOKEN_LEFT_PAREN, TOKEN_RIGHT_PAREN,
-    TOKEN_EQUALS, TOKEN_EQUAL_EQUAL
-    
+    TOKEN_EQUALS, TOKEN_EQUAL_EQUAL, TOKEN_LESS_THAN,
+    TOKEN_GREATER_THAN, TOKEN_MODULUS, TOKEN_EXPONENTIATION,
+    TOKEN_FLOOR_DIVISION
 } TokenType;
 
 
@@ -30,6 +31,7 @@ typedef struct {
 
 
 static char *get_source_from_file (FILE *);
+static char *print_type (int);
 static char consume_char ();
 static Token get_next_token ();
 static Token spawn_token (TokenType);

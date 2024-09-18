@@ -11,17 +11,37 @@ int main (int argc, char **argv) {
     initialize_lexer(source);
     for (;;) {
         Token token = get_next_token();
-        /* printf("Line Number: %d \t", token.line_number); */
         if (token.type == TOKEN_NEWLINE) {
-            /* printf("Lexeme: '%.*s' \t", token.length, token.first_char); */
             lex.line_number++;
         }
-        /* printf("Type: %d \n", token.type); */
+        if (token.type != TOKEN_NEWLINE) {
+            printf("Line Number: %d \t", token.line_number);
+            printf("Lexeme: '%.*s' \t", token.length, token.first_char);
+            printf("Type: %s \n", print_type(token.type));
+        }
         if (token.type == TOKEN_EOF) {
             break;
         }
     }
     return 0;
+}
+
+
+static char *print_type (int type) {
+    switch (type) {
+        case 0:         return "TOKEN_ADD";
+        case 1:         return "TOKEN_MINUS";
+        case 2:         return "TOKEN_MULTIPLICATION";
+        case 3:         return "TOKEN_DIVISION";
+        case 4:         return "TOKEN_EOF";
+        case 5:         return "TOKEN_ERROR";
+        case 6:         return "TOKEN_NEWLINE";
+        case 7:         return "TOKEN_LEFT_PAREN";
+        case 8:         return "TOKEN_RIGHT_PAREN";
+        case 9:         return "TOKEN_EQUALS";
+        case 10:        return "TOKEN_EQUAL_EQUAL";
+        default:        return "Not defined in function print token";
+    }
 }
 
 
@@ -67,11 +87,13 @@ static char consume_char () {
 }
 
 
+// Checks if input is the next char in stream, used for checking
+// if lexeme is two character (==) or one (=)
 static bool look_ahead (char check) {
     if (is_at_end() == true) {
         return false;
     }
-    if (lex.current_char[1] != check) {
+    if (lex.current_char[0] != check) {
         return false;
     }
     lex.current_char++;
@@ -92,14 +114,23 @@ static Token get_next_token() {
         // Single character tokens
         case '+':       return spawn_token(TOKEN_ADD);
         case '-':       return spawn_token(TOKEN_MINUS);
-        case '*':       return spawn_token(TOKEN_MULTIPLICATION);
-        case '/':       return spawn_token(TOKEN_DIVISION);
         case '(':       return spawn_token(TOKEN_LEFT_PAREN);
         case ')':       return spawn_token(TOKEN_RIGHT_PAREN);
+        case '%':       return spawn_token(TOKEN_MODULUS);
+        case '<':       return spawn_token(TOKEN_LESS_THAN);
+        case '>':       return spawn_token(TOKEN_GREATER_THAN);
         case '\n':      return spawn_token(TOKEN_NEWLINE);
         // Single lookahead tokens (one or two characters)
-        case '=':       return spawn_token(
-                                look_ahead('=') == true ? TOKEN_EQUAL_EQUAL : TOKEN_EQUALS);
+        case '=':       
+            return spawn_token(
+                look_ahead('=') == true ? TOKEN_EQUAL_EQUAL : TOKEN_EQUALS);
+        case '*':       
+            return spawn_token(
+                look_ahead('*') == true ? TOKEN_EXPONENTIATION : TOKEN_MULTIPLICATION);
+        case '/':       
+            return spawn_token(
+                look_ahead('/') == true ? TOKEN_FLOOR_DIVISION : TOKEN_DIVISION);
+        // Double lookahead tokens (one - three characters)
         default:        return spawn_token(TOKEN_ERROR);
     }
     return spawn_error("Unknown token encountered");
