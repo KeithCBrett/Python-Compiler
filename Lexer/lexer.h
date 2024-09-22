@@ -23,7 +23,15 @@ typedef enum {
     TOKEN_RIGHT_SQUARE, TOKEN_PERIOD, TOKEN_SEMI_COLON,
     TOKEN_AMPERSAND, TOKEN_AMPERSAND_ASSIGN, TOKEN_COMMA,
     TOKEN_MATRIX_MULT_ASSIGN, TOKEN_MATRIX_MULT, TOKEN_XOR_ASSIGN,
-    TOKEN_XOR
+    TOKEN_XOR, TOKEN_COLON, TOKEN_BNF, TOKEN_NOT,
+    TOKEN_NOT_EQUAL, TOKEN_OR, TOKEN_OR_ASSIGN, TOKEN_TILDA,
+    TOKEN_ARROW, TOKEN_MINUS_ASSIGN, TOKEN_EXPONENTIATION_ASSIGN,
+    TOKEN_MULTIPLICATION_ASSIGN, TOKEN_FLOOR_DIVISION_ASSIGN,
+    TOKEN_DIVISION_ASSIGN, TOKEN_BITWISE_SHIFT_LEFT_ASSIGN,
+    TOKEN_BITWISE_SHIFT_RIGHT_ASSIGN, TOKEN_BITWISE_SHIFT_LEFT,
+    TOKEN_LESS_THAN_ASSIGN, TOKEN_BITWISE_SHIFT_RIGHT,
+    TOKEN_GREATER_THAN_ASSIGN
+
 } TokenType;
 
 
@@ -35,15 +43,18 @@ typedef struct {
 } Token;
 
 
-static char *get_source_from_file (FILE *);
-static char *print_type (int);
-static char consume_char ();
-static Token get_next_token ();
-static Token spawn_token (TokenType);
-static Token spawn_error (const char *);
-static void initialize_lexer (const char *);
-static bool is_at_end ();
-static bool look_ahead (char);
+static char *get_source_from_file(FILE *);
+static char *print_type(int);
+static char consume_char();
+static Token get_next_token();
+static Token spawn_token(TokenType);
+static Token spawn_error(const char *);
+static bool is_at_end();
+static bool look_ahead(char);
+static char peak_once();
+static char peak_twice();
+static void initialize_lexer(const char *);
+static void skip_whitespace();
 
 
 #endif
