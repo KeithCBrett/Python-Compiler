@@ -10,7 +10,7 @@ def add_vals(x, y):
 print(add_vals(x, y))
 
 def bool_test(x):
-    if (x ** 10 *= 10 * 8 **= 12):
+    if (x ** 1024.245 *= 10 * 8 **= 12):
         return True
     else:
         return False

@@ -82,6 +82,8 @@ static char *print_type (int type) {
         case 47:        return "TOKEN_LESS_THAN_ASSIGN";
         case 48:        return "TOKEN_BITWISE_SHIFT_RIGHT";
         case 49:        return "TOKEN_GREATER_THAN_ASSIGN";
+        case 50:        return "TOKEN_FLOAT";
+        case 51:        return "TOKEN_INTEGER";
         default:        return "Not defined in function print_type()";
     }
 }
@@ -123,7 +125,7 @@ static Token spawn_error(const char *error_message) {
 }
 
 
-static char consume_char () {
+static char consume_char() {
     lex.current_char++;
     return lex.current_char[-1];
 }
@@ -131,7 +133,7 @@ static char consume_char () {
 
 // Checks if input is the next char in stream, used for checking
 // if lexeme is two character (==) or one (=)
-static bool look_ahead (const char check) {
+static bool look_ahead(const char check) {
     if (is_at_end() == true) {
         return false;
     }
@@ -144,7 +146,7 @@ static bool look_ahead (const char check) {
 
 
 // Like look ahead but we dont advance our character stream
-static bool look_ahead_dont_advance (const char check) {
+static bool look_ahead_dont_advance(const char check) {
     if (is_at_end() == true) {
         return false;
     }
@@ -175,6 +177,30 @@ static void skip_whitespace() {
 }
 
 
+static bool is_digit(char c) {
+    if ((c >= '0') && (c <= '9')) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+static Token number() {
+    while (is_digit(peak_once()) == true) {
+        consume_char();
+    }
+    if (peak_once() == '.') {
+        consume_char();
+        while (is_digit(peak_once()) == true) {
+            consume_char();
+        }
+        return spawn_token(TOKEN_FLOAT);
+    }
+    return spawn_token(TOKEN_INTEGER);
+}
+
+
 static Token get_next_token() {
     skip_whitespace();
     lex.start_char = lex.current_char;
@@ -184,6 +210,17 @@ static Token get_next_token() {
     }
 
     char c = consume_char();
+
+
+    if (is_digit(c) == true) {
+        return number();
+    }
+
+    /*
+    if (is_letter(c) == true) {
+        return identifier_or_keyword();
+    }
+    */
 
     switch (c) {
         // Single character tokens
@@ -306,7 +343,7 @@ static char peak_twice() {
 }
 
 // Stores program as a string to be lexed
-static char *get_source_from_file (FILE *file) {
+static char *get_source_from_file(FILE *file) {
     // Handle file error
     if (file == NULL) {
         fprintf(stderr, "Unable to open input file\n");

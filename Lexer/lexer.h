@@ -30,7 +30,7 @@ typedef enum {
     TOKEN_DIVISION_ASSIGN, TOKEN_BITWISE_SHIFT_LEFT_ASSIGN,
     TOKEN_BITWISE_SHIFT_RIGHT_ASSIGN, TOKEN_BITWISE_SHIFT_LEFT,
     TOKEN_LESS_THAN_ASSIGN, TOKEN_BITWISE_SHIFT_RIGHT,
-    TOKEN_GREATER_THAN_ASSIGN
+    TOKEN_GREATER_THAN_ASSIGN, TOKEN_FLOAT, TOKEN_INTEGER
 
 } TokenType;
 
@@ -49,8 +49,12 @@ static char consume_char();
 static Token get_next_token();
 static Token spawn_token(TokenType);
 static Token spawn_error(const char *);
+static Token number();
+static Token identifier_or_keyword();
 static bool is_at_end();
 static bool look_ahead(char);
+static bool is_digit(char);
+static bool is_letter(char);
 static char peak_once();
 static char peak_twice();
 static void initialize_lexer(const char *);
