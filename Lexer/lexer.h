@@ -30,8 +30,11 @@ typedef enum {
     TOKEN_DIVISION_ASSIGN, TOKEN_BITWISE_SHIFT_LEFT_ASSIGN,
     TOKEN_BITWISE_SHIFT_RIGHT_ASSIGN, TOKEN_BITWISE_SHIFT_LEFT,
     TOKEN_LESS_THAN_ASSIGN, TOKEN_BITWISE_SHIFT_RIGHT,
-    TOKEN_GREATER_THAN_ASSIGN, TOKEN_FLOAT, TOKEN_INTEGER
-
+    TOKEN_GREATER_THAN_ASSIGN, TOKEN_FLOAT, TOKEN_INTEGER,
+    TOKEN_IDENTIFIER, TOKEN_FALSE, TOKEN_PRINT, TOKEN_DEL,
+    TOKEN_DEF, TOKEN_DELATTR, TOKEN_NONE, TOKEN_TRUE,
+    TOKEN_AND, TOKEN_AS, TOKEN_ASSERT, TOKEN_AWAIT,
+    TOKEN_ASYNC
 } TokenType;
 
 
@@ -51,6 +54,7 @@ static Token spawn_token(TokenType);
 static Token spawn_error(const char *);
 static Token number();
 static Token identifier_or_keyword();
+static Token check_if_keyword(TokenType, char *);
 static bool is_at_end();
 static bool look_ahead(char);
 static bool is_digit(char);

@@ -1,6 +1,5 @@
 #include "lexer.h"
 #include "common.h"
-#include <stdio.h>
 
 
 Lexer lex;
@@ -9,17 +8,24 @@ Lexer lex;
 int main (int argc, char **argv) {
     FILE *fp = fopen("inputfile.py", "r");
     char *source = get_source_from_file(fp);
+
     initialize_lexer(source);
+
     for (;;) {
         Token token = get_next_token();
+
         if (token.type == TOKEN_NEWLINE) {
             lex.line_number++;
         }
+
         if (token.type != TOKEN_NEWLINE) {
+            /*
             printf("Line Number: %4d \t", token.line_number);
             printf("Lexeme: '%.*s' \t", token.length, token.first_char);
             printf("Type: %s \n", print_type(token.type));
+            */
         }
+
         if (token.type == TOKEN_EOF) {
             break;
         }
@@ -84,6 +90,19 @@ static char *print_type (int type) {
         case 49:        return "TOKEN_GREATER_THAN_ASSIGN";
         case 50:        return "TOKEN_FLOAT";
         case 51:        return "TOKEN_INTEGER";
+        case 52:        return "TOKEN_IDENTIFIER";
+        case 53:        return "TOKEN_FALSE";
+        case 54:        return "TOKEN_PRINT";
+        case 55:        return "TOKEN_DEL";
+        case 56:        return "TOKEN_DEF";
+        case 57:        return "TOKEN_DELATTR";
+        case 58:        return "TOKEN_NONE";
+        case 59:        return "TOKEN_TRUE";
+        case 60:        return "TOKEN_AND";
+        case 61:        return "TOKEN_AS";
+        case 62:        return "TOKEN_ASSERT";
+        case 63:        return "TOKEN_AWAIT";
+        case 64:        return "TOKEN_ASYNC";
         default:        return "Not defined in function print_type()";
     }
 }
@@ -125,6 +144,8 @@ static Token spawn_error(const char *error_message) {
 }
 
 
+// Returns the current character and increments the character stream.
+// We use this function to traverse our string (source code).
 static char consume_char() {
     lex.current_char++;
     return lex.current_char[-1];
@@ -201,6 +222,111 @@ static Token number() {
 }
 
 
+static bool is_letter(char c) {
+    if ((c >= 'a' && c <= 'z') ||
+        (c >= 'A' && c <= 'Z') ||
+        (c == '_')) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+static Token check_if_keyword(TokenType expected_type, char *expected_string) {
+    int length = strlen(expected_string);
+    int count = 0;
+    while (count < length) {
+        if (expected_string[count] == lex.current_char[0]) {
+            count++;
+            lex.current_char++;
+        } else {
+            return spawn_token(TOKEN_IDENTIFIER);
+        }
+    }
+    if (count == length) {
+        lex.current_char++;
+        if (is_letter(peak_once()) == true) {
+            while (is_letter(peak_once()) == true) {
+                lex.current_char++;
+            }
+            return spawn_token(TOKEN_IDENTIFIER);
+        } else {
+            return spawn_token(expected_type);
+        }
+    }
+    return spawn_token(TOKEN_IDENTIFIER);
+}
+
+
+// Checks if string of characters is a keyword and returns the corresponding token.
+// If not keyword, capture lexeme and return identifier token.
+static Token identifier_or_keyword() {
+    // Since we have already scanned a letter, we can include numbers in our 
+    // identifier too. (ie var1 var2 etc).
+    while ((is_letter(peak_once()) == true) || (is_digit(peak_once()) == true)) {
+        char c = lex.current_char[-1];
+        switch (c) {
+            case 'F':
+                return check_if_keyword(TOKEN_FALSE, "alse");
+            case 'N':
+                return check_if_keyword(TOKEN_NONE, "one");
+            case 'T':
+                return check_if_keyword(TOKEN_TRUE, "rue");
+            case 'a':
+                c = consume_char();
+                switch (c) {
+                    case 'n':
+                        return check_if_keyword(TOKEN_AND, "d");
+                    case 's':
+                        c = consume_char();
+                        switch (c) {
+                            case ' ':
+                                lex.current_char--;
+                                return spawn_token(TOKEN_AS);
+                            case 's':
+                                return check_if_keyword(TOKEN_ASSERT, "ert");
+                            case 'y':
+                                return check_if_keyword(TOKEN_ASYNC, "nc");
+                        }
+                    case 'w':
+                        return check_if_keyword(TOKEN_AWAIT, "ait");
+                }
+            case 'd':
+                c = consume_char();
+                switch (c) {
+                    case 'e':
+                        c = consume_char();
+                        switch (c) {
+                            case 'l':
+                                c = consume_char();
+                                switch (c) {
+                                    case ' ':
+                                        lex.current_char--;
+                                        return spawn_token(TOKEN_DEL);
+                                    case 'a':
+                                        return check_if_keyword(TOKEN_DELATTR, "ttr");
+                                }
+                            case 'f':
+                                return spawn_token(TOKEN_DEF);
+                        }
+                }
+            case 'p':
+                return check_if_keyword(TOKEN_PRINT, "rint");
+            default:
+                while (is_letter(peak_once()) == true) {
+                    lex.current_char++;
+                }
+                return spawn_token(TOKEN_IDENTIFIER);
+        }
+    }
+    return spawn_token(TOKEN_IDENTIFIER);
+}
+
+
+// Main logic, call this repeatedly in a loop until EOF token reached
+// in order to lex a program. (Be sure to initialize Lexer with source
+// code first with initialize_lexer() and get_source_from_file()).
 static Token get_next_token() {
     skip_whitespace();
     lex.start_char = lex.current_char;
@@ -211,16 +337,13 @@ static Token get_next_token() {
 
     char c = consume_char();
 
-
     if (is_digit(c) == true) {
         return number();
     }
 
-    /*
     if (is_letter(c) == true) {
         return identifier_or_keyword();
     }
-    */
 
     switch (c) {
         // Single character tokens
