@@ -245,7 +245,6 @@ static Token check_if_keyword(TokenType expected_type, char *expected_string) {
         }
     }
     if (count == length) {
-        lex.current_char++;
         if (is_letter(peak_once()) == true) {
             while (is_letter(peak_once()) == true) {
                 lex.current_char++;
