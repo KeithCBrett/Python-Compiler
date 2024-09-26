@@ -19,11 +19,9 @@ int main (int argc, char **argv) {
         }
 
         if (token.type != TOKEN_NEWLINE) {
-            /*
             printf("Line Number: %4d \t", token.line_number);
             printf("Lexeme: '%.*s' \t", token.length, token.first_char);
             printf("Type: %s \n", print_type(token.type));
-            */
         }
 
         if (token.type == TOKEN_EOF) {
@@ -103,6 +101,12 @@ static char *print_type (int type) {
         case 62:        return "TOKEN_ASSERT";
         case 63:        return "TOKEN_AWAIT";
         case 64:        return "TOKEN_ASYNC";
+        case 65:        return "TOKEN_ABS";
+        case 66:        return "TOKEN_AITER";
+        case 67:        return "TOKEN_ALL";
+        case 68:        return "TOKEN_ANY";
+        case 69:        return "TOKEN_ANEXT";
+        case 70:        return "TOKEN_ASCII";
         default:        return "Not defined in function print_type()";
     }
 }
@@ -258,68 +262,107 @@ static Token check_if_keyword(TokenType expected_type, char *expected_string) {
 }
 
 
+static Token make_identifier() {
+    while ((is_letter(lex.current_char[0])) == true ||
+    (is_digit(lex.current_char[0]) == true)) {
+        lex.current_char++;
+    }
+    return spawn_token(TOKEN_IDENTIFIER);
+}
+
+
+static Token check_a_branch() {
+    char c = consume_char();
+    switch (c) {
+        case 'b':
+            // Check for TOKEN_ABS
+            return check_if_keyword(TOKEN_ABS, "s");
+        case 'i':
+            // Check for TOKEN_AITER
+            return check_if_keyword(TOKEN_AITER, "ter");
+        case 'l':
+            // Check for TOKEN_ALL
+            return check_if_keyword(TOKEN_ALL, "l");
+        case 'n':
+            c = lex.current_char[0];
+            switch (c) {
+                case 'd':
+                    c = consume_char();
+                    switch (lex.current_char[0]) {
+                        case ' ':
+                        case '\n':
+                        case '\t':
+                        case '\0':
+                            // Check for TOKEN_AND
+                            return spawn_token(TOKEN_AND);
+                    }
+                case 'y':
+                    c = consume_char();
+                    switch (lex.current_char[0]) {
+                        case ' ':
+                        case '\n':
+                        case '\t':
+                        case '\0':
+                            // Check for TOKEN_ANY
+                            return spawn_token(TOKEN_ANY);
+                    }
+                case 'e':
+                    lex.current_char++;
+                    // Check for TOKEN_ANEXT
+                    return check_if_keyword(TOKEN_ANEXT, "xt");
+                default:
+                    return make_identifier();
+            }
+        case 's':
+            c = lex.current_char[0];
+            switch (c) {
+                case ' ':
+                case '\n':
+                case '\t':
+                    // Check for TOKEN_AS
+                    return spawn_token(TOKEN_AS);
+                case 's':
+                    // Check for TOKEN_ASSERT
+                    lex.current_char++;
+                    return check_if_keyword(TOKEN_ASSERT, "ert");
+                case 'y':
+                    // Check for TOKEN_ASYNC
+                    lex.current_char++;
+                    return check_if_keyword(TOKEN_ASYNC, "nc");
+                case 'c':
+                    // Check for TOKEN_ASCII
+                    lex.current_char++;
+                    return check_if_keyword(TOKEN_ASCII, "ii");
+                default:
+                    return make_identifier();
+            }
+        case 'w':
+            // Check for TOKEN_AWAIT
+            return check_if_keyword(TOKEN_AWAIT, "ait");
+        case '\n': case ' ': case '\t':
+            lex.current_char--; // Put whitespace back, we dont want it in our lexeme
+            return make_identifier();
+        default:
+            return make_identifier();
+    }
+}
+
+
 // Checks if string of characters is a keyword and returns the corresponding token.
 // If not keyword, capture lexeme and return identifier token.
 static Token identifier_or_keyword() {
-    // Since we have already scanned a letter, we can include numbers in our 
-    // identifier too. (ie var1 var2 etc).
-    while ((is_letter(peak_once()) == true) || (is_digit(peak_once()) == true)) {
-        char c = lex.current_char[-1];
-        switch (c) {
-            case 'F':
-                return check_if_keyword(TOKEN_FALSE, "alse");
-            case 'N':
-                return check_if_keyword(TOKEN_NONE, "one");
-            case 'T':
-                return check_if_keyword(TOKEN_TRUE, "rue");
-            case 'a':
-                c = consume_char();
-                switch (c) {
-                    case 'n':
-                        return check_if_keyword(TOKEN_AND, "d");
-                    case 's':
-                        c = consume_char();
-                        switch (c) {
-                            case ' ':
-                                lex.current_char--;
-                                return spawn_token(TOKEN_AS);
-                            case 's':
-                                return check_if_keyword(TOKEN_ASSERT, "ert");
-                            case 'y':
-                                return check_if_keyword(TOKEN_ASYNC, "nc");
-                        }
-                    case 'w':
-                        return check_if_keyword(TOKEN_AWAIT, "ait");
-                }
-            case 'd':
-                c = consume_char();
-                switch (c) {
-                    case 'e':
-                        c = consume_char();
-                        switch (c) {
-                            case 'l':
-                                c = consume_char();
-                                switch (c) {
-                                    case ' ':
-                                        lex.current_char--;
-                                        return spawn_token(TOKEN_DEL);
-                                    case 'a':
-                                        return check_if_keyword(TOKEN_DELATTR, "ttr");
-                                }
-                            case 'f':
-                                return spawn_token(TOKEN_DEF);
-                        }
-                }
-            case 'p':
-                return check_if_keyword(TOKEN_PRINT, "rint");
-            default:
-                while (is_letter(peak_once()) == true) {
-                    lex.current_char++;
-                }
-                return spawn_token(TOKEN_IDENTIFIER);
-        }
+    switch (lex.current_char[-1]) {
+        case 'F':
+            return check_if_keyword(TOKEN_FALSE, "alse");
+        case 'N':
+            return check_if_keyword(TOKEN_NONE, "one");
+        case 'T':
+            return check_if_keyword(TOKEN_TRUE, "rue");
+        case 'a':
+            return check_a_branch();
+        default:
+            return make_identifier();
     }
-    return spawn_token(TOKEN_IDENTIFIER);
 }
 
 
