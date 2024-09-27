@@ -20,7 +20,7 @@ int main (int argc, char **argv) {
 
         if (token.type != TOKEN_NEWLINE) {
             printf("Line Number: %4d \t", token.line_number);
-            printf("Lexeme: '%.*s' \t", token.length, token.first_char);
+            printf("Lexeme: %12.*s \t", token.length, token.first_char);
             printf("Type: %s \n", print_type(token.type));
         }
 
@@ -243,32 +243,15 @@ static bool is_letter(char c) {
 }
 
 
-static Token check_if_keyword(TokenType expected_type, char *expected_string) {
-    int length = strlen(expected_string);
-    int count = 0;
-    while (count < length) {
-        if (expected_string[count] == lex.current_char[0]) {
-            count++;
-            lex.current_char++;
-        } else {
-            return spawn_token(TOKEN_IDENTIFIER);
-        }
-    }
-    if (count == length) {
-        if (is_letter(peak_once()) == true) {
-            while (is_letter(peak_once()) == true) {
-                lex.current_char++;
-            }
-            return spawn_token(TOKEN_IDENTIFIER);
-        } else {
-            return spawn_token(expected_type);
-        }
-    }
-    return spawn_token(TOKEN_IDENTIFIER);
-}
-
-
 static Token make_identifier() {
+    // This switch is for single character identifiers, i.e. n = 6
+    switch (lex.current_char[-1]) {
+        case '\n': case '\0': case ' ':
+            lex.current_char--;
+            return spawn_token(TOKEN_IDENTIFIER);
+        default:
+            break;
+    }
     while ((is_letter(lex.current_char[0])) == true ||
     (is_digit(lex.current_char[0]) == true)) {
         lex.current_char++;
@@ -305,51 +288,58 @@ static Token check_a_branch() {
             if (bool_check_keyword("s") == true) {
                 // Check for TOKEN_ABS
                 return spawn_token(TOKEN_ABS);
+            } else {
+                return make_identifier();
             }
         case 'i':
             if (bool_check_keyword("ter") == true) {
                 // Check for TOKEN_AITER
                 return spawn_token(TOKEN_AITER);
+            } else {
+                return make_identifier();
             }
         case 'l':
             if (bool_check_keyword("l") == true) {
                 // Check for TOKEN_ALL
                 return spawn_token(TOKEN_ALL);
+            } else {
+                return make_identifier();
             }
         case 'n':
             if (bool_check_keyword("d") == true) {
                 // Check for TOKEN_AND
                 return spawn_token(TOKEN_AND);
-            } 
-            if (bool_check_keyword("y") == true) {
+            } else if (bool_check_keyword("y") == true) {
                 // Check for TOKEN_ANY
                 return spawn_token(TOKEN_ANY);
-            }
-            if (bool_check_keyword("ext") == true) {
+            } else if (bool_check_keyword("ext") == true) {
                 // Check for TOKEN_ANEXT
                 return spawn_token(TOKEN_ANEXT);
+            } else {
+                return make_identifier();
             }
         case 's':
             if (bool_check_keyword("") == true) {
                 // Check for TOKEN_AS
                 return spawn_token(TOKEN_AS);
-            } 
-            if (bool_check_keyword("sert") == true) {
+            } else if (bool_check_keyword("sert") == true) {
                 // Check for TOKEN_ASSERT
                 return spawn_token(TOKEN_ASSERT);
-            }
-            if (bool_check_keyword("ync") == true) {
+            } else if (bool_check_keyword("ync") == true) {
                 // Check for TOKEN_ASYNC
                 return spawn_token(TOKEN_ASYNC);
-            }
-            if (bool_check_keyword("cii") == true) {
+            } else if (bool_check_keyword("cii") == true) {
                 // Check for TOKEN_ASCII
                 return spawn_token(TOKEN_ASCII);
+            } else {
+                return make_identifier();
             }
         case 'w':
             if (bool_check_keyword("ait") == true) {
                 // Check for TOKEN_AWAIT
                 return spawn_token(TOKEN_AWAIT);
+            } else {
+                return make_identifier();
             }
         default:
             return make_identifier();
@@ -400,11 +390,20 @@ static Token check_b_branch() {
 static Token identifier_or_keyword() {
     switch (lex.current_char[-1]) {
         case 'F':
-            return check_if_keyword(TOKEN_FALSE, "alse");
+            if (bool_check_keyword("alse") == true) {
+                // Check for TOKEN_FALSE
+                return spawn_token(TOKEN_FALSE);
+            }
         case 'N':
-            return check_if_keyword(TOKEN_NONE, "one");
+            if (bool_check_keyword("one") == true) {
+                // Check for TOKEN_NONE
+                return spawn_token(TOKEN_NONE);
+            }
         case 'T':
-            return check_if_keyword(TOKEN_TRUE, "rue");
+            if (bool_check_keyword("rue") == true) {
+                // Check for TOKEN_TRUE
+                return spawn_token(TOKEN_TRUE);
+            }
         case 'a':
             return check_a_branch();
         case 'b':
