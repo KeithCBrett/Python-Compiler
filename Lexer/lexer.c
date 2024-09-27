@@ -107,6 +107,12 @@ static char *print_type (int type) {
         case 68:        return "TOKEN_ANY";
         case 69:        return "TOKEN_ANEXT";
         case 70:        return "TOKEN_ASCII";
+        case 71:        return "TOKEN_BIN";
+        case 72:        return "TOKEN_BOOL";
+        case 73:        return "TOKEN_BREAKPOINT";
+        case 74:        return "TOKEN_BREAK";
+        case 75:        return "TOKEN_BYTEARRAY";
+        case 76:        return "TOKEN_BYTES";
         default:        return "Not defined in function print_type()";
     }
 }
@@ -271,77 +277,118 @@ static Token make_identifier() {
 }
 
 
+static bool bool_check_keyword(char *string) {
+    size_t string_length = strlen(string);
+    size_t count = 0;
+    while (count < string_length) {
+        if (lex.current_char[0] != string[count]) {
+            lex.current_char -= count;
+            return false;
+        }
+        consume_char();
+        count++;
+    }
+    if ((is_digit(peak_once()) == true) || 
+    (is_letter(peak_once()) == true)) {
+        return false;
+    }
+    return true;
+}
+
+
+// This is the 'a' branch for our keyword/default function trie
+// -- default function as in print(), abs(), etc.
 static Token check_a_branch() {
     char c = consume_char();
     switch (c) {
         case 'b':
-            // Check for TOKEN_ABS
-            return check_if_keyword(TOKEN_ABS, "s");
+            if (bool_check_keyword("s") == true) {
+                // Check for TOKEN_ABS
+                return spawn_token(TOKEN_ABS);
+            }
         case 'i':
-            // Check for TOKEN_AITER
-            return check_if_keyword(TOKEN_AITER, "ter");
+            if (bool_check_keyword("ter") == true) {
+                // Check for TOKEN_AITER
+                return spawn_token(TOKEN_AITER);
+            }
         case 'l':
-            // Check for TOKEN_ALL
-            return check_if_keyword(TOKEN_ALL, "l");
+            if (bool_check_keyword("l") == true) {
+                // Check for TOKEN_ALL
+                return spawn_token(TOKEN_ALL);
+            }
         case 'n':
-            c = lex.current_char[0];
-            switch (c) {
-                case 'd':
-                    c = consume_char();
-                    switch (lex.current_char[0]) {
-                        case ' ':
-                        case '\n':
-                        case '\t':
-                        case '\0':
-                            // Check for TOKEN_AND
-                            return spawn_token(TOKEN_AND);
-                    }
-                case 'y':
-                    c = consume_char();
-                    switch (lex.current_char[0]) {
-                        case ' ':
-                        case '\n':
-                        case '\t':
-                        case '\0':
-                            // Check for TOKEN_ANY
-                            return spawn_token(TOKEN_ANY);
-                    }
-                case 'e':
-                    lex.current_char++;
-                    // Check for TOKEN_ANEXT
-                    return check_if_keyword(TOKEN_ANEXT, "xt");
-                default:
-                    return make_identifier();
+            if (bool_check_keyword("d") == true) {
+                // Check for TOKEN_AND
+                return spawn_token(TOKEN_AND);
+            } 
+            if (bool_check_keyword("y") == true) {
+                // Check for TOKEN_ANY
+                return spawn_token(TOKEN_ANY);
+            }
+            if (bool_check_keyword("ext") == true) {
+                // Check for TOKEN_ANEXT
+                return spawn_token(TOKEN_ANEXT);
             }
         case 's':
-            c = lex.current_char[0];
-            switch (c) {
-                case ' ':
-                case '\n':
-                case '\t':
-                    // Check for TOKEN_AS
-                    return spawn_token(TOKEN_AS);
-                case 's':
-                    // Check for TOKEN_ASSERT
-                    lex.current_char++;
-                    return check_if_keyword(TOKEN_ASSERT, "ert");
-                case 'y':
-                    // Check for TOKEN_ASYNC
-                    lex.current_char++;
-                    return check_if_keyword(TOKEN_ASYNC, "nc");
-                case 'c':
-                    // Check for TOKEN_ASCII
-                    lex.current_char++;
-                    return check_if_keyword(TOKEN_ASCII, "ii");
-                default:
-                    return make_identifier();
+            if (bool_check_keyword("") == true) {
+                // Check for TOKEN_AS
+                return spawn_token(TOKEN_AS);
+            } 
+            if (bool_check_keyword("sert") == true) {
+                // Check for TOKEN_ASSERT
+                return spawn_token(TOKEN_ASSERT);
+            }
+            if (bool_check_keyword("ync") == true) {
+                // Check for TOKEN_ASYNC
+                return spawn_token(TOKEN_ASYNC);
+            }
+            if (bool_check_keyword("cii") == true) {
+                // Check for TOKEN_ASCII
+                return spawn_token(TOKEN_ASCII);
             }
         case 'w':
-            // Check for TOKEN_AWAIT
-            return check_if_keyword(TOKEN_AWAIT, "ait");
-        case '\n': case ' ': case '\t':
-            lex.current_char--; // Put whitespace back, we dont want it in our lexeme
+            if (bool_check_keyword("ait") == true) {
+                // Check for TOKEN_AWAIT
+                return spawn_token(TOKEN_AWAIT);
+            }
+        default:
             return make_identifier();
+    }
+}
+
+
+// This is the 'b' branch for our keyword/default function trie
+static Token check_b_branch() {
+    char c = consume_char();
+    switch (c) {
+        case 'i':
+            if (bool_check_keyword("n") == true) {
+                // Check for TOKEN_BIN
+                return spawn_token(TOKEN_BIN);
+            }
+        case 'o':
+            if (bool_check_keyword("ol") == true) {
+                // Check for TOKEN_BOOL
+                return spawn_token(TOKEN_BOOL);
+            }
+        case 'r':
+            if (bool_check_keyword("eakpoint") == true) {
+                // Check for TOKEN_BREAKPOINT
+                return spawn_token(TOKEN_BREAKPOINT);
+            } 
+            if (bool_check_keyword("eak") == true) {
+                // Check for TOKEN_BREAK
+                return spawn_token(TOKEN_BREAK);
+            }
+        case 'y':
+            if (bool_check_keyword("tearray") == true) {
+                // Check for TOKEN_BYTEARRAY
+                return spawn_token(TOKEN_BYTEARRAY);
+            } 
+            if (bool_check_keyword("tes") == true) {
+                // Check for TOKEN_BYTES
+                return spawn_token(TOKEN_BYTES);
+            }
         default:
             return make_identifier();
     }
@@ -360,6 +407,8 @@ static Token identifier_or_keyword() {
             return check_if_keyword(TOKEN_TRUE, "rue");
         case 'a':
             return check_a_branch();
+        case 'b':
+            return check_b_branch();
         default:
             return make_identifier();
     }

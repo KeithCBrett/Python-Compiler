@@ -35,7 +35,9 @@ typedef enum {
     TOKEN_DEF, TOKEN_DELATTR, TOKEN_NONE, TOKEN_TRUE,
     TOKEN_AND, TOKEN_AS, TOKEN_ASSERT, TOKEN_AWAIT,
     TOKEN_ASYNC, TOKEN_ABS, TOKEN_AITER, TOKEN_ALL,
-    TOKEN_ANY, TOKEN_ANEXT, TOKEN_ASCII
+    TOKEN_ANY, TOKEN_ANEXT, TOKEN_ASCII, TOKEN_BIN,
+    TOKEN_BOOL, TOKEN_BREAKPOINT, TOKEN_BREAK,
+    TOKEN_BYTEARRAY, TOKEN_BYTES
 } TokenType;
 
 
@@ -57,6 +59,7 @@ static Token number();
 static Token identifier_or_keyword();
 static Token make_identifier();
 static Token check_a_branch();
+static Token check_b_branch();
 static Token check_if_keyword(TokenType, char *);
 static bool is_at_end();
 static bool look_ahead(char);
