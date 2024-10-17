@@ -3,38 +3,38 @@
 
 
 Lexer lex;
-
-
-int main (int argc, char **argv) {
-    FILE *fp = fopen("inputfile.py", "r");
-    char *source = get_source_from_file(fp);
-
-    initialize_lexer(source);
-
-    for (;;) {
-        Token token = get_next_token();
-
-        if (token.type == TOKEN_NEWLINE) {
-            lex.line_number++;
-        }
-
-        if (token.type != TOKEN_NEWLINE) {
-            printf("Line Number: %4d \t", token.line_number);
-            printf("Lexeme: %12.*s \t", token.length, token.first_char);
-            printf("Type: %s \n", print_type(token.type));
-        }
-
-        if (token.type == TOKEN_EOF) {
-            break;
-        }
+// Stores program as a string to be lexed
+char *get_source_from_file (FILE *file) {
+    // Handle file error
+    if (file == NULL) {
+        fprintf(stderr, "Unable to open input file\n");
+        exit(127);
     }
-    free(source);
-    fclose(fp);
-    return 0;
+
+
+    // Get buffer size
+    fseek(file, 0, SEEK_END);
+    size_t source_length = ftell(file) - 1;
+    rewind(file);
+
+
+    // Store file in string
+    char *source = malloc(source_length + 1);
+    if (source == NULL) {
+        fprintf(stderr, "Could not allocate enough memory\n");
+        exit(127);
+    }
+    size_t buffer_size = fread(source, sizeof(char), source_length, file);
+    if (buffer_size < source_length) {
+        fprintf(stderr, "Could not read file to completion, fread failed\n");
+        exit(127);
+    }
+    source[buffer_size] = '\0'; // Null terminate string
+    return source;
 }
 
 
-static char *print_type (int type) {
+char *print_type (int type) {
     switch (type) {
         case 0:         return "TOKEN_ADD";
         case 1:         return "TOKEN_MINUS";
@@ -200,7 +200,7 @@ static char *print_type (int type) {
 }
 
 
-static void initialize_lexer(const char *source){
+void initialize_lexer(const char *source){
     lex.start_char = source;
     lex.current_char = source;
     lex.line_number = 1;
@@ -1158,7 +1158,7 @@ static Token identifier_or_keyword() {
 // Main logic, call this repeatedly in a loop until EOF token reached
 // in order to lex a program. (Be sure to initialize Lexer with source
 // code first with initialize_lexer() and get_source_from_file()).
-static Token get_next_token() {
+Token get_next_token() {
     skip_whitespace();
     lex.start_char = lex.current_char;
 
@@ -1295,34 +1295,4 @@ static char peak_once() {
 
 static char peak_twice() {
     return lex.current_char[1];
-}
-
-// Stores program as a string to be lexed
-static char *get_source_from_file(FILE *file) {
-    // Handle file error
-    if (file == NULL) {
-        fprintf(stderr, "Unable to open input file, (fopen failed)\n");
-        exit(127);
-    }
-
-
-    // Get buffer size
-    fseek(file, 0, SEEK_END);
-    size_t source_length = ftell(file) - 1;
-    rewind(file);
-
-
-    // Store file in string
-    char *source = malloc(source_length + 1);
-    if (source == NULL) {
-        fprintf(stderr, "Could not allocate enough memory, (malloc failed)\n");
-        exit(127);
-    }
-    size_t buffer_size = fread(source, sizeof(char), source_length, file);
-    if (buffer_size < source_length) {
-        fprintf(stderr, "Could not read file to completion, (fread failed)\n");
-        exit(127);
-    }
-    source[buffer_size] = '\0'; // Null terminate string
-    return source;
 }

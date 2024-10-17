@@ -71,10 +71,10 @@ typedef struct {
 } Token;
 
 
-static char *get_source_from_file(FILE *);
-static char *print_type(int);
+char *get_source_from_file(FILE *);
+char *print_type(int);
 static char consume_char();
-static Token get_next_token();
+Token get_next_token();
 static Token spawn_token(TokenType);
 static Token spawn_error(const char *);
 static Token number();
@@ -89,7 +89,7 @@ static bool is_letter(char);
 static bool bool_check_keyword(char *);
 static char peak_once();
 static char peak_twice();
-static void initialize_lexer(const char *);
+void initialize_lexer(const char *);
 static void skip_whitespace();
 
 
