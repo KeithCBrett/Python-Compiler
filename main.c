@@ -1,4 +1,5 @@
 #include "Lexer/lexer.h"
+#include "Parser/parser.h"
 #include "Lexer/common.h"
 
 
@@ -12,6 +13,10 @@ int main(int argc, char **argv){
 
     for (;;) {
         Token token = get_next_token();
+        /***************************
+         * Lexer printing aperatus *
+         ***************************/
+        /*
         if (token.type == TOKEN_NEWLINE) {
             line_number++;
         }
@@ -21,9 +26,17 @@ int main(int argc, char **argv){
             printf("Lexeme: %12.*s \t", token.length, token.first_char);
             printf("Type: %s \n", print_type(token.type));
         }
+        */
 
+        /****************************
+         * Parser printing aperatus *
+         ****************************/
+        ParserToken parse_token = spawn_parse_token(token);
+        print_parse_token(parse_token);
+        free(parse_token.lexeme);
         if (token.type == TOKEN_EOF) {
             break;
         }
     }
+    free(source);
 }
