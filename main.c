@@ -1,6 +1,5 @@
 #include "Lexer/lexer.h"
 #include "Parser/parser.h"
-#include "Lexer/common.h"
 
 
 int main(int argc, char **argv){
@@ -10,9 +9,13 @@ int main(int argc, char **argv){
 
     initialize_lexer(source);
     int line_number = 1;
+    StackNode *temp;
+    TreeNode *root = NULL;
+    root = parse(Prec_Outcomes, root, &temp);
+    traverse_binary_tree(root);
 
-    for (;;) {
-        Token token = get_next_token();
+    //for (;;) {
+       // Token token = get_next_token();
         /***************************
          * Lexer printing aperatus *
          ***************************/
@@ -31,12 +34,16 @@ int main(int argc, char **argv){
         /****************************
          * Parser printing aperatus *
          ****************************/
+        /*
         ParserToken parse_token = spawn_parse_token(token);
         print_parse_token(parse_token);
         free(parse_token.lexeme);
         if (token.type == TOKEN_EOF) {
             break;
         }
-    }
-    free(source);
+        */
+        
+    //}
+   // free(source);
+
 }

@@ -1,6 +1,5 @@
 #ifndef parser_h
 #define parser_h
-#include <stdio.h>
 #include "../Lexer/lexer.h"
 
 
@@ -8,6 +7,8 @@
 // I would recommend the links below:
 // Original paper:
     // https://dl.acm.org/doi/pdf/10.1145/512927.512931
+// Paper original was based on:
+    // https://dl.acm.org/doi/pdf/10.1145/321172.321179 
 // Implementation in C can be seen in Robert Nystrom's book, Crafting Interpreters:
     // https://craftinginterpreters.com/compiling-expressions.html
 // Nystrom also made one in Java:
@@ -23,27 +24,48 @@
 // These two types are denoted:
 //      nud(): This is for prefix semantics, i.e. -x
 //      led(): This is for infix semantics, i.e. x - y
-typedef void (*SemanticCode)();
+// TreeNode represents a node on our AST.
+typedef struct TreeNode{
+    Token contents;
+    // If its a prefix operation, left might be null
+    struct TreeNode *left;
+    struct TreeNode *right;
+} TreeNode;
+
+typedef struct StackNode{
+    TreeNode *contents;
+    struct StackNode *next;
+} StackNode;
+
+typedef TreeNode* (*SemanticCode)(TreeNode *, StackNode **);
 
 
 // Requirement for TDOP algorithm, now we know that (+ < *) since multiplication
 // has higher precendence.
 typedef enum Precedence{
-    Outcomes = 0,
-    Booleans,
-    Graphs,
-    AddSub,
-    MultDiv
+    Prec_EOF = 0,
+    Prec_Outcomes,
+    Prec_Integers,
+    Prec_Equals,
+    Prec_Identifiers,
+    Prec_AddSub,
+    Prec_MultDiv,
+    Prec_Unary
 } Precedence;
 
 
-typedef struct ParserToken{
-    char *lexeme;
-    Precedence precendence;
-    TokenType type;
+typedef struct Parser{
+    Token previous;
+    Token current;
+    Token next;
+} Parser;
+
+
+typedef struct Rule{
+    Precedence precedence;
     SemanticCode nud; // prefix
     SemanticCode led; // infix
-} ParserToken;
+} Rule;
 
 
 /*
@@ -53,18 +75,42 @@ typedef struct ParserToken{
  * this function accociates a precedence level, code to translate if token
  * is used as a prefix operator (nud()), or infix operator (led()).
  */
-ParserToken spawn_parse_token(Token);
+Rule spawn_parse_token(Token);
+
 /*
- * print_parse_token()
- * Input: Parse token create by spawn_parse_token().
+ * print_rule()
+ * Input: rule create by spawn_rule().
  * Output: Prints debugging information about parse token.
  */
-void print_parse_token(ParserToken);
+void print_rule(Rule);
+
 /*
  * associate_precedence()
  * Input: TokenType
- * Output: Precedence of token type
+ * Output: Precedence of token type, use this precendence in a assignment
+ * operation.
  */
 Precedence associate_precedence(TokenType);
+
+/*
+ * parse()
+ * Input: a right binding power in the form of a precendence, tree object to build on
+ * in form of TreeNode**
+ * Output: This function will be recursively called to generate ast. equivalent to 
+ * parse(rbp) as described in Pratt's paper
+ */
+TreeNode *parse(Precedence, TreeNode *, StackNode **);
+
+TreeNode *spawn_node(Token);
+
+TreeNode *led_binary(TreeNode *, StackNode **);
+TreeNode *nud_integer(TreeNode *, StackNode **);
+void print_tree(TreeNode *);
+void traverse_binary_tree(TreeNode *);
+TreeNode *led_eof(TreeNode *, StackNode **);
+void push(StackNode **, TreeNode *);
+StackNode *spawn_stack_node(TreeNode *);
+TreeNode *pop(StackNode **);
+
 
 #endif

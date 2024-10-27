@@ -216,7 +216,7 @@ static bool is_at_end() {
 }
 
 
-static Token spawn_token(TokenType type) {
+Token spawn_token(TokenType type) {
     Token return_token;
     return_token.type = type;
     return_token.line_number = lex.line_number;

@@ -58,8 +58,7 @@ typedef enum {
     TOKEN_STATICMETHOD, TOKEN_STR, TOKEN_SUM, TOKEN_SUPER,
     TOKEN_TUPLE, TOKEN_TRY, TOKEN_TYPE, TOKEN_VARS,
     TOKEN_WHILE, TOKEN_WITH, TOKEN_YIELD, TOKEN_ZIP,
-    TOKEN_IMPORT_FUNC
-
+    TOKEN_IMPORT_FUNC, TOKEN_TREE_ROOT
 } TokenType;
 
 
@@ -75,7 +74,7 @@ char *get_source_from_file(FILE *);
 char *print_type(int);
 static char consume_char();
 Token get_next_token();
-static Token spawn_token(TokenType);
+Token spawn_token(TokenType);
 static Token spawn_error(const char *);
 static Token number();
 static Token identifier_or_keyword();
