@@ -1,5 +1,6 @@
 #include "Lexer/lexer.h"
 #include "Parser/parser.h"
+#include <stdio.h>
 
 
 int main(int argc, char **argv){
@@ -8,42 +9,14 @@ int main(int argc, char **argv){
     fclose(fp);
 
     initialize_lexer(source);
-    int line_number = 1;
-    StackNode *temp;
+
     TreeNode *root = NULL;
-    root = parse(Prec_Outcomes, root, &temp);
-    traverse_binary_tree(root);
+    root = parse(Prec_Outcomes, root);
 
-    //for (;;) {
-       // Token token = get_next_token();
-        /***************************
-         * Lexer printing aperatus *
-         ***************************/
-        /*
-        if (token.type == TOKEN_NEWLINE) {
-            line_number++;
-        }
+    size_t tree_size = count_tree_nodes(root);
+    TreeNode **array = fill_array(*array, root, tree_size);
 
-        if (token.type != TOKEN_NEWLINE) {
-            printf("Line Number: %4d \t", token.line_number);
-            printf("Lexeme: %12.*s \t", token.length, token.first_char);
-            printf("Type: %s \n", print_type(token.type));
-        }
-        */
-
-        /****************************
-         * Parser printing aperatus *
-         ****************************/
-        /*
-        ParserToken parse_token = spawn_parse_token(token);
-        print_parse_token(parse_token);
-        free(parse_token.lexeme);
-        if (token.type == TOKEN_EOF) {
-            break;
-        }
-        */
-        
-    //}
-   // free(source);
-
+    for (size_t i = 0; i < tree_size; i++) {
+        printf("%.*s ", array[i]->contents.length, array[i]->contents.first_char);
+    }
 }

@@ -1,5 +1,6 @@
 #include "parser.h"
 #include "../Lexer/lexer.h"
+#include <stdio.h>
 
 
 /*
@@ -11,6 +12,19 @@
 
 Parser parser;
 
+
+// This table is based on Nystrom's table, the only difference being the functions
+// themselves do not produce bytecode, they instead weave a AST (like Crockford's
+// nuds and leds).
+
+// For more information on the table, contact me or refer to Robert Nystrom's 
+// Crafting Interpreters, Chapter 17
+
+// For more inforation on the nuds and leds, contact me or refer to Crockford's
+// blog below:
+// https://www.crockford.com/javascript/tdop/tdop.html
+
+
 Rule table[] = {
     [TOKEN_INTEGER]        = {Prec_Integers,    nud_integer, NULL},
     [TOKEN_IDENTIFIER]     = {Prec_Identifiers, nud_integer, NULL},
@@ -20,20 +34,20 @@ Rule table[] = {
     [TOKEN_EOF]            = {Prec_EOF,         NULL,        NULL},
 };
 
-TreeNode *led_binary(TreeNode *tree, StackNode **stack){
+
+TreeNode *led_binary(TreeNode *tree){
     TreeNode *new_node = spawn_node(parser.current);
+    new_node->right = parse(table[parser.current.type].precedence, tree);
     new_node->left = tree;
-    new_node->right = parse(table[parser.current.type].precedence, tree, stack);
     return new_node;
 }
 
 
-TreeNode *nud_integer(TreeNode *tree, StackNode **stack){
+TreeNode *nud_integer(TreeNode *tree){
     TreeNode *tree_node = spawn_node(parser.previous);
+    parser.current = get_next_token();
     return tree_node;
 }
-
-
 
 
 TreeNode *spawn_node(Token t){
@@ -87,57 +101,95 @@ bool is_tree_node_empty(TreeNode *node){
 }
 
 
-void traverse_binary_tree(TreeNode *tree){
-    // T1
+print_node *spawn_print_node(int depth, TreeNode *node){
+    print_node *return_node = malloc(sizeof(print_node));
+    return_node->next = NULL;
+    return_node->depth = depth;
+    return_node->contents = node;
+    return return_node;
+}
+
+
+print_node pop_print_node(print_node **stack){
+    print_node *temp = *stack;
+    print_node *return_node = temp;
+    *stack = (*stack)->next;
+    free(temp);
+    return *return_node;
+}
+
+
+void push_print_node(print_node **stack, print_node *push_node){
+    push_node->next = *stack;
+    *stack = push_node;
+}
+
+
+size_t count_tree_nodes(TreeNode *tree){
     StackNode *stack = NULL;
     TreeNode *p = tree;
-    int depth = 0;
+    size_t return_num = 0;
     for (;;) {
-        if (is_tree_node_empty(p) == true) { // T2
-            for (int i = 0; i < depth; i++) {
-                printf("\t");
-            }
-            printf("%s\n", print_type(p->contents.type));
-            // T4
+        if (is_tree_node_empty(p) == true) {
+            return_num++;
             if (is_stack_empty(&stack) == true) {
                 break;
             } else {
                 p = pop(&stack);
-                depth--;
-                // T5
-                for (int i = 0; i < depth; i++) {
-                    printf("\t");
-                }
-                printf("%s\n", print_type(p->contents.type));
+                return_num++;
                 p = p->right;
-                depth++;
             }
         } else {
-            // T3
             push(&stack, p);
             p = p->left;
-            depth++;
         }
     }
+    return return_num;
 }
 
 
-TreeNode *parse(Precedence rbp, TreeNode *tree, StackNode **stack){
+TreeNode **fill_array(TreeNode *array, TreeNode *root, size_t size){
+    TreeNode **return_array = malloc(size * sizeof(TreeNode));
+    StackNode *stack = NULL;
+    StackNode *fillstack = NULL;
+    TreeNode *p = root;
+    size_t return_num = 0;
+    for (;;) {
+        if (is_tree_node_empty(p) == true) {
+            push(&fillstack, p);
+            if (is_stack_empty(&stack) == true) {
+                for (size_t i = 0; i < size; i++) {
+                    return_array[i] = pop(&fillstack);
+                }
+                break;
+            } else {
+                p = pop(&stack);
+                push(&fillstack, p);
+                p = p->right;
+            }
+        } else {
+            push(&stack, p);
+            p = p->left;
+        }
+    }
+    return return_array;
+}
+
+
+TreeNode *parse(Precedence rbp, TreeNode *tree){
     Token t = get_next_token();
     parser.previous = t;
     SemanticCode c = table[t.type].nud;
     if (c == NULL) {
         //printf("error in parse()\n");
     }
-    TreeNode *left = c(tree, stack);
-    while (rbp <= table[t.type].precedence) {
-        Token t = get_next_token();
+    TreeNode *left = c(tree);
+    while (rbp <= table[parser.current.type].precedence) {
         if (t.type == TOKEN_EOF) {
             break;
         }
-        parser.current = t;
-        c = table[t.type].led;
-        left = c(left, stack);
+        c = table[parser.current.type].led;
+        left = c(left);
     }
     return left;
 }
