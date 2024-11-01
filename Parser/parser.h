@@ -48,13 +48,15 @@ typedef TreeNode* (*SemanticCode)(TreeNode *);
 // has higher precendence.
 typedef enum Precedence{
     Prec_EOF = 0,
+    Prec_Right_Paren,
     Prec_Outcomes,
     Prec_Integers,
     Prec_Equals,
     Prec_Identifiers,
     Prec_AddSub,
     Prec_MultDiv,
-    Prec_Unary
+    Prec_Unary,
+    Prec_Paren
 } Precedence;
 
 
@@ -106,12 +108,16 @@ TreeNode *led_binary(TreeNode *);
 
 
 /*
- * nud_integer()
+ * nud_atom()
  * Input: The AST so far
  * Output: Returns itself as an empty tree node. One of the leds will use this return
  * value as a leaf.
  */
-TreeNode *nud_integer(TreeNode *);
+TreeNode *nud_atom(TreeNode *);
+
+
+TreeNode *nud_paren(TreeNode *);
+TreeNode *led_paren(TreeNode *);
 
 
 /*
@@ -189,6 +195,10 @@ void enqueue(StackNode **, TreeNode *);
  * Output: The TreeNode at the front of the queue. This looks o(n) but im too lazy for new method.
  */
 TreeNode *dequeue(StackNode **);
+
+
+
+
 
 
 #endif
