@@ -45,7 +45,6 @@ TreeNode *led_binary(TreeNode *tree){
 
 TreeNode *nud_integer(TreeNode *tree){
     TreeNode *tree_node = spawn_node(parser.previous);
-    parser.current = get_next_token();
     return tree_node;
 }
 
@@ -175,15 +174,15 @@ TreeNode **preorder(TreeNode *root, size_t size){
 
 
 TreeNode *parse(Precedence rbp, TreeNode *tree){
-    Token t = get_next_token();
-    parser.previous = t;
-    SemanticCode c = table[t.type].nud;
+    parser.previous = get_next_token();
+    SemanticCode c = table[parser.previous.type].nud;
     if (c == NULL) {
         printf("error in parse()\n");
     }
     TreeNode *left = c(tree);
+    parser.current = get_next_token();
     while (rbp <= table[parser.current.type].precedence) {
-        if (t.type == TOKEN_EOF) {
+        if (parser.previous.type == TOKEN_EOF) {
             break;
         }
         c = table[parser.current.type].led;
