@@ -119,6 +119,7 @@ void push_print_node(print_node **, print_node *);
 print_node pop_print_node(print_node **);
 size_t count_tree_nodes(TreeNode *);
 TreeNode **fill_array(TreeNode *, TreeNode *, size_t);
+TreeNode **preorder(TreeNode *, size_t);
 
 
 #endif

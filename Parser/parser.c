@@ -119,10 +119,6 @@ print_node pop_print_node(print_node **stack){
 }
 
 
-void push_print_node(print_node **stack, print_node *push_node){
-    push_node->next = *stack;
-    *stack = push_node;
-}
 
 
 size_t count_tree_nodes(TreeNode *tree){
@@ -147,27 +143,77 @@ size_t count_tree_nodes(TreeNode *tree){
     return return_num;
 }
 
+void enqueue(StackNode **queue, TreeNode *t){
+    StackNode *queue_node = malloc(sizeof(StackNode));
+    queue_node->contents = t;
+    queue_node->next = *queue;
+    *queue = queue_node;
+}
+
+
+TreeNode *dequeue(StackNode **queue){
+    StackNode *temp = *queue;
+    StackNode *prev = NULL;
+    while (temp->next != NULL) {
+        prev = temp;
+        temp = temp->next;
+    }
+    TreeNode *return_int = temp->contents;
+    if (prev != NULL) {
+        prev->next = NULL;
+    }
+    free(temp);
+    return return_int;
+}
+
 
 TreeNode **fill_array(TreeNode *array, TreeNode *root, size_t size){
     TreeNode **return_array = malloc(size * sizeof(TreeNode));
     StackNode *stack = NULL;
-    StackNode *fillstack = NULL;
+    StackNode *queue = NULL;
     TreeNode *p = root;
     size_t return_num = 0;
     for (;;) {
         if (is_tree_node_empty(p) == true) {
-            push(&fillstack, p);
+            enqueue(&queue, p);
             if (is_stack_empty(&stack) == true) {
                 for (size_t i = 0; i < size; i++) {
-                    return_array[i] = pop(&fillstack);
+                    return_array[i] = dequeue(&queue);
                 }
                 break;
             } else {
                 p = pop(&stack);
-                push(&fillstack, p);
+                enqueue(&queue, p);
                 p = p->right;
             }
         } else {
+            push(&stack, p);
+            p = p->left;
+        }
+    }
+    return return_array;
+}
+
+
+TreeNode **preorder(TreeNode *root, size_t size){
+    TreeNode **return_array = malloc(size * sizeof(TreeNode));
+    StackNode *stack = NULL;
+    StackNode *queue = NULL;
+    TreeNode *p = root;
+    for (;;) {
+        if (is_tree_node_empty(p) == true) {
+            enqueue(&queue, p);
+            if (is_stack_empty(&stack) == true) {
+                for (size_t i = 0; i < size; i++) {
+                    return_array[i] = dequeue(&queue);
+                }
+                break;
+            } else {
+                p = pop(&stack);
+                p = p->right;
+            }
+        } else {
+            enqueue(&queue, p);
             push(&stack, p);
             p = p->left;
         }
