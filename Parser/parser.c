@@ -101,26 +101,6 @@ bool is_tree_node_empty(TreeNode *node){
 }
 
 
-print_node *spawn_print_node(int depth, TreeNode *node){
-    print_node *return_node = malloc(sizeof(print_node));
-    return_node->next = NULL;
-    return_node->depth = depth;
-    return_node->contents = node;
-    return return_node;
-}
-
-
-print_node pop_print_node(print_node **stack){
-    print_node *temp = *stack;
-    print_node *return_node = temp;
-    *stack = (*stack)->next;
-    free(temp);
-    return *return_node;
-}
-
-
-
-
 size_t count_tree_nodes(TreeNode *tree){
     StackNode *stack = NULL;
     TreeNode *p = tree;
@@ -167,34 +147,6 @@ TreeNode *dequeue(StackNode **queue){
 }
 
 
-TreeNode **fill_array(TreeNode *array, TreeNode *root, size_t size){
-    TreeNode **return_array = malloc(size * sizeof(TreeNode));
-    StackNode *stack = NULL;
-    StackNode *queue = NULL;
-    TreeNode *p = root;
-    size_t return_num = 0;
-    for (;;) {
-        if (is_tree_node_empty(p) == true) {
-            enqueue(&queue, p);
-            if (is_stack_empty(&stack) == true) {
-                for (size_t i = 0; i < size; i++) {
-                    return_array[i] = dequeue(&queue);
-                }
-                break;
-            } else {
-                p = pop(&stack);
-                enqueue(&queue, p);
-                p = p->right;
-            }
-        } else {
-            push(&stack, p);
-            p = p->left;
-        }
-    }
-    return return_array;
-}
-
-
 TreeNode **preorder(TreeNode *root, size_t size){
     TreeNode **return_array = malloc(size * sizeof(TreeNode));
     StackNode *stack = NULL;
@@ -227,7 +179,7 @@ TreeNode *parse(Precedence rbp, TreeNode *tree){
     parser.previous = t;
     SemanticCode c = table[t.type].nud;
     if (c == NULL) {
-        //printf("error in parse()\n");
+        printf("error in parse()\n");
     }
     TreeNode *left = c(tree);
     while (rbp <= table[parser.current.type].precedence) {

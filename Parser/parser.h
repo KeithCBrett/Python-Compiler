@@ -33,16 +33,13 @@ typedef struct TreeNode{
     struct TreeNode *right;
 } TreeNode;
 
-typedef struct print_node{
-    int depth;
-    TreeNode *contents;
-    struct print_node *next;
-} print_node;
 
+// Wrapper for a TreeNode, so that we can us it in our linked list based stack.
 typedef struct StackNode{
     TreeNode *contents;
     struct StackNode *next;
 } StackNode;
+
 
 typedef TreeNode* (*SemanticCode)(TreeNode *);
 
@@ -106,20 +103,92 @@ TreeNode *spawn_node(Token);
  * found. This is when we fold the tree to get the correct semantic meaning.
  */
 TreeNode *led_binary(TreeNode *);
+
+
+/*
+ * nud_integer()
+ * Input: The AST so far
+ * Output: Returns itself as an empty tree node. One of the leds will use this return
+ * value as a leaf.
+ */
 TreeNode *nud_integer(TreeNode *);
-void print_tree(TreeNode *);
-void traverse_binary_tree(TreeNode *, print_node **);
-TreeNode *led_eof(TreeNode *, StackNode **);
-void push(StackNode **, TreeNode *);
+
+
+/*
+ * spawn_stack_node()
+ * Input: A TreeNode from our AST.
+ * Output: A TreeNode that we can put on a stack. We will use this stack to traverse our tree
+ * without recursion. (Donald Knuth TAOCP, VOL I, 3ed. Page 320, Algorithm T).
+ */
 StackNode *spawn_stack_node(TreeNode *);
+
+
+/*
+ * push()
+ * Input: A stack and a TreeNode to be pushed onto the stack.
+ * Output: None, stack will have pushed node on top. Access with pop().
+ */
+void push(StackNode **, TreeNode *);
+
+
+/*
+ * pop()
+ * Input: A stack.
+ * Output: Node at the top of the stack. Also shifts the stack and frees popped node.
+ */
 TreeNode *pop(StackNode **);
-void initialize_parser();
-print_node *spawn_print_node(int, TreeNode *);
-void push_print_node(print_node **, print_node *);
-print_node pop_print_node(print_node **);
+
+
+/*
+ * count_tree_nodes()
+ * Input: Finished AST
+ * Output: Counts number of tree elements and returns that number as size_t. Used for checking bounds
+ * for arrays and loops.
+ */
 size_t count_tree_nodes(TreeNode *);
-TreeNode **fill_array(TreeNode *, TreeNode *, size_t);
+
+
+/*
+ * is_tree_node_empty()
+ * Input: A node on our tree.
+ * Output: This is for checking if we have hit a leaf in our AST (int or var, etc). Used in preorder()
+ * to traverse our AST properly.
+ */
+bool is_tree_node_empty(TreeNode *);
+
+
+/*
+ * preorder()
+ * Input: Our AST.
+ * Output: This function traverses our AST and visits the nodes in preorder. Allows us to print our
+ * AST as something similiar to S-Expressions. (prefix notation).
+ */
 TreeNode **preorder(TreeNode *, size_t);
+
+
+/*
+ * is_stack_empty()
+ * Input: Stack
+ * Output: Boolean telling if stack is empty or not. Useful for checking stack underflows and is
+ * also used in our preorder() function to terminate.
+ */
+bool is_stack_empty(StackNode **);
+
+
+/*
+ * enqueue()
+ * Input: Queue, TreeNode to be queued.
+ * Output: Nothing, queue passed will have the TreeNode appended to it.
+ */
+void enqueue(StackNode **, TreeNode *);
+
+
+/*
+ * dequeue()
+ * Input: Queue
+ * Output: The TreeNode at the front of the queue. This looks o(n) but im too lazy for new method.
+ */
+TreeNode *dequeue(StackNode **);
 
 
 #endif
