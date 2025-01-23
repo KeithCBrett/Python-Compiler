@@ -26,18 +26,23 @@
 //      nud(): This is for prefix semantics, i.e. -x
 //      led(): This is for infix semantics, i.e. x - y
 // TreeNode represents a node on our AST.
+
+
 typedef struct TreeNode{
-    Token contents;
-    // If its a prefix operation, left might be null
-    struct TreeNode *left;
-    struct TreeNode *right;
+	Token contents;
+	// If its a prefix operation, left might be null
+	struct TreeNode *left;
+	struct TreeNode *right;
+	bool reg;
+	size_t rule_number;
+	int register_number;
 } TreeNode;
 
 
 // Wrapper for a TreeNode, so that we can us it in our linked list based stack.
 typedef struct StackNode{
-    TreeNode *contents;
-    struct StackNode *next;
+	TreeNode *contents;
+	struct StackNode *next;
 } StackNode;
 
 
@@ -47,30 +52,30 @@ typedef TreeNode* (*SemanticCode)(TreeNode *);
 // Requirement for TDOP algorithm, now we know that (+ < *) since multiplication
 // has higher precendence.
 typedef enum Precedence{
-    Prec_EOF = 0,
-    Prec_Right_Paren,
-    Prec_Outcomes,
-    Prec_Integers,
-    Prec_Equals,
-    Prec_Identifiers,
-    Prec_AddSub,
-    Prec_MultDiv,
-    Prec_Unary,
-    Prec_Paren
+	Prec_EOF = 0,
+	Prec_Right_Paren,
+	Prec_Outcomes,
+	Prec_Integers,
+	Prec_Equals,
+	Prec_Identifiers,
+	Prec_AddSub,
+	Prec_MultDiv,
+	Prec_Unary,
+	Prec_Paren
 } Precedence;
 
 
 typedef struct Parser{
-    Token previous;
-    Token current;
-    Token next;
+	Token previous;
+	Token current;
+	Token next;
 } Parser;
 
 
 typedef struct Rule{
-    Precedence precedence;
-    SemanticCode nud; // prefix
-    SemanticCode led; // infix
+	Precedence precedence;
+	SemanticCode nud; // prefix
+	SemanticCode led; // infix
 } Rule;
 
 
@@ -170,6 +175,7 @@ bool is_tree_node_empty(TreeNode *);
  * AST as something similiar to S-Expressions. (prefix notation).
  */
 TreeNode **preorder(TreeNode *, size_t);
+TreeNode **postorder(TreeNode *, size_t);
 
 
 /*
@@ -195,10 +201,6 @@ void enqueue(StackNode **, TreeNode *);
  * Output: The TreeNode at the front of the queue. This looks o(n) but im too lazy for new method.
  */
 TreeNode *dequeue(StackNode **);
-
-
-
-
 
 
 #endif
