@@ -4,6 +4,7 @@
 
 
 #include "code_generator.h"
+#include <stdio.h>
 
 
 #define ASM_IDENTIFIER		1
@@ -13,72 +14,6 @@
 #define ASM_EQUALS		5
 #define ASM_SUBTRACTION		6
 #define ASM_DIVISION		7
-
-
-IntllNode *spawn_IntllNode(int input){
-	IntllNode *return_node = malloc(sizeof(IntllNode));
-	return_node->contents = input;
-	return_node->next = NULL;
-	return return_node;
-}
-
-
-void IntllEnqueue(int input, IntllNode **queue){
-	IntllNode *enqueue_node = spawn_IntllNode(input);
-	enqueue_node->next = *queue;
-	*queue = enqueue_node;
-}
-
-
-IntllNode *IntllDequeue(IntllNode **queue){
-	IntllNode *curr = *queue;
-	IntllNode *prev = NULL;
-	while (curr->next != NULL) {
-		prev = curr;
-		curr = curr->next;
-	}
-	IntllNode *return_node = curr;
-	if (prev != NULL) {
-		prev->next = NULL;
-	}
-	free(curr);
-	return return_node;
-}
-
-
-void init_regnames(IntllNode **register_name_array){
-	for (int i = 0; i < 8; i++) {
-		IntllEnqueue(i, register_name_array);
-	}
-}
-
-
-void init_reginuse(IntllNode **register_inuse_array){
-	for (int i = 0; i < 8; i++) {
-		IntllEnqueue(0, register_inuse_array);
-	}
-}
-
-
-int get_reg(IntllNode **names, IntllNode **inuse){
-	IntllNode *temp_inuse = *inuse;
-	IntllNode *temp_names = *names;
-	for (int i = 0; i < 7; i++) {
-		if (temp_inuse->contents == 1) {
-			temp_inuse = temp_inuse->next;
-			temp_names = temp_names->next;
-		} else {
-			return temp_names->contents;
-		}
-		if (temp_inuse->contents == 1) {
-			printf("out of registers\n");
-			return 0;
-		}
-	}
-	return temp_names->contents;
-}
-
-
 
 
 void tile(TreeNode *n, int *regcount){
@@ -138,6 +73,17 @@ void label(TreeNode *n, int *regcount){
 				printf("error, could not find tile for TOKEN_MULT");
 				break;
 			}
+		case TOKEN_DIVISION:
+			if ((n->left->reg == true) && (n->right->reg == true)) {
+				n->reg = true;
+				n->rule_number = ASM_DIVISION;
+				generate_asm(n->rule_number, n, regcount);
+				break;
+			} else {
+				n->reg = false;
+				printf("Error, could not tile");
+				break;
+			}
 		case TOKEN_EQUALS:
 			if ((n->left->reg == true) && (n->right->reg == true)) {
 				n->reg = true;
@@ -188,6 +134,16 @@ void generate_asm(size_t r, TreeNode *n, int *regcount){
 			printf("mul\t\treg(%d), reg(%d)\n", n->left->register_number,
 					n->right->register_number);
 			n->register_number = n->left->register_number;
+			break;
+		// Division
+		case ASM_DIVISION:
+			printf("mov\t\treg(%d), rdx\n", *regcount);
+			*regcount += 1;
+			printf("xor\t\trdx, rdx\n");
+			printf("mov\t\trax, reg(%d)\n", n->left->register_number);
+			printf("mov\t\treg(%d), reg(%d)\n", *regcount, n->right->register_number);
+			printf("div\t\treg(%d)\n", *regcount);
+			*regcount += 1;
 			break;
 		// Equals
 		case ASM_EQUALS:
