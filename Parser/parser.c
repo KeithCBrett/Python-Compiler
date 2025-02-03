@@ -27,16 +27,17 @@ Parser parser;
 
 
 Rule table[] = {
-	[TOKEN_INTEGER]        = {Prec_Integers,    nud_atom,  NULL},
-	[TOKEN_IDENTIFIER]     = {Prec_Identifiers, nud_atom,  NULL},
-	[TOKEN_ADD]            = {Prec_AddSub,      NULL,      led_binary},
-	[TOKEN_MINUS]          = {Prec_AddSub,      NULL,      led_binary},
-	[TOKEN_EQUALS]         = {Prec_Equals,      NULL,      led_binary},
-	[TOKEN_MULTIPLICATION] = {Prec_MultDiv,     NULL,      led_binary},
-	[TOKEN_DIVISION]       = {Prec_MultDiv,     NULL,      led_binary},
-	[TOKEN_EOF]            = {Prec_EOF,         NULL,      NULL},
-	[TOKEN_LEFT_PAREN]     = {Prec_Paren,       nud_paren, NULL},
-	[TOKEN_RIGHT_PAREN]    = {Prec_Right_Paren, NULL,      led_paren},
+	[TOKEN_INTEGER]		= {Prec_Integers,	nud_atom,	NULL},
+	[TOKEN_IDENTIFIER]     	= {Prec_Identifiers,	nud_atom,	NULL},
+	[TOKEN_ADD]            	= {Prec_AddSub,		NULL,		led_binary},
+	[TOKEN_MINUS]          	= {Prec_AddSub,		NULL,		led_binary},
+	[TOKEN_EQUALS]         	= {Prec_Equals,		NULL,		led_binary},
+	[TOKEN_MULTIPLICATION] 	= {Prec_MultDiv,	NULL,		led_binary},
+	[TOKEN_DIVISION]       	= {Prec_MultDiv,	NULL,		led_binary},
+	[TOKEN_EOF]            	= {Prec_EOF,		NULL,		NULL},
+	[TOKEN_LEFT_PAREN]     	= {Prec_Paren,		nud_paren,	NULL},
+	[TOKEN_RIGHT_PAREN]    	= {Prec_Right_Paren,	NULL,		led_paren},
+	[TOKEN_NEWLINE]		= {Prec_Newline,	NULL,		led_binary}
 };
 
 

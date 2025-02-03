@@ -23,7 +23,7 @@ int main(int argc, char **argv){
 	int *p_regcount = &regcount;
 
 
-	tile(root, p_regcount);
+	tile(root, root, p_regcount);
 
 	/*
 	for (size_t i = 0; i < tree_size; i++) {

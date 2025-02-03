@@ -3,9 +3,10 @@
 #include "../Parser/parser.h"
 
 
-void label(TreeNode *, int *);
+void label(TreeNode *, TreeNode *, int *);
 void generate_asm(size_t, TreeNode *, int *);
-void tile(TreeNode *, int *);
+void tile(TreeNode *, TreeNode *, int *);
+bool is_leftside(TreeNode *, TreeNode *);
 
 
 #endif

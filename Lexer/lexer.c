@@ -281,10 +281,6 @@ static void skip_whitespace() {
 			case '\r':
 				lex.current_char++;
 				break;
-			case '\n':
-				lex.current_char++;
-				lex.line_number++;
-				break;
 			default:
 				return;
 		}

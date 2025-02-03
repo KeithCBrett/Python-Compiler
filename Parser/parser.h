@@ -56,6 +56,7 @@ typedef enum Precedence{
 	Prec_Right_Paren,
 	Prec_Outcomes,
 	Prec_Integers,
+	Prec_Newline,
 	Prec_Equals,
 	Prec_Identifiers,
 	Prec_AddSub,
