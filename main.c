@@ -14,7 +14,7 @@ int main(int argc, char **argv){
 	initialize_lexer(source);
 
 	TreeNode *root = NULL;
-	root = parse(Prec_Outcomes, root);
+	root = parse(Prec_Newline, root);
 
 	size_t tree_size = count_tree_nodes(root);
 	TreeNode **array = postorder(root, tree_size);

@@ -53,16 +53,16 @@ typedef TreeNode* (*SemanticCode)(TreeNode *);
 // has higher precendence.
 typedef enum Precedence{
 	Prec_EOF = 0,
+	Prec_Newline,
 	Prec_Right_Paren,
 	Prec_Outcomes,
 	Prec_Integers,
-	Prec_Newline,
 	Prec_Equals,
 	Prec_Identifiers,
 	Prec_AddSub,
 	Prec_MultDiv,
 	Prec_Unary,
-	Prec_Paren
+	Prec_Paren,
 } Precedence;
 
 
@@ -85,7 +85,7 @@ typedef struct Rule{
  * Input: a right binding power in the form of a precendence, tree object to build on
  * in form of TreeNode*
  * Output: This function will be recursively called to generate ast. equivalent to 
- * parse(rbp) as described in Pratt's paper. We initialize this function with rbp of 0
+ * parse(rbp) as described in Pratt's paper. We initialize this function with rbp of 2
  * and it will rapidly build up with recursive calls until a weaker operator is encountered.
  * In which case the parser will fold the tree and continue until eof encoutered.
  */
@@ -124,6 +124,9 @@ TreeNode *nud_atom(TreeNode *);
 
 TreeNode *nud_paren(TreeNode *);
 TreeNode *led_paren(TreeNode *);
+TreeNode *led_rparen(TreeNode *);
+TreeNode *nud_print(TreeNode *);
+TreeNode *led_comma(TreeNode *);
 
 
 /*
