@@ -7,9 +7,24 @@
 
 
 int main(int argc, char **argv){
-	FILE *fp = fopen("inputfile.py", "r");
-	char *source = get_source_from_file(fp);
-	fclose(fp);
+	if (argc < 3) {
+		printf("Error, output file ommitted. Usage: pyco inputfile.py outputfile.py\n");
+		return 1;
+	}
+	if (argc < 2) {
+		printf("Error, input file ommitted. Usage: pyco inputfile.py outputfile.py\n");
+		return 1;
+	}
+	// Input file (python source to compile)
+	FILE *ifp = fopen(argv[1], "r");
+
+	// Output file (x86-64 assembly source if all goes well)
+	FILE *ofp = fopen(argv[2], "w");
+
+	// Store input file in string.
+	char *source = get_source_from_file(ifp);
+	// Done with input file, free.
+	fclose(ifp);
 
 	initialize_lexer(source);
 
@@ -19,11 +34,17 @@ int main(int argc, char **argv){
 	size_t tree_size = count_tree_nodes(root);
 	TreeNode **array = postorder(root, tree_size);
 
+	// For virtual registers.
 	int regcount = 0;
 	int *p_regcount = &regcount;
 
+	// Perform instruction selection using virtual registers.
+	tile(root, root, p_regcount, ofp);
 
-	tile(root, root, p_regcount);
+	// CONVERT VIRTUAL REGISTERS TO REAL ONES HERE.
+
+	// Assembly generated, close output file.
+	fclose(ofp);
 
 	/*
 	for (size_t i = 0; i < tree_size; i++) {
