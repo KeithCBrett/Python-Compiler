@@ -38,10 +38,14 @@ int main(int argc, char **argv){
 	int regcount = 0;
 	int *p_regcount = &regcount;
 
+	// Symbol table for variables.
+	StNode **symbol_table = st_spawn_table();
+
 	// Perform instruction selection using virtual registers.
-	tile(root, root, p_regcount, ofp);
+	tile(root, root, p_regcount, ofp, symbol_table);
 
 	// CONVERT VIRTUAL REGISTERS TO REAL ONES HERE.
+	// pass
 
 	// Assembly generated, close output file.
 	fclose(ofp);
