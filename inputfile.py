@@ -1,3 +1,3 @@
-x = 5
-y = 6
-z = x + y
+y = 7
+z = 2
+print(y * z)

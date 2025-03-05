@@ -181,18 +181,21 @@ void generate_asm(size_t r, TreeNode *n, int *regcount, FILE *ofp, StNode **symb
 			fprintf(ofp, "add\t\treg(%d),\treg(%d)\n", n->left->register_number,
 					n->right->register_number);
 			n->register_number = n->left->register_number;
+			symbol_table = st_insert(symbol_table, n, n->left->register_number);
 			break;
 		// Subtraction
 		case ASM_SUBTRACTION:
 			fprintf(ofp, "sub\t\treg(%d),\treg(%d)\n", n->left->register_number,
 					n->right->register_number);
 			n->register_number = n->left->register_number;
+			symbol_table = st_insert(symbol_table, n, n->left->register_number);
 			break;
 		// Multiplication
 		case ASM_MULTIPLICATION:
 		fprintf(ofp, "mul\t\treg(%d),\treg(%d)\n", n->left->register_number,
 					n->right->register_number);
 			n->register_number = n->left->register_number;
+			symbol_table = st_insert(symbol_table, n, n->left->register_number);
 			break;
 		// Division
 		case ASM_DIVISION:
@@ -235,7 +238,7 @@ void generate_asm(size_t r, TreeNode *n, int *regcount, FILE *ofp, StNode **symb
 				fprintf(ofp, "call\t\tprintstr\n");
 				break;
 			} else if (n->right->reg == true) {
-				fprintf(ofp, "mov\t\trcx,\treg(%d)\n", n->register_number);
+				fprintf(ofp, "mov\t\trcx,\treg(%d)\n", st_search(symbol_table, n->right));
 				fprintf(ofp, "call\t\tprintstr\n");
 				break;
 			}
