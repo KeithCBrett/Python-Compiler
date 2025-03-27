@@ -59,8 +59,8 @@ TreeNode *nud_print(TreeNode *tree){
 
 TreeNode *led_binary(TreeNode *tree){
 	TreeNode *new_node = spawn_node(parser.current);
-	new_node->right = parse(table[parser.current.type].precedence, tree);
 	new_node->left = tree;
+	new_node->right = parse(table[parser.current.type].precedence, tree);
 	return new_node;
 }
 
@@ -73,7 +73,8 @@ TreeNode *led_rparen(TreeNode *tree){
 
 
 TreeNode *nud_paren(TreeNode *tree){
-	TreeNode *inner = parse(Prec_Right_Paren, tree);
+	// +1 so it breaks on right parens.
+	TreeNode *inner = parse((Prec_Right_Paren + 1), tree);
 	return inner;
 }
 
