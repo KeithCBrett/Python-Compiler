@@ -272,15 +272,28 @@ static bool look_ahead_dont_advance(const char check) {
 
 
 // Breaks out of loop when non whitespace is encountered
-static void skip_whitespace() {
+static void skip_whitespace(bool was_newline) {
 	for (;;) {
 		char c = peak_once();
 		switch (c) {
-			case ' ':
 			case '\t':
 			case '\r':
 				lex.current_char++;
 				break;
+			case ' ':
+				// If last token was newline, this space is
+				// acting as indentation, so we dont skip.
+				if (was_newline == true)
+				{
+					// get_next_token () will handle this one.
+					return;
+				}
+				// Otherwise, skip as usual.
+				else
+				{
+					lex.current_char++;
+					break;
+				}
 			default:
 				return;
 		}
@@ -1155,8 +1168,8 @@ static Token identifier_or_keyword() {
 // Main logic, call this repeatedly in a loop until EOF token reached
 // in order to lex a program. (Be sure to initialize Lexer with source
 // code first with initialize_lexer() and get_source_from_file()).
-Token get_next_token() {
-	skip_whitespace();
+Token get_next_token(bool was_newline) {
+	skip_whitespace(was_newline);
 	lex.start_char = lex.current_char;
 
 	if (is_at_end()) {
@@ -1187,6 +1200,9 @@ Token get_next_token() {
 		case '.':       return spawn_token(TOKEN_PERIOD);
 		case ';':       return spawn_token(TOKEN_SEMI_COLON);
 		case '\n':      return spawn_token(TOKEN_NEWLINE);
+		// In order to make things straight forward, we strictly inforce PEP8 4 space indent.
+		case ' ':	return spawn_token(TOKEN_TAB);
+		case '\t':	return spawn_token(TOKEN_TAB);
 		// Single lookahead tokens (one or two characters)
 		case '=':       
 			return spawn_token(

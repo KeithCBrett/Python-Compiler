@@ -1,2 +1,2 @@
-x = (1 + 3) * 2 + 4
-y = 7
+for i in range(5):
+    print(i, x, y)

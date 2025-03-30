@@ -58,7 +58,7 @@ typedef enum {
 	TOKEN_STATICMETHOD, TOKEN_STR, TOKEN_SUM, TOKEN_SUPER,
 	TOKEN_TUPLE, TOKEN_TRY, TOKEN_TYPE, TOKEN_VARS,
 	TOKEN_WHILE, TOKEN_WITH, TOKEN_YIELD, TOKEN_ZIP,
-	TOKEN_IMPORT_FUNC, TOKEN_TREE_ROOT
+	TOKEN_IMPORT_FUNC, TOKEN_TREE_ROOT, TOKEN_TAB
 } TokenType;
 
 
@@ -73,7 +73,7 @@ typedef struct {
 char *get_source_from_file(FILE *);
 char *print_type(int);
 static char consume_char();
-Token get_next_token();
+Token get_next_token(bool);
 Token spawn_token(TokenType);
 static Token spawn_error(const char *);
 static Token number();
@@ -89,7 +89,7 @@ static bool bool_check_keyword(char *);
 static char peak_once();
 static char peak_twice();
 void initialize_lexer(const char *);
-static void skip_whitespace();
+static void skip_whitespace(bool);
 
 
 #endif

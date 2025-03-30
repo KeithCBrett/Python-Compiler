@@ -28,7 +28,9 @@
 // TreeNode represents a node on our AST.
 
 
-typedef struct TreeNode{
+typedef struct
+TreeNode
+{
 	Token contents;
 	// If its a prefix operation, left might be null
 	struct TreeNode *left;
@@ -36,24 +38,34 @@ typedef struct TreeNode{
 	bool reg;
 	size_t rule_number;
 	int register_number;
-} TreeNode;
+}
+TreeNode;
 
 
 // Wrapper for a TreeNode, so that we can us it in our linked list based stack.
-typedef struct StackNode{
+typedef struct
+StackNode
+{
 	TreeNode *contents;
 	struct StackNode *next;
-} StackNode;
+}
+StackNode;
 
 
-typedef TreeNode* (*SemanticCode)(TreeNode *);
+typedef
+TreeNode *
+(*SemanticCode)(TreeNode *, bool);
 
 
 // Requirement for TDOP algorithm, now we know that (+ < *) since multiplication
 // has higher precendence.
-typedef enum Precedence{
+typedef enum
+Precedence
+{
 	Prec_EOF = 0,
+	Prec_Start,
 	Prec_Newline,
+	Prec_Keyword,
 	Prec_Right_Paren,
 	Prec_Outcomes,
 	Prec_Integers,
@@ -63,21 +75,28 @@ typedef enum Precedence{
 	Prec_MultDiv,
 	Prec_Unary,
 	Prec_Paren,
-} Precedence;
+}
+Precedence;
 
 
-typedef struct Parser{
+typedef struct
+Parser
+{
 	Token previous;
 	Token current;
 	Token next;
-} Parser;
+}
+Parser;
 
 
-typedef struct Rule{
+typedef struct
+Rule
+{
 	Precedence precedence;
 	SemanticCode nud; // prefix
 	SemanticCode led; // infix
-} Rule;
+}
+Rule;
 
 
 /*
@@ -89,7 +108,8 @@ typedef struct Rule{
  * and it will rapidly build up with recursive calls until a weaker operator is encountered.
  * In which case the parser will fold the tree and continue until eof encoutered.
  */
-TreeNode *parse(Precedence, TreeNode *);
+TreeNode *
+parse (Precedence, TreeNode *, bool);
 
 
 /*
@@ -99,7 +119,8 @@ TreeNode *parse(Precedence, TreeNode *);
  * it with its left and right branches, parse and operator precedence decides if it has a parent
  * (i.e. is it at the top of the tree (lowest precedence) or bottom (highest precedence).
  */
-TreeNode *spawn_node(Token);
+TreeNode *
+spawn_node (Token);
 
 
 /*
@@ -110,7 +131,8 @@ TreeNode *spawn_node(Token);
  * precedence. This precendence will ramp with the recursive calls, until weak operator is
  * found. This is when we fold the tree to get the correct semantic meaning.
  */
-TreeNode *led_binary(TreeNode *);
+TreeNode *
+led_binary (TreeNode *, bool);
 
 
 /*
@@ -119,14 +141,45 @@ TreeNode *led_binary(TreeNode *);
  * Output: Returns itself as an empty tree node. One of the leds will use this return
  * value as a leaf.
  */
-TreeNode *nud_atom(TreeNode *);
+TreeNode *
+nud_atom (TreeNode *, bool);
 
 
-TreeNode *nud_paren(TreeNode *);
-TreeNode *led_paren(TreeNode *);
-TreeNode *led_rparen(TreeNode *);
-TreeNode *nud_print(TreeNode *);
-TreeNode *led_comma(TreeNode *);
+TreeNode *
+nud_paren (TreeNode *, bool);
+
+TreeNode *
+led_paren (TreeNode *, bool);
+
+TreeNode *
+led_rparen (TreeNode *, bool);
+
+TreeNode *
+nud_print (TreeNode *, bool);
+
+TreeNode *
+led_comma (TreeNode *, bool);
+
+TreeNode *
+nud_for (TreeNode *, bool);
+
+TreeNode *
+led_atom (TreeNode *, bool);
+
+TreeNode *
+nud_in (TreeNode *, bool);
+
+TreeNode *
+led_range (TreeNode *, bool);
+
+TreeNode *
+led_colon (TreeNode *, bool);
+
+TreeNode *
+nud_tab (TreeNode *, bool);
+
+TreeNode *
+led_print (TreeNode *, bool);
 
 
 /*
