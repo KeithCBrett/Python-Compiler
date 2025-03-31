@@ -1,6 +1,7 @@
 #include "Lexer/lexer.h"
 #include "Parser/parser.h"
 #include "Code_Generator/code_generator.h"
+#include "Testing/testing.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,22 +29,21 @@ int main(int argc, char **argv){
 
 	initialize_lexer(source);
 
+	test_parser();
 	TreeNode *root = NULL;
 	bool was_newline = false;
-	root = parse(Prec_Start, root, was_newline);
+	//root = parse(Prec_Start, root, was_newline);
 
-	size_t tree_size = count_tree_nodes(root);
-	TreeNode **array = postorder(root, tree_size);
 
 	// For virtual registers.
 	int regcount = 0;
 	int *p_regcount = &regcount;
 
 	// Symbol table for variables.
-	StNode **symbol_table = st_spawn_table();
+//	StNode **symbol_table = st_spawn_table();
 
 	// Perform instruction selection using virtual registers.
-	tile(root, root, p_regcount, ofp, symbol_table);
+//	tile(root, root, p_regcount, ofp, symbol_table);
 
 	// CONVERT VIRTUAL REGISTERS TO REAL ONES HERE.
 	// pass

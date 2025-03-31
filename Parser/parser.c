@@ -55,7 +55,8 @@ nud_tab (TreeNode *tree, bool was_newline)
 {
 	TreeNode *return_node = spawn_node (parser.previous);
 	return_node->left = spawn_node (spawn_token (TOKEN_RIGHT_PAREN));
-	return_node->right = parse (table[parser.current.type].precedence, tree, was_newline);
+	return_node->right = parse (table[parser.current.type].precedence,
+			tree, was_newline);
 	return return_node;
 }
 
@@ -107,7 +108,8 @@ led_atom (TreeNode *tree, bool was_newline)
 	TreeNode *return_node = tree;
 	// curr should be identifier.
 	return_node->left = spawn_node (parser.current);
-	return_node->right = parse (table[parser.current.type].precedence, tree, was_newline);
+	return_node->right = parse (table[parser.current.type].precedence,
+			tree, was_newline);
 	return return_node;
 }
 
@@ -116,7 +118,8 @@ TreeNode *
 led_comma (TreeNode *tree, bool was_newline)
 {
 	TreeNode *return_node = spawn_node (parser.current);
-	return_node->left = parse (table[parser.current.type].precedence, tree, was_newline);
+	return_node->left = parse (table[parser.current.type].precedence,
+			tree, was_newline);
 	return_node->right = tree;
 	return return_node;
 }
@@ -135,7 +138,8 @@ led_binary (TreeNode *tree, bool was_newline)
 {
 	TreeNode *new_node = spawn_node (parser.current);
 	new_node->left = tree;
-	new_node->right = parse (table[parser.current.type].precedence, tree, was_newline);
+	new_node->right = parse (table[parser.current.type].precedence,
+			tree, was_newline);
 	return new_node;
 }
 
@@ -163,7 +167,8 @@ led_paren (TreeNode *tree, bool was_newline)
 {
 	TreeNode *return_node = tree;
 	return_node->left = spawn_node (spawn_token (TOKEN_RIGHT_PAREN));
-	return_node->right = parse ((Prec_Right_Paren + 1), tree, was_newline); // Consume args.
+	// Consume args.
+	return_node->right = parse ((Prec_Right_Paren + 1), tree, was_newline);
 	return return_node;
 }
 
@@ -414,9 +419,10 @@ parse (Precedence rbp, TreeNode *tree, bool was_newline)
 	{
 		printf ("error in parse()\n");
 	}
-
-	TreeNode *left = c (tree, was_newline); // c(tree) will return identifier or value itself
-	parser.current = get_next_token (was_newline); // Slip past identifier or val and get to operator
+	// c(tree) will return identifier or value itself
+	TreeNode *left = c (tree, was_newline);
+	// Slip past identifier or val and get to operator
+	parser.current = get_next_token (was_newline);
 
 	if (parser.current.type == TOKEN_NEWLINE)
 	{
