@@ -29,10 +29,14 @@ int main(int argc, char **argv){
 
 	initialize_lexer(source);
 
-	test_parser();
+	//test_parser();
 	TreeNode *root = NULL;
 	bool was_newline = false;
-	//root = parse(Prec_Start, root, was_newline);
+	root = parse(Prec_Start, root, was_newline);
+	kill_tree (root);
+	root = NULL;
+
+	free (source);
 
 
 	// For virtual registers.

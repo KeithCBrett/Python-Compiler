@@ -454,3 +454,27 @@ parse (Precedence rbp, TreeNode *tree, bool was_newline)
 
 	return left; // when rbp drops we break the loop and fold our tree
 }
+
+
+void
+kill_node (TreeNode *inp_node)
+{
+	free (inp_node);
+	inp_node = NULL;
+}
+
+
+void
+kill_tree (TreeNode *inp_ast)
+{
+	if (is_tree_node_empty (inp_ast) == false)
+	{
+		kill_tree (inp_ast->left);
+		kill_tree (inp_ast->right);
+		kill_node (inp_ast);
+	}
+	else
+	{
+		kill_node (inp_ast);
+	}
+}

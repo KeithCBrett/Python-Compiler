@@ -36,8 +36,10 @@ test_ast (TreeNode *gen, TreeNode *expected)
 void
 test_parser ()
 {
+	fprintf (stderr, "\n");
 	bool tests_passed = true;
 	size_t num_tests_failed = 0;
+	fprintf (stderr, "test_parser ():\n\n");
 
 
 	// Test 1: Simple assignment 1.
@@ -51,11 +53,13 @@ test_parser ()
 	gen1 = parse (Prec_Start, gen1, gen1bool);
 	if (test_ast (gen1, exp1))
 	{
-		fprintf (stderr, "Test 1: PASS\n");
+		fprintf (stderr, "Test 1:\n");
+		fprintf (stderr, "\tx = 3\n");
+		fprintf (stderr, "\tPASS\n");
 	}
 	else
 	{
-		fprintf (stderr, "Test 1: FAIL\n");
+		fprintf (stderr, "Test 1:\n\tFAIL\n");
 		tests_passed = false;
 		num_tests_failed++;
 	}
@@ -74,16 +78,19 @@ test_parser ()
 	gen2 = parse (Prec_Start, gen2, gen2bool);
 	if (test_ast (gen2, exp2))
 	{
-		fprintf (stderr, "Test 2: PASS\n");
+		fprintf (stderr, "Test 2:\n");
+		fprintf (stderr, "\ty = 2 + 3\n");
+		fprintf (stderr, "\tPASS\n");
 	}
 	else
 	{
-		fprintf (stderr, "Test 2: FAIL\n");
+		fprintf (stderr, "Test 2:\n\tFAIL\n");
 		tests_passed = false;
 		num_tests_failed++;
 	}
 
 
+	fprintf (stderr, "\n");
 	fprintf (stderr, "SUMMARY:\n");
 	if (tests_passed)
 	{
@@ -93,4 +100,5 @@ test_parser ()
 	{
 		fprintf(stderr, "ERROR, %zu tests failed\n", num_tests_failed);
 	}
+	fprintf (stderr, "\n");
 }

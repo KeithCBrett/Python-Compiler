@@ -113,6 +113,16 @@ parse (Precedence, TreeNode *, bool);
 
 
 /*
+ * kill_tree()
+ * Input: AST spawned by function parse().
+ * Output: Nothing, Traverses tree and frees each node, returning memory to the
+ * heap.
+ */
+void
+kill_tree (TreeNode *);
+
+
+/*
  * spawn_node()
  * Input: A token spawned from lexer. Specifically, get_next_token() from lexer.c, lexer.h
  * Output: This token will be the root of some sub tree. One of the led functions will supply
@@ -121,6 +131,15 @@ parse (Precedence, TreeNode *, bool);
  */
 TreeNode *
 spawn_node (Token);
+
+
+/*
+ * kill_node()
+ * Input: TreeNode created from spawn_node.
+ * Output: Nothing, return memory associated with node back to heap.
+ */
+void
+kill_node (TreeNode *);
 
 
 /*
