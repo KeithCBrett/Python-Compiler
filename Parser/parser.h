@@ -113,6 +113,15 @@ parse (Precedence, TreeNode *, bool);
 
 
 /*
+ * get_parent_type()
+ * Input: Some node in our AST, and the root of our AST.
+ * Output: The type of input node's parent.
+ */
+TokenType
+get_parent_type (TreeNode *, TreeNode *);
+
+
+/*
  * kill_tree()
  * Input: AST spawned by function parse().
  * Output: Nothing, Traverses tree and frees each node, returning memory to the

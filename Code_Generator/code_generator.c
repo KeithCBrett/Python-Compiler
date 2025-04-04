@@ -23,6 +23,10 @@
 #define ASM_IDENTIFIER_RS	8
 #define ASM_PRINT		9
 #define ASM_COMMA		10
+#define ASM_FORLOOPID		11
+#define ASM_IN			12
+#define ASM_FOR			13
+#define ASM_FORCLOSE		14
 
 
 // tile() performs a postorder traversal via recursion. Passes off execution to ofp, label
@@ -31,17 +35,17 @@
 // register to register model.
 void
 tile (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
-      StNode **symbol_table)
+      StNode **symbol_table, int *loopcount)
 {
 	if (is_tree_node_empty (n) == false)
 	{
-		tile (n->left, root, regcount, ofp, symbol_table);
-		tile (n->right, root, regcount, ofp, symbol_table);
-		label (n, root, regcount, ofp, symbol_table);
+		tile (n->left, root, regcount, ofp, symbol_table, loopcount);
+		tile (n->right, root, regcount, ofp, symbol_table, loopcount);
+		label (n, root, regcount, ofp, symbol_table, loopcount);
 	}
 	else
 	{
-		label (n, root, regcount, ofp, symbol_table);
+		label (n, root, regcount, ofp, symbol_table, loopcount);
 	}
 }
 
@@ -51,7 +55,7 @@ tile (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 // is performed).
 void
 label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
-		StNode **symbol_table)
+		StNode **symbol_table, int *loopcount)
 {
 	switch (n->contents.type)
 	{
@@ -60,11 +64,28 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 			// assignment and by reference.
 			if (is_leftside (n, root) == false)
 			{
-				n->reg = true;
-				n->rule_number = ASM_IDENTIFIER_RS;
-				generate_asm (n->rule_number, n, regcount, ofp,
-						symbol_table);
-				break;
+				// Special handling for id's found in for
+				// statements.
+				if (get_parent_type (n, root) == TOKEN_FOR)
+				{
+					n->reg = true;
+					n->rule_number = ASM_FORLOOPID;
+					generate_asm (n->rule_number, n,
+							regcount, ofp,
+							symbol_table,
+							loopcount);
+					break;
+				}
+				else
+				{
+					n->reg = true;
+					n->rule_number = ASM_IDENTIFIER_RS;
+					generate_asm (n->rule_number, n,
+							regcount, ofp,
+							symbol_table,
+							loopcount);
+					break;
+				}
 			}
 			else
 			{
@@ -73,14 +94,14 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 				// Use rule 1 to rewrite to register.
 				n->rule_number = ASM_IDENTIFIER;
 				generate_asm (n->rule_number, n, regcount, ofp,
-						symbol_table);
+						symbol_table, loopcount);
 				break;
 			}
 		case TOKEN_INTEGER:
 			n->reg = true;
 			n->rule_number = ASM_CONSTANT;
 			generate_asm (n->rule_number, n, regcount, ofp,
-					symbol_table);
+					symbol_table, loopcount);
 			break;
 		case TOKEN_ADD:
 			if ((n->left->reg == true) && (n->right->reg == true))
@@ -88,7 +109,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 				n->reg = true;
 				n->rule_number = ASM_ADDITION;
 				generate_asm (n->rule_number, n, regcount, ofp,
-						symbol_table);
+						symbol_table, loopcount);
 				break;
 			}
 			else
@@ -103,7 +124,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 				n->reg = true;
 				n->rule_number = ASM_SUBTRACTION;
 				generate_asm (n->rule_number, n, regcount, ofp,
-						symbol_table);
+						symbol_table, loopcount);
 				break;
 			}
 			else
@@ -118,7 +139,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 				n->reg = true;
 				n->rule_number = ASM_MULTIPLICATION;
 				generate_asm (n->rule_number, n, regcount, ofp,
-						symbol_table);
+						symbol_table, loopcount);
 				break;
 			}
 			else
@@ -133,7 +154,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 				n->reg = true;
 				n->rule_number = ASM_DIVISION;
 				generate_asm (n->rule_number, n, regcount, ofp,
-						symbol_table);
+						symbol_table, loopcount);
 				break;
 			}
 			else
@@ -148,7 +169,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 				n->reg = true;
 				n->rule_number = ASM_EQUALS;
 				generate_asm (n->rule_number, n, regcount, ofp,
-						symbol_table);
+						symbol_table, loopcount);
 				break;
 			}
 			else
@@ -166,7 +187,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 				n->reg = true;
 				n->rule_number = ASM_PRINT;
 				generate_asm (n->rule_number, n, regcount, ofp,
-						symbol_table);
+						symbol_table, loopcount);
 				break;
 			}
 			else
@@ -181,7 +202,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 				n->reg = true;
 				n->rule_number = ASM_COMMA;
 				generate_asm (n->rule_number, n, regcount, ofp,
-						symbol_table);
+						symbol_table, loopcount);
 				break;
 			}
 			break;
@@ -189,13 +210,64 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 			// We will let other tokens like FOR and IN handle
 			// this. They are higher up in the tree and thus
 			// have more information to work with.
+			n->reg = true;
 			break;
+		case TOKEN_IN:
+			if ((n->left->reg == true) && (n->right->reg == true))
+			{
+				n->reg = true;
+				n->rule_number = ASM_IN;
+				generate_asm (n->rule_number, n, regcount, ofp,
+						symbol_table, loopcount);
+				break;
+			}
+			else
+			{
+				n->reg = false;
+				fprintf (stderr, "Error, tile() TOKEN_IN\n");
+				break;
+			}
+		case TOKEN_FOR:
+			if ((n->left->reg == true) && (n->right->reg == true))
+			{
+				n->reg = true;
+				n->rule_number = ASM_FOR;
+				generate_asm(n->rule_number, n, regcount, ofp,
+						symbol_table, loopcount);
+				break;
+			}
+			else
+			{
+				n->reg = false;
+				fprintf (stderr, "Error, tile(), TOKEN_FOR\n");
+				break;
+			}
 		case TOKEN_RIGHT_PAREN:
 			break;
+		// Newline is somewhat important. It will probably handle
+		// multiple things, but for now it definitely sure handles
+		// closing for loops.
 		case TOKEN_NEWLINE:
+			if ((n->left->contents.type == TOKEN_FOR)
+					&& (n->right->contents.type
+						== TOKEN_TAB))
+			{
+				n->rule_number = ASM_FORCLOSE;
+				n->reg = true;
+				generate_asm(n->rule_number, n, regcount, ofp,
+						symbol_table, loopcount);
+				break;
+			}
+			else
+			{
+				break;
+			}
+			break;
+		case TOKEN_TAB:
+			n->reg = true;
 			break;
 		default:
-			fprintf(ofp, "error in label\n");
+			fprintf(stderr, "error in label\n");
 			break;
 	}
 }
@@ -203,7 +275,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 
 void
 generate_asm(size_t r, TreeNode *n, int *regcount, FILE *ofp,
-		StNode **symbol_table)
+		StNode **symbol_table, int *loopcount)
 {
 	switch (r)
 	{
@@ -227,6 +299,9 @@ generate_asm(size_t r, TreeNode *n, int *regcount, FILE *ofp,
 					n->contents.length,
 					n->contents.first_char);
 			n->register_number = *regcount;
+			// Associate register number in symbol table.
+			symbol_table = st_insert (symbol_table, n,
+					n->register_number);
 			*regcount += 1;
 			break;
 		// Addition
@@ -288,11 +363,12 @@ generate_asm(size_t r, TreeNode *n, int *regcount, FILE *ofp,
 				size_t num_nodes = ((count_tree_nodes (n->right)
 							+ 1) / 2);
 
-				// Once we have the array of args, we call some assembly
-				// function that combines the args into a single string
-				// buffer.
-				// This assembly function, cat_args(), takes all of its
-				// arguments on the stack, so lets do that before calling.
+				// Once we have the array of args, we call some
+				// assembly function that combines the args
+				// into a single string buffer. This assembly
+				// function, cat_args(), takes all of its
+				// arguments on the stack, so lets do that
+				// before calling.
 
 				// We can call out concatenation function now
 				fprintf (ofp, "call\t\tcat_args\n");
@@ -318,6 +394,52 @@ generate_asm(size_t r, TreeNode *n, int *regcount, FILE *ofp,
 			}
 			fprintf (ofp, "push\t\treg(%d)\n",
 					n->right->register_number);
+			break;
+		// Handling for variable declarations within for loops.
+		case ASM_FORLOOPID:
+			fprintf (ofp, "mov\t\treg(%d), 0\n", *regcount);
+			n->register_number = *regcount;
+			n->reg = true;
+			symbol_table = st_insert (symbol_table, n,
+					n->register_number);
+			*regcount += 1;
+			break;
+		case ASM_IN:
+			// Standard 'for x in range(y):' esque statement.
+			if ((n->left->contents.type == TOKEN_RANGE)
+					&& (n->right->contents.type = TOKEN_INTEGER))
+			{
+				// Get register number from integer already in
+				// register.
+				n->register_number = n->right->register_number;
+				n->reg = true;
+				break;
+			}
+			break;
+		case ASM_FOR:
+			fprintf (ofp, "dec\t\treg(%d)\n",
+					n->right->register_number);
+			fprintf (ofp, "loop%dstart:\n", *loopcount);
+			fprintf (ofp, "cmp\t\treg(%d), reg(%d)\n",
+					n->left->register_number,
+					n->right->register_number);
+			fprintf (ofp, "je\t\tloop%dend\n", *loopcount);
+			n->reg = true;
+			n->register_number = n->left->register_number;
+			break;
+		case ASM_FORCLOSE:
+			if ((n->left->reg == true) && (n->right->reg == true))
+			{
+				fprintf (ofp, "inc\t\treg(%d)\n", n->left->register_number);
+				fprintf (ofp, "jmp\t\tloop%dstart\n", *loopcount);
+				fprintf (ofp, "loop%dend:\n", *loopcount);
+				*loopcount += 1;
+			}
+			else
+			{
+				fprintf (stderr, "Error in gen_asm ASM_FORCLOSE\n");
+				break;
+			}
 			break;
 		default:
 			fprintf (ofp, "error in generate_asm\n");

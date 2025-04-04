@@ -464,6 +464,38 @@ kill_node (TreeNode *inp_node)
 }
 
 
+TokenType
+get_parent_type (TreeNode *inp_node, TreeNode *inp_root)
+{
+	StackNode *stack = NULL;
+	for (;;)
+	{
+		if (is_tree_node_empty (inp_root) == true)
+		{
+			if (is_stack_empty (&stack) == true)
+			{
+				break;
+			}
+			else
+			{
+				inp_root = pop (&stack); // Backtrack
+				inp_root = inp_root->right;
+			}
+		}
+		else
+		{
+			if ((inp_root->left == inp_node) || (inp_root->right == inp_node))
+			{
+				return inp_root->contents.type;
+			}
+			push (&stack, inp_root); // Store spot for backtrack
+			inp_root = inp_root->left;
+		}
+	}
+	return TOKEN_ERROR;
+}
+
+
 void
 kill_tree (TreeNode *inp_ast)
 {

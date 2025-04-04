@@ -33,27 +33,30 @@ int main(int argc, char **argv){
 	TreeNode *root = NULL;
 	bool was_newline = false;
 	root = parse(Prec_Start, root, was_newline);
-	kill_tree (root);
-	root = NULL;
-
-	free (source);
 
 
 	// For virtual registers.
 	int regcount = 0;
 	int *p_regcount = &regcount;
+	int loopcount = 0;
+	int *p_loopcount = &loopcount;
 
 	// Symbol table for variables.
-//	StNode **symbol_table = st_spawn_table();
+	StNode **symbol_table = st_spawn_table();
 
 	// Perform instruction selection using virtual registers.
-//	tile(root, root, p_regcount, ofp, symbol_table);
+	tile(root, root, p_regcount, ofp, symbol_table, p_loopcount);
+
+	kill_tree (root);
+	root = NULL;
 
 	// CONVERT VIRTUAL REGISTERS TO REAL ONES HERE.
 	// pass
 
 	// Assembly generated, close output file.
 	fclose(ofp);
+	// Tree done, discard source.
+	free (source);
 
 	/*
 	for (size_t i = 0; i < tree_size; i++) {
