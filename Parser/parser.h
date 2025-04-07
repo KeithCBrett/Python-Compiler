@@ -37,7 +37,7 @@ TreeNode
 	struct TreeNode *right;
 	bool reg;
 	size_t rule_number;
-	int register_number;
+	size_t register_number;
 }
 TreeNode;
 

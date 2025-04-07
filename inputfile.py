@@ -1,3 +1,4 @@
 for i in range(5):
     print(i)
-    print(5)
+for y in range(10):
+    print(i, y)

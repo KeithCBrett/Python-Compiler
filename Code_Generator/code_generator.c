@@ -34,7 +34,7 @@
 // transform the node into a register, which represents a valid instruction in our 
 // register to register model.
 void
-tile (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
+tile (TreeNode *n, TreeNode *root, size_t *regcount, FILE *ofp,
       StNode **symbol_table, int *loopcount)
 {
 	if (is_tree_node_empty (n) == false)
@@ -54,7 +54,7 @@ tile (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 // assembly, i.e. assembly without real registers allocated (only instruction selection
 // is performed).
 void
-label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
+label (TreeNode *n, TreeNode *root, size_t *regcount, FILE *ofp,
 		StNode **symbol_table, int *loopcount)
 {
 	switch (n->contents.type)
@@ -70,7 +70,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 				{
 					n->reg = true;
 					n->rule_number = ASM_FORLOOPID;
-					generate_asm (n->rule_number, n,
+					generate_vasm (n->rule_number, n,
 							regcount, ofp,
 							symbol_table,
 							loopcount);
@@ -80,7 +80,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 				{
 					n->reg = true;
 					n->rule_number = ASM_IDENTIFIER_RS;
-					generate_asm (n->rule_number, n,
+					generate_vasm (n->rule_number, n,
 							regcount, ofp,
 							symbol_table,
 							loopcount);
@@ -93,14 +93,14 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 				n->reg = true;
 				// Use rule 1 to rewrite to register.
 				n->rule_number = ASM_IDENTIFIER;
-				generate_asm (n->rule_number, n, regcount, ofp,
+				generate_vasm (n->rule_number, n, regcount, ofp,
 						symbol_table, loopcount);
 				break;
 			}
 		case TOKEN_INTEGER:
 			n->reg = true;
 			n->rule_number = ASM_CONSTANT;
-			generate_asm (n->rule_number, n, regcount, ofp,
+			generate_vasm (n->rule_number, n, regcount, ofp,
 					symbol_table, loopcount);
 			break;
 		case TOKEN_ADD:
@@ -108,7 +108,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 			{
 				n->reg = true;
 				n->rule_number = ASM_ADDITION;
-				generate_asm (n->rule_number, n, regcount, ofp,
+				generate_vasm (n->rule_number, n, regcount, ofp,
 						symbol_table, loopcount);
 				break;
 			}
@@ -123,7 +123,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 			{
 				n->reg = true;
 				n->rule_number = ASM_SUBTRACTION;
-				generate_asm (n->rule_number, n, regcount, ofp,
+				generate_vasm (n->rule_number, n, regcount, ofp,
 						symbol_table, loopcount);
 				break;
 			}
@@ -138,7 +138,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 			{
 				n->reg = true;
 				n->rule_number = ASM_MULTIPLICATION;
-				generate_asm (n->rule_number, n, regcount, ofp,
+				generate_vasm (n->rule_number, n, regcount, ofp,
 						symbol_table, loopcount);
 				break;
 			}
@@ -153,7 +153,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 			{
 				n->reg = true;
 				n->rule_number = ASM_DIVISION;
-				generate_asm (n->rule_number, n, regcount, ofp,
+				generate_vasm (n->rule_number, n, regcount, ofp,
 						symbol_table, loopcount);
 				break;
 			}
@@ -168,7 +168,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 			{
 				n->reg = true;
 				n->rule_number = ASM_EQUALS;
-				generate_asm (n->rule_number, n, regcount, ofp,
+				generate_vasm (n->rule_number, n, regcount, ofp,
 						symbol_table, loopcount);
 				break;
 			}
@@ -186,7 +186,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 			{
 				n->reg = true;
 				n->rule_number = ASM_PRINT;
-				generate_asm (n->rule_number, n, regcount, ofp,
+				generate_vasm (n->rule_number, n, regcount, ofp,
 						symbol_table, loopcount);
 				break;
 			}
@@ -201,7 +201,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 			{
 				n->reg = true;
 				n->rule_number = ASM_COMMA;
-				generate_asm (n->rule_number, n, regcount, ofp,
+				generate_vasm (n->rule_number, n, regcount, ofp,
 						symbol_table, loopcount);
 				break;
 			}
@@ -217,7 +217,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 			{
 				n->reg = true;
 				n->rule_number = ASM_IN;
-				generate_asm (n->rule_number, n, regcount, ofp,
+				generate_vasm (n->rule_number, n, regcount, ofp,
 						symbol_table, loopcount);
 				break;
 			}
@@ -232,7 +232,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 			{
 				n->reg = true;
 				n->rule_number = ASM_FOR;
-				generate_asm(n->rule_number, n, regcount, ofp,
+				generate_vasm(n->rule_number, n, regcount, ofp,
 						symbol_table, loopcount);
 				break;
 			}
@@ -254,7 +254,7 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 			{
 				n->rule_number = ASM_FORCLOSE;
 				n->reg = true;
-				generate_asm(n->rule_number, n, regcount, ofp,
+				generate_vasm(n->rule_number, n, regcount, ofp,
 						symbol_table, loopcount);
 				break;
 			}
@@ -273,29 +273,34 @@ label (TreeNode *n, TreeNode *root, int *regcount, FILE *ofp,
 }
 
 
-void
-generate_asm(size_t r, TreeNode *n, int *regcount, FILE *ofp,
-		StNode **symbol_table, int *loopcount)
+VasmInstruction *
+generate_vasm(size_t r, TreeNode *n, size_t *regcount, StNode **symbol_table,
+		int *loopcount, VasmInstruction *vasm)
 {
+	VasmInstruction *return_list = vasm;
 	switch (r)
 	{
 		// Identifiers
 		case ASM_IDENTIFIER:
-			fprintf (ofp, "xor\t\treg(%d),\treg(%d)\n", *regcount,
-					*regcount);
+			return_list = insert_vasm_instruction (
+					vasm, spawn_vasm_op (VASM_XOR,
+						*regcount, *regcount, true, true));
 			n->register_number = *regcount;
 			*regcount += 1;
+			return return_list;
 			break;
 		// Non-lhs variable assignment
 		case ASM_IDENTIFIER_RS:
-			fprintf (ofp, "mov\t\treg(%d),\treg(%d)\n", *regcount,
-					st_search (symbol_table, n));
+			return_list = insert_vasm_instruction (
+					vasm, spawn_vasm_op (VASM_MOV,
+						*regcount, st_search
+						(symbol_table, n), true, true));
 			n->register_number = *regcount;
 			*regcount += 1;
 			break;
 		// Constants
 		case ASM_CONSTANT:
-			fprintf (ofp, "mov\t\treg(%d),\t%.*s\n", *regcount,
+			fprintf (ofp, "mov\t\treg(%zu),\t%.*s\n", *regcount,
 					n->contents.length,
 					n->contents.first_char);
 			n->register_number = *regcount;
@@ -306,7 +311,7 @@ generate_asm(size_t r, TreeNode *n, int *regcount, FILE *ofp,
 			break;
 		// Addition
 		case ASM_ADDITION:
-			fprintf (ofp, "add\t\treg(%d),\treg(%d)\n",
+			fprintf (ofp, "add\t\treg(%zu),\treg(%zu)\n",
 					n->left->register_number,
 					n->right->register_number);
 			n->register_number = n->left->register_number;
@@ -315,7 +320,7 @@ generate_asm(size_t r, TreeNode *n, int *regcount, FILE *ofp,
 			break;
 		// Subtraction
 		case ASM_SUBTRACTION:
-			fprintf (ofp, "sub\t\treg(%d),\treg(%d)\n",
+			fprintf (ofp, "sub\t\treg(%zu),\treg(%zu)\n",
 					n->left->register_number,
 					n->right->register_number);
 			n->register_number = n->left->register_number;
@@ -324,7 +329,7 @@ generate_asm(size_t r, TreeNode *n, int *regcount, FILE *ofp,
 			break;
 		// Multiplication
 		case ASM_MULTIPLICATION:
-		fprintf (ofp, "mul\t\treg(%d),\treg(%d)\n",
+		fprintf (ofp, "mul\t\treg(%zu),\treg(%zu)\n",
 				n->left->register_number,
 				n->right->register_number);
 			n->register_number = n->left->register_number;
@@ -333,19 +338,19 @@ generate_asm(size_t r, TreeNode *n, int *regcount, FILE *ofp,
 			break;
 		// Division
 		case ASM_DIVISION:
-			fprintf (ofp, "mov\t\treg(%d),\trdx\n", *regcount);
+			fprintf (ofp, "mov\t\treg(%zu),\trdx\n", *regcount);
 			*regcount += 1;
 			fprintf (ofp, "xor\t\trdx,\trdx\n");
-			fprintf (ofp, "mov\t\trax,\treg(%d)\n",
+			fprintf (ofp, "mov\t\trax,\treg(%zu)\n",
 					n->left->register_number);
-			fprintf (ofp, "mov\t\treg(%d),\treg(%d)\n",
+			fprintf (ofp, "mov\t\treg(%zu),\treg(%zu)\n",
 					*regcount, n->right->register_number);
-			fprintf (ofp, "div\t\treg(%d)\n", *regcount);
+			fprintf (ofp, "div\t\treg(%zu)\n", *regcount);
 			*regcount += 1;
 			break;
 		// Equals
 		case ASM_EQUALS:
-			fprintf (ofp, "mov\t\treg(%d),\treg(%d)\n",
+			fprintf (ofp, "mov\t\treg(%zu),\treg(%zu)\n",
 					n->left->register_number,
 					n->right->register_number);
 			n->register_number = n->left->register_number;
@@ -380,7 +385,7 @@ generate_asm(size_t r, TreeNode *n, int *regcount, FILE *ofp,
 			}
 			else if (n->right->reg == true)
 			{
-				fprintf (ofp, "mov\t\trcx,\treg(%d)\n",
+				fprintf (ofp, "mov\t\trcx,\treg(%zu)\n",
 						st_search (symbol_table, n->right));
 				fprintf (ofp, "call\t\tprintstr\n");
 				break;
@@ -389,15 +394,15 @@ generate_asm(size_t r, TreeNode *n, int *regcount, FILE *ofp,
 		case ASM_COMMA:
 			if (n->left->rule_number != ASM_COMMA)
 			{
-				fprintf (ofp, "push\t\treg(%d)\n",
+				fprintf (ofp, "push\t\treg(%zu)\n",
 						n->left->register_number);
 			}
-			fprintf (ofp, "push\t\treg(%d)\n",
+			fprintf (ofp, "push\t\treg(%zu)\n",
 					n->right->register_number);
 			break;
 		// Handling for variable declarations within for loops.
 		case ASM_FORLOOPID:
-			fprintf (ofp, "mov\t\treg(%d), 0\n", *regcount);
+			fprintf (ofp, "mov\t\treg(%zu), 0\n", *regcount);
 			n->register_number = *regcount;
 			n->reg = true;
 			symbol_table = st_insert (symbol_table, n,
@@ -417,10 +422,10 @@ generate_asm(size_t r, TreeNode *n, int *regcount, FILE *ofp,
 			}
 			break;
 		case ASM_FOR:
-			fprintf (ofp, "dec\t\treg(%d)\n",
+			fprintf (ofp, "dec\t\treg(%zu)\n",
 					n->right->register_number);
 			fprintf (ofp, "loop%dstart:\n", *loopcount);
-			fprintf (ofp, "cmp\t\treg(%d), reg(%d)\n",
+			fprintf (ofp, "cmp\t\treg(%zu), reg(%zu)\n",
 					n->left->register_number,
 					n->right->register_number);
 			fprintf (ofp, "je\t\tloop%dend\n", *loopcount);
@@ -430,7 +435,7 @@ generate_asm(size_t r, TreeNode *n, int *regcount, FILE *ofp,
 		case ASM_FORCLOSE:
 			if ((n->left->reg == true) && (n->right->reg == true))
 			{
-				fprintf (ofp, "inc\t\treg(%d)\n", n->left->register_number);
+				fprintf (ofp, "inc\t\treg(%zu)\n", n->left->register_number);
 				fprintf (ofp, "jmp\t\tloop%dstart\n", *loopcount);
 				fprintf (ofp, "loop%dend:\n", *loopcount);
 				*loopcount += 1;
@@ -595,7 +600,7 @@ st_insert (StNode **table, TreeNode *entry, int value)
 }
 
 
-int
+size_t
 st_search (StNode **table, TreeNode *node)
 {
 	size_t index = fib_hash (st_convert_string(
@@ -696,4 +701,45 @@ fib_hash (size_t input)
 	// big-endian, here we have to shift right.
 	output = output >> 59;
 	return output;
+}
+
+
+VasmInstruction *
+spawn_vasm_op (VasmOperation inp_op, VasmRegister inp_regl,
+		VasmRegister inp_regr, bool inp_regl_reg, bool inp_regr_reg)
+{
+	VasmInstruction *out_inst = malloc (sizeof (VasmInstruction));
+	out_inst->op = inp_op;
+	out_inst->regl = inp_regl;
+	out_inst->regr = inp_regr;
+	out_inst->regr_reg = inp_regr_reg;
+	out_inst->regl_reg = inp_regl_reg;
+	out_inst->label_num = -1;
+	out_inst->next = NULL;
+	return out_inst;
+}
+
+
+VasmInstruction *
+insert_vasm_instruction (VasmInstruction *inp_list, VasmInstruction *inp_inst)
+{
+	// Case 0: Empty list
+	if (inp_list == NULL)
+	{
+		// Return instruction
+		return inp_inst;
+	}
+	else
+	{
+		// Store head
+		VasmInstruction *head = inp_list;
+		// Traverse
+		while (inp_list->next != NULL)
+		{
+			inp_list = inp_list->next;
+		}
+		// Add
+		inp_list->next = inp_inst;
+		return head;
+	}
 }

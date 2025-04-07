@@ -36,8 +36,8 @@ int main(int argc, char **argv){
 
 
 	// For virtual registers.
-	int regcount = 0;
-	int *p_regcount = &regcount;
+	size_t regcount = 0;
+	size_t *p_regcount = &regcount;
 	int loopcount = 0;
 	int *p_loopcount = &loopcount;
 
