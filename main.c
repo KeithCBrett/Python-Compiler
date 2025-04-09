@@ -9,11 +9,13 @@
 
 int main(int argc, char **argv){
 	if (argc < 3) {
-		printf("Error, output file ommitted. Usage: pyco inputfile.py outputfile.py\n");
+		printf ("Error, output file ommitted. Usage: pyco inputfile.py");
+		printf (" outputfile.py\n");
 		return 1;
 	}
 	if (argc < 2) {
-		printf("Error, input file ommitted. Usage: pyco inputfile.py outputfile.py\n");
+		printf ("Error, input file ommitted. Usage: pyco inputfile.py");
+		printf ("outputfile.py\n");
 		return 1;
 	}
 	// Input file (python source to compile)
@@ -35,17 +37,25 @@ int main(int argc, char **argv){
 	root = parse(Prec_Start, root, was_newline);
 
 
-	// For virtual registers.
-	size_t regcount = 0;
+	// For virtual registers. We start at 100 because the first 100 are
+	// reserved for various things. For one, 0-4 are reserved for rax,
+	// rbx, rcx, rdx. We probably don't need all of them, but we definitely
+	// need atleast rdx and rax for division, even in vasm. The other
+	// reserved names are for primitive functions and helper functions
+	// like print, abs, and whatnot.
+	size_t regcount = 5;
 	size_t *p_regcount = &regcount;
-	int loopcount = 0;
-	int *p_loopcount = &loopcount;
+	size_t loopcount = 1;
+	size_t *p_loopcount = &loopcount;
 
 	// Symbol table for variables.
 	StNode **symbol_table = st_spawn_table();
+	VasmInstruction *vasm = NULL;
+	VasmInstruction **p_vasm = &vasm;
 
 	// Perform instruction selection using virtual registers.
-	tile(root, root, p_regcount, ofp, symbol_table, p_loopcount);
+	tile (root, root, p_regcount, symbol_table, p_loopcount, p_vasm);
+	output_vasm_file (ofp, vasm);
 
 	kill_tree (root);
 	root = NULL;
@@ -54,7 +64,7 @@ int main(int argc, char **argv){
 	// pass
 
 	// Assembly generated, close output file.
-	fclose(ofp);
+	fclose (ofp);
 	// Tree done, discard source.
 	free (source);
 
