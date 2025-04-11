@@ -1,2 +1,2 @@
-x = 5 + 6
-print(x)
+for i in range(5):
+    print(i)

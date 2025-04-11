@@ -36,13 +36,26 @@ VasmOperation
 	VASM_PUSH,
 	VASM_DEC,
 	VASM_CMP,
-	VASM_JE,
-	VASM_JMP,
-	VASM_INC,
-	VASM_LABEL_START,
-	VASM_LABEL_END,
+	VASM_INC = 10,
+	VASM_JE_FOR_START,
+	VASM_JE_FOR_END,
+	VASM_JMP_FOR_START,
+	VASM_JMP_FOR_END,
+	VASM_LABEL_FOR_START,
+	VASM_LABEL_FOR_END,
 }
 VasmOperation;
+
+
+typedef struct
+LabelData
+{
+	size_t label_for_num;
+	bool label_for;
+	bool label_for_start;
+	bool label_for_end;
+}
+LabelData;
 
 
 typedef struct
@@ -53,8 +66,7 @@ VasmInstruction
 	size_t regr;
 	bool regl_reg;
 	bool regr_reg;
-	bool label;
-	size_t label_num;
+	LabelData label_data;
 	struct VasmInstruction *next;
 }
 VasmInstruction;
@@ -70,6 +82,22 @@ insert_vasm_instruction (VasmInstruction *, VasmInstruction *);
 
 void
 output_vasm_file (FILE *, VasmInstruction *);
+
+
+bool
+left_side_register (VasmInstruction *);
+
+
+bool
+right_side_register (VasmInstruction *);
+
+
+bool
+both_side_register (VasmInstruction *);
+
+
+bool
+no_registers (VasmInstruction *);
 
 
 // Input: Nothing.

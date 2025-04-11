@@ -45,7 +45,7 @@ int main(int argc, char **argv){
 	// like print, abs, and whatnot.
 	size_t regcount = 5;
 	size_t *p_regcount = &regcount;
-	size_t loopcount = 1;
+	size_t loopcount = 0;
 	size_t *p_loopcount = &loopcount;
 
 	// Symbol table for variables.

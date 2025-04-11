@@ -29,10 +29,10 @@
 #define ASM_FORCLOSE		14
 
 
-// tile() performs a postorder traversal via recursion. Passes off execution to ofp, label
-// which annotates nodes with a boolean. The boolean represents whether or not we can
-// transform the node into a register, which represents a valid instruction in our 
-// register to register model.
+// tile() performs a postorder traversal via recursion. Passes off execution
+// to ofp, label which annotates nodes with a boolean. The boolean represents
+// whether or not we can transform the node into a register, which represents
+// a valid instruction in our register to register model.
 void
 tile (TreeNode *n, TreeNode *root, size_t *regcount,
       StNode **symbol_table, size_t *loopcount, VasmInstruction **vasm)
@@ -50,9 +50,9 @@ tile (TreeNode *n, TreeNode *root, size_t *regcount,
 }
 
 
-// label() annotates the node passed and then calls generate_asm to generate virtual
-// assembly, i.e. assembly without real registers allocated (only instruction selection
-// is performed).
+// label() annotates the node passed and then calls generate_asm to generate
+// virtual assembly, i.e. assembly without real registers allocated (only
+// instruction selection is performed).
 void
 label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 		size_t *loopcount, VasmInstruction **vasm)
@@ -73,6 +73,11 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 					generate_vasm (n->rule_number, n,
 							regcount, symbol_table,
 							loopcount, vasm);
+					break;
+				}
+				else if (get_parent_type (n, root) == TOKEN_PRINT)
+				{
+					n->reg = true;
 					break;
 				}
 				else
@@ -439,7 +444,7 @@ generate_vasm (size_t r, TreeNode *n, size_t *regcount, StNode **symbol_table,
 				*vasm = insert_vasm_instruction (*vasm,
 						spawn_vasm_op (VASM_CALL,
 							VASM_FUNC_PRINTSTR,
-							-1, true, true, false));
+							-1, true, false, false));
 				break;
 			}
 			break;
@@ -485,16 +490,17 @@ generate_vasm (size_t r, TreeNode *n, size_t *regcount, StNode **symbol_table,
 						n->right->register_number,
 						-1, true, false, false));
 			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_LABEL_START,
+					spawn_vasm_op (VASM_LABEL_FOR_START,
 						*loopcount, -1, false,
 						false, true));
+			(*vasm)->label_data.label_for_start = true;
 			*vasm = insert_vasm_instruction (*vasm,
 					spawn_vasm_op (VASM_CMP,
 						n->left->register_number,
 						n->right->register_number,
 						true, true, false));
 			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_JE, *loopcount,
+					spawn_vasm_op (VASM_JE_FOR_END, *loopcount,
 						-1, false, false, false));
 			n->reg = true;
 			n->register_number = n->left->register_number;
@@ -508,13 +514,14 @@ generate_vasm (size_t r, TreeNode *n, size_t *regcount, StNode **symbol_table,
 							-1, true, false,
 							false));
 				*vasm = insert_vasm_instruction (*vasm,
-						spawn_vasm_op (VASM_JMP,
+						spawn_vasm_op (VASM_JMP_FOR_START,
 							*loopcount, -1,
 							false, false, false));
 				*vasm = insert_vasm_instruction (*vasm,
-						spawn_vasm_op (VASM_LABEL_END,
+						spawn_vasm_op (VASM_LABEL_FOR_END,
 							*loopcount, -1,
 							false, false, true));
+				(*vasm)->label_data.label_for_end = true;
 				*loopcount += 1;
 			}
 			else
@@ -792,14 +799,14 @@ spawn_vasm_op (VasmOperation inp_op, size_t inp_regl,
 	out_inst->regr = inp_regr;
 	out_inst->regr_reg = inp_regr_reg;
 	out_inst->regl_reg = inp_regl_reg;
-	out_inst->label = inp_label;
+	out_inst->label_data.label_for = inp_label;
 	if (inp_label)
 	{
-		out_inst->label_num = inp_regl;
+		out_inst->label_data.label_for_num = inp_regl;
 	}
 	else
 	{
-		out_inst->label_num = 0;
+		out_inst->label_data.label_for_num = 0;
 	}
 	out_inst->next = NULL;
 	return out_inst;
@@ -831,17 +838,71 @@ insert_vasm_instruction (VasmInstruction *inp_list, VasmInstruction *inp_inst)
 }
 
 
+bool
+left_side_register (VasmInstruction *inp_vasm)
+{
+	if (inp_vasm->regl_reg && (inp_vasm->regr_reg == false))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+
+bool
+right_side_register (VasmInstruction *inp_vasm)
+{
+	if ((inp_vasm->regl_reg == false ) && inp_vasm->regr_reg)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+
+bool
+both_side_register (VasmInstruction *inp_vasm)
+{
+	if (inp_vasm->regl_reg && inp_vasm->regr_reg)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool
+no_registers (VasmInstruction *inp_vasm)
+{
+	if ((inp_vasm->regl_reg == false) && (inp_vasm->regr_reg == false))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 void
 output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 {
 	// Print whole vasm list.
-	while (inp_vasm->next != NULL)
+	for (;;)
 	{
 		switch (inp_vasm->op)
 		{
 			case VASM_ADD:
 				// Handling for adding two registers.
-				if (inp_vasm->regl_reg && inp_vasm->regr_reg)
+				if (both_side_register (inp_vasm))
 				{
 					fprintf (inp_file,
 							"add\t\tr(%zu), r(%zu)\n",
@@ -850,8 +911,7 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 					break;
 				}
 				// Handling for adding const into reg.
-				else if ((inp_vasm->regl_reg)
-						&& (inp_vasm->regr_reg == false))
+				else if (left_side_register (inp_vasm))
 				{
 					fprintf (inp_file, "add\t\tr(%zu), %zu\n",
 							inp_vasm->regl,
@@ -867,7 +927,7 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 				break;
 			case VASM_MOV:
 				// Case I: moving register into another register.
-				if (inp_vasm->regl_reg && inp_vasm->regr_reg)
+				if (both_side_register (inp_vasm))
 				{
 					fprintf (inp_file,
 						"mov\t\tr(%zu), r(%zu)\n",
@@ -875,9 +935,7 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 					break;
 				}
 				// Case II: moving const into register.
-				else if ((inp_vasm->regl_reg)
-						&& (inp_vasm->regr_reg
-							== false))
+				else if (left_side_register (inp_vasm))
 				{
 					fprintf (inp_file,
 						"mov\t\tr(%zu), %zu\n",
@@ -893,9 +951,7 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 				}
 			case VASM_XOR:
 				// Case I: xor register by itself.
-				if (inp_vasm->regl_reg && inp_vasm->regr_reg
-						&& (inp_vasm->regl
-							== inp_vasm->regr))
+				if (both_side_register (inp_vasm))
 				{
 					fprintf (inp_file,
 						"xor\t\tr(%zu), r(%zu)\n",
@@ -909,10 +965,165 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 					"Error in output_vasm_file VASM_XOR\n");
 					break;
 				}
+			case VASM_CALL:
+				if (inp_vasm->regl == VASM_FUNC_PRINTSTR)
+				{
+					fprintf (inp_file,
+					"call\t\tprintstr\n");
+					break;
+				}
+				else
+				{
+					fprintf (stderr,
+					"Error in output_vasm_file VASM_CALL\n");
+				}
+			case VASM_MUL:
+				if (both_side_register (inp_vasm))
+				{
+					fprintf (inp_file,
+						"mul\t\tr(%zu), r(%zu)\n",
+						inp_vasm->regl,
+						inp_vasm->regr);
+					break;
+				}
+				else if (left_side_register (inp_vasm))
+				{
+					fprintf (inp_file,
+						"mul\t\tr(%zu), %zu\n",
+						inp_vasm->regl,
+						inp_vasm->regr);
+					break;
+				}
+				else
+				{
+					fprintf (stderr,
+					"ERROR in output_vasm_file VASM_MULT\n");
+					break;
+				}
+			case VASM_DEC:
+				if (left_side_register (inp_vasm))
+				{
+					fprintf (inp_file,
+					"dec\t\tr(%zu)\n", inp_vasm->regl);
+					break;
+				}
+				else
+				{
+					fprintf (stderr,
+					"Error in output_vasm_file VASM_DEC\n");
+					break;
+				}
+			case VASM_LABEL_FOR_START:
+				if (no_registers (inp_vasm))
+				{
+					fprintf (inp_file, "forstart%zu:\n",
+							inp_vasm->label_data.label_for_num);
+					inp_vasm->label_data.label_for_start = true;
+					break;
+				}
+				else
+				{
+					fprintf (stderr,
+					"Error in output_vasm_file VASM_LABEL_FOR_START\n");
+					break;
+				}
+			case VASM_CMP:
+				// Case I: Comparing two registers
+				if (both_side_register (inp_vasm))
+				{
+					fprintf (inp_file,
+						"cmp\t\tr(%zu), r(%zu)\n",
+						inp_vasm->regl,
+						inp_vasm->regr);
+					break;
+				}
+				// Case II: Comparing register to const
+				else if (left_side_register (inp_vasm))
+				{
+					fprintf (inp_file,
+						"cmp\t\tr(%zu), %zu\n",
+						inp_vasm->regl,
+						inp_vasm->regr);
+					break;
+				}
+				// Case III: Error
+				else
+				{
+					fprintf (stderr,
+					"Error in output_vasm_file VASM_CMP\n");
+					break;
+				}
+			case VASM_JE_FOR_END:
+				if (no_registers (inp_vasm))
+				{
+					fprintf (inp_file,
+						"je\t\tforend%zu\n",
+						inp_vasm->label_data.label_for_num);
+					break;
+				}
+				else
+				{
+					fprintf (stderr,
+					"Error in output_vasm_file VASM_JE\n");
+					break;
+				}
+			case VASM_INC:
+				if (left_side_register (inp_vasm))
+				{
+					fprintf (inp_file,
+						"inc\t\tr(%zu)\n",
+						inp_vasm->regl);
+					break;
+				}
+				else
+				{
+					fprintf (stderr,
+					"Error in output_vasm_file VASM_INC\n");
+					break;
+				}
+			case VASM_JMP_FOR_START:
+				if (no_registers (inp_vasm))
+				{
+					fprintf (inp_file,
+						"jmp\t\tforstart%zu\n",
+						inp_vasm->regl);
+					break;
+				}
+				else
+				{
+					fprintf (stderr,
+					"Error in output_vasm_file VASM_JMP\n");
+					break;
+				}
+			case VASM_LABEL_FOR_END:
+				if (no_registers (inp_vasm))
+				{
+					fprintf (inp_file, "forend%zu:\n",
+							inp_vasm->regl);
+					inp_vasm->label_data.label_for_end = true;
+					break;
+				}
+				else
+				{
+					fprintf (stderr,
+					"Error in output_vasm_file ");
+					fprintf (stderr,
+					"VASM_LABEL_FOR_END\n");
+					break;
+				}
 			default:
-				fprintf (stderr, "Error in output_vasm_file\n");
+				fprintf (stderr,
+					"Error in output_vasm_file %u\n",
+					inp_vasm->op);
 				break;
 		}
-		inp_vasm = inp_vasm->next;
+		if (inp_vasm->next != NULL)
+		{
+			inp_vasm = inp_vasm->next;
+		}
+		else
+		{
+			break;
+		}
 	}
 }
