@@ -7,22 +7,51 @@
 #include <string.h>
 
 
-int main(int argc, char **argv){
-	if (argc < 3) {
-		printf ("Error, output file ommitted. Usage: pyco inputfile.py");
-		printf (" outputfile.py\n");
+int
+main (int argc, char **argv)
+{
+	if (argc < 4)
+	{
+		if (argv[1][0] != '-')
+		{
+			fprintf (stderr,
+			"Error, output type ommitted. Usage: pyco -asm");
+			fprintf (stderr,
+			" inputfile.py outputfile.asm\n");
+			return 1;
+		}
+		else
+		{
+			fprintf (stderr,
+			"Error, output file ommitted. Usage: pyco -asm");
+			fprintf (stderr,
+			" inputfile.py outputfile.asm\n");
+			return 1;
+		}
+	}
+	if (argc < 3)
+	{
+		fprintf (stderr,
+		"Error, input file ommitted. Usage: pyco -asm ");
+		fprintf (stderr,
+		"inputfile.py outputfile.asm\n");
+		return 1;
+
+	}
+	if (argc < 2)
+	{
+		fprintf (stderr,
+		"Error, output type ommitted. Usage: pyco -asm");
+		fprintf (stderr,
+		" inputfile.py outputfile.asm\n");
 		return 1;
 	}
-	if (argc < 2) {
-		printf ("Error, input file ommitted. Usage: pyco inputfile.py");
-		printf ("outputfile.py\n");
-		return 1;
-	}
+
 	// Input file (python source to compile)
-	FILE *ifp = fopen(argv[1], "r");
+	FILE *ifp = fopen(argv[2], "r");
 
 	// Output file (x86-64 assembly source if all goes well)
-	FILE *ofp = fopen(argv[2], "w");
+	FILE *ofp = fopen(argv[3], "w");
 
 	// Store input file in string.
 	char *source = get_source_from_file(ifp);
@@ -55,7 +84,11 @@ int main(int argc, char **argv){
 
 	// Perform instruction selection using virtual registers.
 	tile (root, root, p_regcount, symbol_table, p_loopcount, p_vasm);
-	output_vasm_file (ofp, vasm);
+	const char *testing = "-vasm";
+	if ((strcmp (argv[1], testing)) == 0)
+	{
+		output_vasm_file (ofp, vasm);
+	}
 
 	kill_tree (root);
 	root = NULL;
