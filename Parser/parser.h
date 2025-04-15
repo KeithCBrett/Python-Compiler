@@ -42,6 +42,8 @@ TreeNode
 TreeNode;
 
 
+
+
 // Wrapper for a TreeNode, so that we can us it in our linked list based stack.
 typedef struct
 StackNode
@@ -54,7 +56,7 @@ StackNode;
 
 typedef
 TreeNode *
-(*SemanticCode)(TreeNode *, bool);
+(*SemanticCode)(TreeNode *, bool, IndentLL **);
 
 
 // Requirement for TDOP algorithm, now we know that (+ < *) since multiplication
@@ -109,7 +111,7 @@ Rule;
  * In which case the parser will fold the tree and continue until eof encoutered.
  */
 TreeNode *
-parse (Precedence, TreeNode *, bool);
+parse (Precedence, TreeNode *, bool, IndentLL **);
 
 
 /*
@@ -160,7 +162,7 @@ kill_node (TreeNode *);
  * found. This is when we fold the tree to get the correct semantic meaning.
  */
 TreeNode *
-led_binary (TreeNode *, bool);
+led_binary (TreeNode *, bool, IndentLL **);
 
 
 /*
@@ -170,44 +172,48 @@ led_binary (TreeNode *, bool);
  * value as a leaf.
  */
 TreeNode *
-nud_atom (TreeNode *, bool);
-
-
-TreeNode *
-nud_paren (TreeNode *, bool);
+nud_atom (TreeNode *, bool, IndentLL **);
 
 TreeNode *
-led_paren (TreeNode *, bool);
+nud_newline (TreeNode *, bool, IndentLL **);
 
 TreeNode *
-led_rparen (TreeNode *, bool);
+nud_paren (TreeNode *, bool, IndentLL **);
 
 TreeNode *
-nud_print (TreeNode *, bool);
+led_paren (TreeNode *, bool, IndentLL **);
 
 TreeNode *
-led_comma (TreeNode *, bool);
+led_rparen (TreeNode *, bool, IndentLL **);
 
 TreeNode *
-nud_for (TreeNode *, bool);
+nud_print (TreeNode *, bool, IndentLL **);
 
 TreeNode *
-led_atom (TreeNode *, bool);
+led_comma (TreeNode *, bool, IndentLL **);
 
 TreeNode *
-nud_in (TreeNode *, bool);
+nud_for (TreeNode *, bool, IndentLL **);
 
 TreeNode *
-led_range (TreeNode *, bool);
+led_atom (TreeNode *, bool, IndentLL **);
 
 TreeNode *
-led_colon (TreeNode *, bool);
+nud_in (TreeNode *, bool, IndentLL **);
 
 TreeNode *
-nud_tab (TreeNode *, bool);
+led_range (TreeNode *, bool, IndentLL **);
+
+TreeNode *
+led_colon (TreeNode *, bool, IndentLL **);
+
 
 TreeNode *
 led_print (TreeNode *, bool);
+
+
+
+
 
 
 /*

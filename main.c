@@ -48,22 +48,26 @@ main (int argc, char **argv)
 	}
 
 	// Input file (python source to compile)
-	FILE *ifp = fopen(argv[2], "r");
+	FILE *ifp = fopen (argv[2], "r");
 
 	// Output file (x86-64 assembly source if all goes well)
-	FILE *ofp = fopen(argv[3], "w");
+	FILE *ofp = fopen (argv[3], "w");
 
 	// Store input file in string.
-	char *source = get_source_from_file(ifp);
+	char *source = get_source_from_file (ifp);
 	// Done with input file, free.
-	fclose(ifp);
+	fclose (ifp);
 
-	initialize_lexer(source);
+	initialize_lexer (source);
 
 	//test_parser();
 	TreeNode *root = NULL;
-	bool was_newline = false;
-	root = parse(Prec_Start, root, was_newline);
+	bool was_newline = true;
+
+
+	IndentLL *indent_levels = NULL;
+	IndentLL **p_indent_levels = &indent_levels;
+	root = parse (Prec_Start, root, was_newline, p_indent_levels);
 
 
 	// For virtual registers. We start at 100 because the first 100 are
@@ -78,7 +82,7 @@ main (int argc, char **argv)
 	size_t *p_loopcount = &loopcount;
 
 	// Symbol table for variables.
-	StNode **symbol_table = st_spawn_table();
+	StNode **symbol_table = st_spawn_table ();
 	VasmInstruction *vasm = NULL;
 	VasmInstruction **p_vasm = &vasm;
 

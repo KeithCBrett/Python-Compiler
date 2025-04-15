@@ -12,6 +12,16 @@ typedef struct {
 } Lexer;
 
 
+// Linked list of indentation levels
+typedef struct
+IndentLL
+{
+	size_t level;
+	struct IndentLL *next;
+}
+IndentLL;
+
+
 typedef enum {
 	TOKEN_ADD, TOKEN_MINUS, TOKEN_MULTIPLICATION,
 	TOKEN_DIVISION, TOKEN_EOF, TOKEN_ERROR,
@@ -70,26 +80,73 @@ typedef struct {
 } Token;
 
 
-char *get_source_from_file(FILE *);
-char *print_type(int);
-static char consume_char();
-Token get_next_token(bool);
-Token spawn_token(TokenType);
-static Token spawn_error(const char *);
-static Token number();
-static Token identifier_or_keyword();
-static Token spawn_identifier();
-static Token check_a_branch();
-static Token check_b_branch();
-static bool is_at_end();
-static bool look_ahead(char);
-static bool is_digit(char);
-static bool is_letter(char);
-static bool bool_check_keyword(char *);
-static char peak_once();
-static char peak_twice();
-void initialize_lexer(const char *);
-static void skip_whitespace(bool);
+char *
+get_source_from_file (FILE *);
 
+char *
+print_type (int);
+
+static char
+consume_char ();
+
+Token
+get_next_token (bool, IndentLL **);
+
+Token
+spawn_token (TokenType);
+
+static Token
+spawn_error (const char *);
+
+static Token
+number ();
+
+static Token
+identifier_or_keyword ();
+
+static Token
+spawn_identifier ();
+
+static Token
+check_a_branch ();
+
+static Token
+check_b_branch ();
+
+static bool
+is_at_end ();
+
+static bool
+look_ahead (char);
+
+static bool
+is_digit (char);
+
+static bool
+is_letter (char);
+
+static bool
+bool_check_keyword (char *);
+
+static char
+peak_once ();
+
+static char
+peak_twice ();
+
+void
+initialize_lexer (const char *);
+
+static void
+skip_whitespace (bool, IndentLL **);
+
+void
+add_indent_node (IndentLL **, size_t);
+
+void
+kill_indent_list (IndentLL *);
+
+size_t
+get_indent_level (IndentLL *, size_t);
 
 #endif

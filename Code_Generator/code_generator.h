@@ -37,23 +37,39 @@ VasmOperation
 	VASM_DEC,
 	VASM_CMP,
 	VASM_INC = 10,
-	VASM_JE_FOR_START,
-	VASM_JE_FOR_END,
-	VASM_JMP_FOR_START,
-	VASM_JMP_FOR_END,
-	VASM_LABEL_FOR_START,
-	VASM_LABEL_FOR_END,
+	VASM_JE,
+	VASM_JMP,
+	VASM_FOR_ENTRY_LABEL,
+	VASM_FOR_BODY_LABEL,
+	VASM_FOR_EXIT_LABEL
 }
 VasmOperation;
+
+
+typedef enum
+LabelType
+{
+	LT_FOR = 0,
+}
+LabelType;
+
+
+typedef enum
+LabelSubtype
+{
+	LST_FOR_ENTRY = 0,
+	LST_FOR_BODY,
+	LST_FOR_EXIT
+}
+LabelSubtype;
 
 
 typedef struct
 LabelData
 {
-	size_t label_for_num;
-	bool label_for;
-	bool label_for_start;
-	bool label_for_end;
+	size_t type;
+	size_t subtype;
+	size_t id;
 }
 LabelData;
 

@@ -490,18 +490,21 @@ generate_vasm (size_t r, TreeNode *n, size_t *regcount, StNode **symbol_table,
 						n->right->register_number,
 						-1, true, false, false));
 			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_LABEL_FOR_START,
+					spawn_vasm_op (VASM_FOR_ENTRY_LABEL,
 						*loopcount, -1, false,
 						false, true));
-			(*vasm)->label_data.label_for_start = true;
 			*vasm = insert_vasm_instruction (*vasm,
 					spawn_vasm_op (VASM_CMP,
 						n->left->register_number,
 						n->right->register_number,
 						true, true, false));
 			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_JE_FOR_END, *loopcount,
+					spawn_vasm_op (VASM_JE, *loopcount,
 						-1, false, false, false));
+			*vasm = insert_vasm_instruction (*vasm,
+					spawn_vasm_op (VASM_FOR_BODY_LABEL,
+						*loopcount, -1, false,
+						false, true));
 			n->reg = true;
 			n->register_number = n->left->register_number;
 			break;
@@ -514,14 +517,14 @@ generate_vasm (size_t r, TreeNode *n, size_t *regcount, StNode **symbol_table,
 							-1, true, false,
 							false));
 				*vasm = insert_vasm_instruction (*vasm,
-						spawn_vasm_op (VASM_JMP_FOR_START,
+						spawn_vasm_op (VASM_JMP,
 							*loopcount, -1,
 							false, false, false));
 				*vasm = insert_vasm_instruction (*vasm,
-						spawn_vasm_op (VASM_LABEL_FOR_END,
+						spawn_vasm_op (VASM_FOR_EXIT_LABEL,
 							*loopcount, -1,
 							false, false, true));
-				(*vasm)->label_data.label_for_end = true;
+				// loop exit reached, loop done.
 				*loopcount += 1;
 			}
 			else
@@ -799,14 +802,36 @@ spawn_vasm_op (VasmOperation inp_op, size_t inp_regl,
 	out_inst->regr = inp_regr;
 	out_inst->regr_reg = inp_regr_reg;
 	out_inst->regl_reg = inp_regl_reg;
-	out_inst->label_data.label_for = inp_label;
 	if (inp_label)
 	{
-		out_inst->label_data.label_for_num = inp_regl;
+		if (inp_op == VASM_FOR_BODY_LABEL)
+		{
+			out_inst->label_data.id = inp_regl;
+			out_inst->label_data.type = LT_FOR;
+			out_inst->label_data.subtype = LST_FOR_BODY;
+		}
+		else if (inp_op == VASM_FOR_EXIT_LABEL)
+		{
+			out_inst->label_data.id = inp_regl;
+			out_inst->label_data.type = LT_FOR;
+			out_inst->label_data.subtype = LST_FOR_EXIT;
+		}
+		else if (inp_op == VASM_FOR_ENTRY_LABEL)
+		{
+			out_inst->label_data.id = inp_regl;
+			out_inst->label_data.type = LT_FOR;
+			out_inst->label_data.subtype = LST_FOR_ENTRY;
+		}
+		else
+		{
+			fprintf (stderr, "Error in spawn_vasm_op (labels)\n");
+		}
 	}
 	else
 	{
-		out_inst->label_data.label_for_num = 0;
+		out_inst->label_data.id = 0;
+		out_inst->label_data.type = 0;
+		out_inst->label_data.subtype = 0;
 	}
 	out_inst->next = NULL;
 	return out_inst;
@@ -1013,12 +1038,12 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 					"Error in output_vasm_file VASM_DEC\n");
 					break;
 				}
-			case VASM_LABEL_FOR_START:
+			case VASM_FOR_ENTRY_LABEL:
 				if (no_registers (inp_vasm))
 				{
-					fprintf (inp_file, "forstart%zu:\n",
-							inp_vasm->label_data.label_for_num);
-					inp_vasm->label_data.label_for_start = true;
+					// FLB for loop beginning.
+					fprintf (inp_file, "FLB%zu:\n",
+							inp_vasm->label_data.id);
 					break;
 				}
 				else
@@ -1053,12 +1078,12 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 					"Error in output_vasm_file VASM_CMP\n");
 					break;
 				}
-			case VASM_JE_FOR_END:
+			case VASM_JE:
 				if (no_registers (inp_vasm))
 				{
 					fprintf (inp_file,
-						"je\t\tforend%zu\n",
-						inp_vasm->label_data.label_for_num);
+						"je\t\tFLE%zu\n",
+						inp_vasm->label_data.id);
 					break;
 				}
 				else
@@ -1081,12 +1106,15 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 					"Error in output_vasm_file VASM_INC\n");
 					break;
 				}
-			case VASM_JMP_FOR_START:
+			case VASM_JMP:
 				if (no_registers (inp_vasm))
 				{
 					fprintf (inp_file,
-						"jmp\t\tforstart%zu\n",
+						"jmp\t\tFLB%zu\n",
 						inp_vasm->regl);
+					// for jumps, maybe have label data contain destination info.
+					inp_vasm->label_data.id
+						= inp_vasm->regl;
 					break;
 				}
 				else
@@ -1095,12 +1123,12 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 					"Error in output_vasm_file VASM_JMP\n");
 					break;
 				}
-			case VASM_LABEL_FOR_END:
+			case VASM_FOR_EXIT_LABEL:
 				if (no_registers (inp_vasm))
 				{
-					fprintf (inp_file, "forend%zu:\n",
+					fprintf (inp_file, "FLE%zu:\n",
 							inp_vasm->regl);
-					inp_vasm->label_data.label_for_end = true;
+					// end of loop, increment for next set of loops
 					break;
 				}
 				else
@@ -1109,6 +1137,21 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 					"Error in output_vasm_file ");
 					fprintf (stderr,
 					"VASM_LABEL_FOR_END\n");
+					break;
+				}
+			case VASM_FOR_BODY_LABEL:
+				if (no_registers (inp_vasm))
+				{
+					fprintf (inp_file, "FLM%zu:\n",
+							inp_vasm->regl);
+					break;
+				}
+				else
+				{
+					fprintf (stderr,
+					"Error in output_vasm_file");
+					fprintf (stderr,
+					" VASM_FOR_BODY_LABEL\n");
 					break;
 				}
 			default:
