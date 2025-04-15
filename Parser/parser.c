@@ -53,9 +53,9 @@ TreeNode *
 nud_newline (TreeNode *inp_tree, bool inp_was_newline,
 		IndentLL **inp_indent_list)
 {
-	parser.previous = parser.current;
-	parser.current = get_next_token (false, inp_indent_list);
-	return inp_tree;
+	TreeNode *out_node = parse(Prec_Newline, inp_tree, inp_was_newline,
+			inp_indent_list);
+	return out_node;
 }
 
 

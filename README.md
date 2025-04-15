@@ -58,13 +58,6 @@ result.
 
 ## TO DO
 ### Lexer:
-- Better handling of indentation levels.
-    - Scheme: link list of indent levels, 1 for each line.
-        - This allows us to remove tabs from ast.
-        - This furthers increases memory costs. We can probably confine this to the ast
-        generation phase (parsing), since we only need it for checking syntactical validity
-        of some program (whether blocks are using a single indentation level).
-        - This may also help in the handling of lexical scope.
 - Handle floating point.
 - Handle strings.
 - Handle lexical scope reliably.
