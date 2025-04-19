@@ -14,6 +14,15 @@
 
 
 typedef struct
+LineInfo
+{
+	size_t prev;
+	size_t curr;
+}
+LineInfo;
+
+
+typedef struct
 StNode {
 	int contents;
 	size_t lexeme;
@@ -83,13 +92,14 @@ VasmInstruction
 	bool regl_reg;
 	bool regr_reg;
 	LabelData label_data;
+	size_t line_number;
 	struct VasmInstruction *next;
 }
 VasmInstruction;
 
 
 VasmInstruction *
-spawn_vasm_op (VasmOperation, size_t, size_t, bool, bool, bool);
+spawn_vasm_op (VasmOperation, size_t, size_t, bool, bool, bool, size_t);
 
 
 VasmInstruction *
@@ -154,15 +164,15 @@ fib_hash (size_t);
 
 void
 label (TreeNode *, TreeNode *, size_t *, StNode **, size_t *,
-		VasmInstruction **);
+		VasmInstruction **, IndentLL *, size_t *);
 
 void
 generate_vasm (size_t, TreeNode *, size_t *, StNode **, size_t *,
-		VasmInstruction **);
+		VasmInstruction **, IndentLL *, size_t *);
 
 void
 tile (TreeNode *, TreeNode *, size_t *, StNode **, size_t *,
-		VasmInstruction **);
+		VasmInstruction **, IndentLL *, size_t *);
 
 /*
  * is_leftside (TreeNode *AST, TreeNode *node)
@@ -190,5 +200,7 @@ get_arg_array (TreeNode *);
 size_t
 convert_constant (int, const char *);
 
+bool
+is_indent_level_dropped (size_t, size_t);
 
 #endif

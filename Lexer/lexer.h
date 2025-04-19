@@ -149,4 +149,8 @@ kill_indent_list (IndentLL *);
 size_t
 get_indent_level (IndentLL *, size_t);
 
+void
+print_indent_list (IndentLL *);
+
+
 #endif

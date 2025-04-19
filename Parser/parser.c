@@ -16,11 +16,12 @@ Parser
 parser;
 
 
-// This table is based on Nystrom's table, the only difference being the functions
-// themselves do not produce bytecode, they instead weave a AST (like Crockford's
-// nuds and leds).
+// This table is based on Nystrom's table, the only difference being the
+// functions themselves do not produce bytecode, they instead weave a AST
+// (like Crockford's nuds and leds).
 
-// For more information on the table, refer to Robert Nystrom's Crafting Interpreters, Chapter 17
+// For more information on the table, refer to Robert Nystrom's Crafting
+// Interpreters, Chapter 17
 
 // For more inforation on the nuds and leds, refer to Crockford's
 // blog below:
@@ -29,23 +30,40 @@ parser;
 
 Rule
 table[] = {
-	[TOKEN_INTEGER]		= {Prec_Integers,	nud_atom,	NULL},
-	[TOKEN_IDENTIFIER]     	= {Prec_Identifiers,	nud_atom,	led_atom},
-	[TOKEN_ADD]            	= {Prec_AddSub,		NULL,		led_binary},
-	[TOKEN_MINUS]          	= {Prec_AddSub,		NULL,		led_binary},
-	[TOKEN_EQUALS]         	= {Prec_Equals,		NULL,		led_binary},
-	[TOKEN_MULTIPLICATION] 	= {Prec_MultDiv,	NULL,		led_binary},
-	[TOKEN_DIVISION]       	= {Prec_MultDiv,	NULL,		led_binary},
-	[TOKEN_EOF]            	= {Prec_EOF,		NULL,		NULL},
-	[TOKEN_LEFT_PAREN]     	= {Prec_Paren,		nud_paren,	led_paren},
-	[TOKEN_RIGHT_PAREN]    	= {Prec_Right_Paren,	NULL,		led_rparen},
-	[TOKEN_NEWLINE]		= {Prec_Newline,	nud_newline,	led_binary},
-	[TOKEN_PRINT]		= {Prec_Equals,		nud_print,	NULL},
-	[TOKEN_COMMA]		= {Prec_Identifiers,	NULL,		led_comma},
-	[TOKEN_FOR]		= {Prec_Identifiers,	nud_for,	NULL},
-	[TOKEN_IN]		= {Prec_Keyword,	nud_in,		NULL},
-	[TOKEN_COLON]		= {Prec_Keyword,	NULL,		led_colon},
-	[TOKEN_RANGE]		= {Prec_Identifiers,	NULL,		led_range},
+	[TOKEN_INTEGER]
+		= {Prec_Integers,	nud_atom,	NULL},
+	[TOKEN_IDENTIFIER]
+		= {Prec_Identifiers,	nud_atom,	led_atom},
+	[TOKEN_ADD]
+		= {Prec_AddSub,		NULL,		led_binary},
+	[TOKEN_MINUS]
+		= {Prec_AddSub,		NULL,		led_binary},
+	[TOKEN_EQUALS]
+		= {Prec_Equals,		NULL,		led_binary},
+	[TOKEN_MULTIPLICATION]
+		= {Prec_MultDiv,	NULL,		led_binary},
+	[TOKEN_DIVISION]
+		= {Prec_MultDiv,	NULL,		led_binary},
+	[TOKEN_EOF]
+		= {Prec_EOF,		NULL,		NULL},
+	[TOKEN_LEFT_PAREN]
+		= {Prec_Paren,		nud_paren,	led_paren},
+	[TOKEN_RIGHT_PAREN]
+		= {Prec_Right_Paren,	NULL,		led_rparen},
+	[TOKEN_NEWLINE]
+		= {Prec_Newline,	nud_newline,	led_binary},
+	[TOKEN_PRINT]
+		= {Prec_Equals,		nud_print,	NULL},
+	[TOKEN_COMMA]
+		= {Prec_Identifiers,	NULL,		led_comma},
+	[TOKEN_FOR]
+		= {Prec_Identifiers,	nud_for,	NULL},
+	[TOKEN_IN]
+		= {Prec_Keyword,	nud_in,		NULL},
+	[TOKEN_COLON]
+		= {Prec_Keyword,	NULL,		led_colon},
+	[TOKEN_RANGE]
+		= {Prec_Identifiers,	NULL,		led_range},
 };
 
 
@@ -398,10 +416,12 @@ preorder (TreeNode *root, size_t size)
 
 
 TreeNode *
-parse (Precedence rbp, TreeNode *tree, bool was_newline, IndentLL **indent_list)
+parse (Precedence rbp, TreeNode *tree, bool was_newline,
+		IndentLL **indent_list)
 {
-	// This boolean helps us to determine whether whitespace is acting as indentation.
-	// (Since python standard is to use spaces instead of tabs).
+	// This boolean helps us to determine whether whitespace is acting as
+	// indentation. (Since python standard is to use spaces instead of
+	// tabs).
 	
 	parser.previous = get_next_token (was_newline, indent_list); // Initialize
 
@@ -485,7 +505,8 @@ get_parent_type (TreeNode *inp_node, TreeNode *inp_root)
 		}
 		else
 		{
-			if ((inp_root->left == inp_node) || (inp_root->right == inp_node))
+			if ((inp_root->left == inp_node)
+					|| (inp_root->right == inp_node))
 			{
 				return inp_root->contents.type;
 			}

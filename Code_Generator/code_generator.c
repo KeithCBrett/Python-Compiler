@@ -35,17 +35,26 @@
 // a valid instruction in our register to register model.
 void
 tile (TreeNode *n, TreeNode *root, size_t *regcount,
-      StNode **symbol_table, size_t *loopcount, VasmInstruction **vasm)
+      StNode **symbol_table, size_t *loopcount, VasmInstruction **vasm,
+      IndentLL *indent_level, size_t *line_num)
 {
 	if (is_tree_node_empty (n) == false)
 	{
-		tile (n->left, root, regcount, symbol_table, loopcount, vasm);
-		tile (n->right, root, regcount, symbol_table, loopcount, vasm);
-		label (n, root, regcount, symbol_table, loopcount, vasm);
+		tile
+			(n->left, root, regcount, symbol_table, loopcount,
+			 vasm, indent_level, line_num);
+		tile
+			(n->right, root, regcount, symbol_table, loopcount,
+			 vasm, indent_level, line_num);
+		label
+			(n, root, regcount, symbol_table, loopcount,
+			 vasm, indent_level, line_num);
 	}
 	else
 	{
-		label (n, root, regcount, symbol_table, loopcount, vasm);
+		label
+			(n, root, regcount, symbol_table, loopcount,
+			 vasm, indent_level, line_num);
 	}
 }
 
@@ -55,7 +64,8 @@ tile (TreeNode *n, TreeNode *root, size_t *regcount,
 // instruction selection is performed).
 void
 label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
-		size_t *loopcount, VasmInstruction **vasm)
+		size_t *loopcount, VasmInstruction **vasm,
+		IndentLL *indent_level, size_t *line_num)
 {
 	switch (n->contents.type)
 	{
@@ -70,12 +80,15 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 				{
 					n->reg = true;
 					n->rule_number = ASM_FORLOOPID;
-					generate_vasm (n->rule_number, n,
-							regcount, symbol_table,
-							loopcount, vasm);
+					generate_vasm
+						(n->rule_number, n, regcount,
+						 symbol_table, loopcount,
+						 vasm, indent_level,
+						 line_num);
 					break;
 				}
-				else if (get_parent_type (n, root) == TOKEN_PRINT)
+				else if (get_parent_type (n, root)
+						== TOKEN_PRINT)
 				{
 					n->reg = true;
 					break;
@@ -84,10 +97,11 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 				{
 					n->reg = true;
 					n->rule_number = ASM_IDENTIFIER_RS;
-					generate_vasm (n->rule_number, n,
-							regcount,
-							symbol_table,
-							loopcount, vasm);
+					generate_vasm
+						(n->rule_number, n, regcount,
+						 symbol_table, loopcount,
+						 vasm, indent_level,
+						 line_num);
 					break;
 				}
 			}
@@ -97,23 +111,30 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 				n->reg = true;
 				// Use rule 1 to rewrite to register.
 				n->rule_number = ASM_IDENTIFIER;
-				generate_vasm (n->rule_number, n, regcount,
-						symbol_table, loopcount, vasm);
+				generate_vasm
+					(n->rule_number, n, regcount,
+					 symbol_table, loopcount,
+					 vasm, indent_level,
+					 line_num);
 				break;
 			}
 		case TOKEN_INTEGER:
 			n->reg = true;
 			n->rule_number = ASM_CONSTANT;
-			generate_vasm (n->rule_number, n, regcount,
-					symbol_table, loopcount, vasm);
+			generate_vasm
+				(n->rule_number, n, regcount, symbol_table,
+				 loopcount, vasm, indent_level,
+				 line_num);
 			break;
 		case TOKEN_ADD:
 			if ((n->left->reg == true) && (n->right->reg == true))
 			{
 				n->reg = true;
 				n->rule_number = ASM_ADDITION;
-				generate_vasm (n->rule_number, n, regcount,
-						symbol_table, loopcount, vasm);
+				generate_vasm
+					(n->rule_number, n, regcount,
+					 symbol_table, loopcount,
+					 vasm, indent_level, line_num);
 				break;
 			}
 			else
@@ -127,8 +148,10 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 			{
 				n->reg = true;
 				n->rule_number = ASM_SUBTRACTION;
-				generate_vasm (n->rule_number, n, regcount,
-						symbol_table, loopcount, vasm);
+				generate_vasm
+					(n->rule_number, n, regcount,
+					 symbol_table, loopcount,
+					 vasm, indent_level, line_num);
 				break;
 			}
 			else
@@ -142,14 +165,17 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 			{
 				n->reg = true;
 				n->rule_number = ASM_MULTIPLICATION;
-				generate_vasm (n->rule_number, n, regcount,
-						symbol_table, loopcount, vasm);
+				generate_vasm
+					(n->rule_number, n, regcount,
+					 symbol_table, loopcount,
+					 vasm, indent_level, line_num);
 				break;
 			}
 			else
 			{
 				n->reg = false;
-				printf ("error, could not find tile for TOKEN_MULT");
+				printf
+				("error, could not find tile for TOKEN_MULT");
 				break;
 			}
 		case TOKEN_DIVISION:
@@ -157,8 +183,10 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 			{
 				n->reg = true;
 				n->rule_number = ASM_DIVISION;
-				generate_vasm (n->rule_number, n, regcount,
-						symbol_table, loopcount, vasm);
+				generate_vasm
+					(n->rule_number, n, regcount,
+					 symbol_table, loopcount,
+					 vasm, indent_level, line_num);
 				break;
 			}
 			else
@@ -172,8 +200,10 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 			{
 				n->reg = true;
 				n->rule_number = ASM_EQUALS;
-				generate_vasm (n->rule_number, n, regcount,
-						symbol_table, loopcount, vasm);
+				generate_vasm
+					(n->rule_number, n, regcount,
+					 symbol_table, loopcount,
+					 vasm, indent_level, line_num);
 				break;
 			}
 			else
@@ -185,13 +215,16 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 		case TOKEN_PRINT:
 			// left doesn't matter, tree builds print with args on 
 			// right branch and some place holder node on the left.
-			// place holder nodes are right paren tokens without lexeme.
+			// place holder nodes are right paren tokens without
+			// lexeme.
 			if (n->right->reg == true)
 			{
 				n->reg = true;
 				n->rule_number = ASM_PRINT;
-				generate_vasm (n->rule_number, n, regcount,
-						symbol_table, loopcount, vasm);
+				generate_vasm
+					(n->rule_number, n, regcount,
+					 symbol_table, loopcount,
+					 vasm, indent_level, line_num);
 				break;
 			}
 			else
@@ -205,8 +238,10 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 			{
 				n->reg = true;
 				n->rule_number = ASM_COMMA;
-				generate_vasm (n->rule_number, n, regcount,
-						symbol_table, loopcount, vasm);
+				generate_vasm
+					(n->rule_number, n, regcount,
+					 symbol_table, loopcount,
+					 vasm, indent_level, line_num);
 				break;
 			}
 			break;
@@ -221,8 +256,10 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 			{
 				n->reg = true;
 				n->rule_number = ASM_IN;
-				generate_vasm (n->rule_number, n, regcount,
-						symbol_table, loopcount, vasm);
+				generate_vasm
+					(n->rule_number, n, regcount,
+					 symbol_table, loopcount,
+					 vasm, indent_level, line_num);
 				break;
 			}
 			else
@@ -236,8 +273,10 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 			{
 				n->reg = true;
 				n->rule_number = ASM_FOR;
-				generate_vasm (n->rule_number, n, regcount,
-						symbol_table, loopcount, vasm);
+				generate_vasm
+					(n->rule_number, n, regcount,
+					 symbol_table, loopcount,
+					 vasm, indent_level, line_num);
 				break;
 			}
 			else
@@ -252,14 +291,19 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 		// multiple things, but for now it definitely sure handles
 		// closing for loops.
 		case TOKEN_NEWLINE:
-			if ((n->left->contents.type == TOKEN_FOR)
+			if (((n->left->contents.type == TOKEN_FOR)
 					&& (n->right->contents.type
-						== TOKEN_TAB))
+						== TOKEN_TAB)
+					|| n->is_root))
 			{
 				n->rule_number = ASM_FORCLOSE;
 				n->reg = true;
-				generate_vasm(n->rule_number, n, regcount,
-						symbol_table, loopcount, vasm);
+				n->left->reg = true;
+				n->right->reg = true;
+				generate_vasm
+					(n->rule_number, n, regcount,
+					 symbol_table, loopcount,
+					 vasm, indent_level, line_num);
 				break;
 			}
 			else
@@ -293,115 +337,131 @@ convert_constant (int inp_length, const char *inp_string)
 
 void
 generate_vasm (size_t r, TreeNode *n, size_t *regcount, StNode **symbol_table,
-		size_t *loopcount, VasmInstruction **vasm)
+		size_t *loopcount, VasmInstruction **vasm,
+		IndentLL *indent_list, size_t *prev_line_number)
 {
+	size_t prev_indent_level = get_indent_level
+		(indent_list, *prev_line_number);
+	size_t curr_indent_level = get_indent_level
+		(indent_list, n->contents.line_number);
+	if (is_indent_level_dropped (prev_indent_level, curr_indent_level))
+	{
+		*vasm = insert_vasm_instruction
+			(*vasm, spawn_vasm_op
+			 (VASM_FOR_EXIT_LABEL, *loopcount, -1, false, false,
+			  true, n->contents.line_number));
+		*loopcount += 1;
+	}
+	*prev_line_number = n->contents.line_number;
 	switch (r)
 	{
 		// Identifiers
 		case ASM_IDENTIFIER:
 			// XOR reg(i), reg(i)
-			*vasm = insert_vasm_instruction (
-					*vasm, spawn_vasm_op (VASM_XOR,
-						*regcount, *regcount, true,
-						true, false));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_XOR, *regcount, *regcount, true, true,
+				  false, n->contents.line_number));
 			n->register_number = *regcount;
 			*regcount += 1;
 			break;
 		// Non-lhs variable assignment
 		case ASM_IDENTIFIER_RS:
 			// MOV reg(i), reg(j)
-			*vasm = insert_vasm_instruction (
-					*vasm, spawn_vasm_op (VASM_MOV,
-						*regcount, st_search
-						(symbol_table, n), true,
-						true, false));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_MOV, *regcount, st_search
+				  (symbol_table, n), true, true, false,
+				  n->contents.line_number));
 			n->register_number = *regcount;
 			*regcount += 1;
 			break;
 		// Constants
 		case ASM_CONSTANT:
 			// MOV reg(i), CONST
-			*vasm = insert_vasm_instruction (
-					*vasm, spawn_vasm_op (VASM_MOV,
-						*regcount, convert_constant (
-						n->contents.length,
-						n->contents.first_char),
-						true, false, false));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_MOV, *regcount, convert_constant
+				  (n->contents.length, n->contents.first_char),
+				  true, false, false,
+				  n->contents.line_number));
 			n->register_number = *regcount;
 			// Associate register number in symbol table.
-			symbol_table = st_insert (symbol_table, n,
-					n->register_number);
+			symbol_table = st_insert
+				(symbol_table, n, n->register_number);
 			*regcount += 1;
 			break;
 		// Addition
 		case ASM_ADDITION:
-			*vasm = insert_vasm_instruction (
-					*vasm, spawn_vasm_op (VASM_ADD,
-						n->left->register_number,
-						n->right->register_number,
-						true, true, false));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_ADD, n->left->register_number,
+				  n->right->register_number, true, true, false,
+				  n->contents.line_number));
 			n->register_number = n->left->register_number;
-			symbol_table = st_insert (symbol_table, n,
-					n->left->register_number);
+			symbol_table = st_insert
+				(symbol_table, n, n->left->register_number);
 			break;
 		// Subtraction
 		case ASM_SUBTRACTION:
-			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_SUB,
-						n->left->register_number,
-						n->right->register_number,
-						true, true, false));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_SUB, n->left->register_number,
+				  n->right->register_number, true, true, false,
+				  n->contents.line_number));
 			n->register_number = n->left->register_number;
-			symbol_table = st_insert (symbol_table, n,
-					n->left->register_number);
+			symbol_table = st_insert
+				(symbol_table, n, n->left->register_number);
 			break;
 		// Multiplication
 		case ASM_MULTIPLICATION:
-			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_MUL,
-						n->left->register_number,
-						n->right->register_number,
-						true, true, false));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_MUL, n->left->register_number,
+				  n->right->register_number, true, true, false,
+				  n->contents.line_number));
 			n->register_number = n->left->register_number;
-			symbol_table = st_insert (symbol_table, n,
-					n->left->register_number);
+			symbol_table = st_insert
+				(symbol_table, n, n->left->register_number);
 			break;
 		// Division
 		case ASM_DIVISION:
-			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_MOV,
-						*regcount, 4, true, true,
-						false));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_MOV, *regcount, 4, true, true, false,
+				  n->contents.line_number));
 			*regcount += 1;
-			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_XOR,
-						4, 4, true, true, false));
-			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_MOV,
-						1, n->left->register_number,
-						true, true, false));
-			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_MOV,
-						*regcount,
-						n->right->register_number,
-						true, true, false));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_XOR, 4, 4, true, true, false,
+				  n->contents.line_number));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_MOV, 1, n->left->register_number, true,
+				  true, false, n->contents.line_number));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_MOV, *regcount,
+				  n->right->register_number, true, true, false,
+				  n->contents.line_number));
 			// NULL because div takes one operand
-			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_DIV,
-						*regcount, -1, true, true,
-						false));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_DIV, *regcount, -1, true, true, false,
+				  n->contents.line_number));
 			*regcount += 1;
 			break;
 		// Equals
 		case ASM_EQUALS:
-			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_MOV,
-						n->left->register_number,
-						n->right->register_number,
-						true, true, false));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_MOV, n->left->register_number,
+				  n->right->register_number, true, true, false,
+				  n->contents.line_number));
 			n->register_number = n->left->register_number;
-			symbol_table = st_insert (symbol_table, n->left,
-					n->right->register_number);
+			symbol_table = st_insert
+				(symbol_table, n->left,
+				 n->right->register_number);
 			break;
 		case ASM_PRINT:
 			// We are going to treat print like a vasm primitive
@@ -423,11 +483,11 @@ generate_vasm (size_t r, TreeNode *n, size_t *regcount, StNode **symbol_table,
 				// before calling.
 
 				// We can call our concatenation function now
-				*vasm = insert_vasm_instruction (*vasm,
-						spawn_vasm_op (VASM_CALL,
-							VASM_FUNC_CAT_ARGS,
-							-1, false, false,
-							false));
+				*vasm = insert_vasm_instruction
+					(*vasm, spawn_vasm_op
+					 (VASM_CALL, VASM_FUNC_CAT_ARGS, -1,
+					  false, false, false,
+					  n->contents.line_number));
 
 				// String buffer in rax.
 				//fprintf (ofp, "mov\t\trcx\trax\n");
@@ -436,46 +496,50 @@ generate_vasm (size_t r, TreeNode *n, size_t *regcount, StNode **symbol_table,
 			}
 			else if (n->right->reg == true)
 			{
-				*vasm = insert_vasm_instruction (*vasm,
-						spawn_vasm_op (VASM_MOV,
-							REG_RCX, st_search (
-							symbol_table, n->right),
-							true, true, false));
-				*vasm = insert_vasm_instruction (*vasm,
-						spawn_vasm_op (VASM_CALL,
-							VASM_FUNC_PRINTSTR,
-							-1, true, false, false));
+				*vasm = insert_vasm_instruction
+					(*vasm, spawn_vasm_op
+					 (VASM_MOV, REG_RCX, st_search
+					  (symbol_table, n->right), true, true,
+					  false, n->contents.line_number));
+				*vasm = insert_vasm_instruction
+					(*vasm, spawn_vasm_op
+					 (VASM_CALL, VASM_FUNC_PRINTSTR, -1,
+					  true, false, false,
+					  n->contents.line_number));
 				break;
 			}
 			break;
 		case ASM_COMMA:
 			if (n->left->rule_number != ASM_COMMA)
 			{
-				*vasm = insert_vasm_instruction (*vasm,
-						spawn_vasm_op (VASM_PUSH,
-							n->left->register_number,
-							-1, true, false, false));
+				*vasm = insert_vasm_instruction
+					(*vasm, spawn_vasm_op
+					 (VASM_PUSH, n->left->register_number,
+					  -1, true, false, false,
+					  n->contents.line_number));
 			}
-			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_PUSH,
-						n->right->register_number,
-						-1, true, true, false));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_PUSH, n->right->register_number, -1,
+				  true, true, false, n->contents.line_number));
 			break;
 		// Handling for variable declarations within for loops.
 		case ASM_FORLOOPID:
-			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_XOR, *regcount,
-						*regcount, true, true, false));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_XOR, *regcount, *regcount, true, true,
+				  false, n->contents.line_number));
 			n->register_number = *regcount;
 			n->reg = true;
-			symbol_table = st_insert (symbol_table, n,
-					n->register_number);
+			symbol_table = st_insert
+				(symbol_table, n, n->register_number);
 			*regcount += 1;
 			break;
 		case ASM_IN:
 			// Standard 'for x in range(y):' esque statement.
 			if ((n->left->contents.type == TOKEN_RANGE)
-					&& (n->right->contents.type = TOKEN_INTEGER))
+					&& (n->right->contents.type
+						= TOKEN_INTEGER))
 			{
 				// Get register number from integer already in
 				// register.
@@ -485,51 +549,56 @@ generate_vasm (size_t r, TreeNode *n, size_t *regcount, StNode **symbol_table,
 			}
 			break;
 		case ASM_FOR:
-			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_DEC,
-						n->right->register_number,
-						-1, true, false, false));
-			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_FOR_ENTRY_LABEL,
-						*loopcount, -1, false,
-						false, true));
-			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_CMP,
-						n->left->register_number,
-						n->right->register_number,
-						true, true, false));
-			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_JE, *loopcount,
-						-1, false, false, false));
-			*vasm = insert_vasm_instruction (*vasm,
-					spawn_vasm_op (VASM_FOR_BODY_LABEL,
-						*loopcount, -1, false,
-						false, true));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_DEC, n->right->register_number, -1,
+				  true, false, false,
+				  n->contents.line_number));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_FOR_ENTRY_LABEL, *loopcount, -1, false,
+				  false, true, n->contents.line_number));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_CMP, n->left->register_number,
+				  n->right->register_number, true, true, false,
+				  n->contents.line_number));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_JE, *loopcount, -1, false, false, false,
+				  n->contents.line_number));
+			*vasm = insert_vasm_instruction
+				(*vasm, spawn_vasm_op
+				 (VASM_FOR_BODY_LABEL, *loopcount, -1, false,
+				  false, true, n->contents.line_number));
 			n->reg = true;
 			n->register_number = n->left->register_number;
 			break;
 		case ASM_FORCLOSE:
 			if ((n->left->reg == true) && (n->right->reg == true))
 			{
-				*vasm = insert_vasm_instruction (*vasm,
-						spawn_vasm_op (VASM_INC,
-							n->left->register_number,
-							-1, true, false,
-							false));
-				*vasm = insert_vasm_instruction (*vasm,
-						spawn_vasm_op (VASM_JMP,
-							*loopcount, -1,
-							false, false, false));
-				*vasm = insert_vasm_instruction (*vasm,
-						spawn_vasm_op (VASM_FOR_EXIT_LABEL,
-							*loopcount, -1,
-							false, false, true));
+				*vasm = insert_vasm_instruction
+					(*vasm, spawn_vasm_op
+					 (VASM_INC, n->left->register_number,
+					  -1, true, false, false,
+					  n->contents.line_number));
+				*vasm = insert_vasm_instruction
+					(*vasm, spawn_vasm_op
+					 (VASM_JMP, *loopcount, -1, false,
+					  false, false,
+					  n->contents.line_number));
+				*vasm = insert_vasm_instruction
+					(*vasm, spawn_vasm_op
+					 (VASM_FOR_EXIT_LABEL, *loopcount, -1,
+					  false, false, true,
+					  n->contents.line_number));
 				// loop exit reached, loop done.
 				*loopcount += 1;
 			}
 			else
 			{
-				fprintf (stderr, "Error in gen_asm ASM_FORCLOSE\n");
+				fprintf
+				(stderr, "Error in gen_asm ASM_FORCLOSE\n");
 				break;
 			}
 			break;
@@ -670,9 +739,8 @@ st_insert (StNode **table, TreeNode *entry, int value)
 	if (st_search (return_table, entry) == -1)
 	{
 		// Add string to symbol table.
-		return_table[index]->lexeme = st_convert_string (
-				entry->contents.first_char,
-				entry->contents.length);
+		return_table[index]->lexeme = st_convert_string
+			(entry->contents.first_char, entry->contents.length);
 		// Associate new int.
 		return_table[index]->contents = value;
 	}
@@ -690,18 +758,20 @@ st_insert (StNode **table, TreeNode *entry, int value)
 size_t
 st_search (StNode **table, TreeNode *node)
 {
-	size_t index = fib_hash (st_convert_string(
-				node->contents.first_char, node->contents.length));
+	size_t index = fib_hash
+		(st_convert_string
+		 (node->contents.first_char, node->contents.length));
 	StNode **temp = table;
-	size_t string_hash = st_convert_string (node->contents.first_char,
-			node->contents.length);
+	size_t string_hash = st_convert_string
+		(node->contents.first_char, node->contents.length);
 	// Check if we are already on target.
 	if (temp[index]->lexeme == string_hash)
 	{
 		return temp[index]->contents;
 	}
 	// If not, traverse linked list.
-	while ((temp[index]->next != NULL) && (temp[index]->lexeme != string_hash))
+	while ((temp[index]->next != NULL) && (temp[index]->lexeme
+				!= string_hash))
 	{
 		temp[index] = temp[index]->next;
 	}
@@ -765,7 +835,8 @@ st_kill_table (StNode **input_table)
 StNode **
 st_spawn_table ()
 {
-	StNode **return_table = malloc (SYMBOL_TABLE_SIZE * sizeof (*return_table));
+	StNode **return_table = malloc (SYMBOL_TABLE_SIZE * sizeof
+			(*return_table));
 	for (int i = 0 ; i < SYMBOL_TABLE_SIZE ; i++)
 	{
 		return_table[i] = malloc (sizeof (StNode));
@@ -794,7 +865,7 @@ fib_hash (size_t input)
 VasmInstruction *
 spawn_vasm_op (VasmOperation inp_op, size_t inp_regl,
 		size_t inp_regr, bool inp_regl_reg, bool inp_regr_reg,
-		bool inp_label)
+		bool inp_label, size_t inp_line_number)
 {
 	VasmInstruction *out_inst = malloc (sizeof (VasmInstruction));
 	out_inst->op = inp_op;
@@ -802,6 +873,7 @@ spawn_vasm_op (VasmOperation inp_op, size_t inp_regl,
 	out_inst->regr = inp_regr;
 	out_inst->regr_reg = inp_regr_reg;
 	out_inst->regl_reg = inp_regl_reg;
+	out_inst->line_number = inp_line_number;
 	if (inp_label)
 	{
 		if (inp_op == VASM_FOR_BODY_LABEL)
@@ -929,34 +1001,41 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 				// Handling for adding two registers.
 				if (both_side_register (inp_vasm))
 				{
-					fprintf (inp_file,
-							"add\t\tr(%zu), r(%zu)\n",
-							inp_vasm->regl,
-							inp_vasm->regr);
+					fprintf
+					(inp_file,
+					 "add\t\tr(%zu), r(%zu)\n",
+					 inp_vasm->regl, inp_vasm->regr);
 					break;
 				}
 				// Handling for adding const into reg.
 				else if (left_side_register (inp_vasm))
 				{
-					fprintf (inp_file, "add\t\tr(%zu), %zu\n",
-							inp_vasm->regl,
-							inp_vasm->regr);
+					fprintf
+					(inp_file,
+					 "add\t\tr(%zu), %zu\n",
+					 inp_vasm->regl, inp_vasm->regr);
 					break;
 				}
 				else
 				{
-					fprintf (stderr,
-						"ERROR in output_vasm_file VASM_ADD\n");
+					fprintf
+					(stderr,
+					 "ERROR in output_vasm_file ");
+					fprintf
+					(stderr,
+					 "VASM_ADD\n");
 					break;
 				}
 				break;
 			case VASM_MOV:
-				// Case I: moving register into another register.
+				// Case I: moving register into another
+				// register.
 				if (both_side_register (inp_vasm))
 				{
-					fprintf (inp_file,
-						"mov\t\tr(%zu), r(%zu)\n",
-						inp_vasm->regl, inp_vasm->regr);
+					fprintf
+					(inp_file,
+					 "mov\t\tr(%zu), r(%zu)\n",
+					 inp_vasm->regl,inp_vasm->regr);
 					break;
 				}
 				// Case II: moving const into register.
@@ -1042,14 +1121,17 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 				if (no_registers (inp_vasm))
 				{
 					// FLB for loop beginning.
-					fprintf (inp_file, "FLB%zu:\n",
-							inp_vasm->label_data.id);
+					fprintf
+						(inp_file, "FLB%zu:\n",
+						 inp_vasm->label_data.id);
 					break;
 				}
 				else
 				{
 					fprintf (stderr,
-					"Error in output_vasm_file VASM_LABEL_FOR_START\n");
+					"Error in output_vasm_file ");
+					fprintf (stderr,
+					"VASM_LABEL_FOR_START\n");
 					break;
 				}
 			case VASM_CMP:
@@ -1112,7 +1194,8 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 					fprintf (inp_file,
 						"jmp\t\tFLB%zu\n",
 						inp_vasm->regl);
-					// for jumps, maybe have label data contain destination info.
+					// for jumps, maybe have label data
+					// contain destination info.
 					inp_vasm->label_data.id
 						= inp_vasm->regl;
 					break;
@@ -1128,7 +1211,8 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 				{
 					fprintf (inp_file, "FLE%zu:\n",
 							inp_vasm->regl);
-					// end of loop, increment for next set of loops
+					// end of loop, increment for next set
+					// of loops
 					break;
 				}
 				else
@@ -1168,5 +1252,57 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 		{
 			break;
 		}
+	}
+}
+
+
+VasmInstruction *
+close_loops (IndentLL *inp_indent_list, VasmInstruction *inp_vasm,
+		size_t loop_count)
+{
+	VasmInstruction *prev_vasm = inp_vasm;
+	VasmInstruction *head = prev_vasm;
+	inp_vasm = inp_vasm->next;
+	VasmInstruction *curr_vasm = inp_vasm;
+	size_t prev_indent_level = get_indent_level
+		(inp_indent_list, prev_vasm->line_number);
+	size_t curr_indent_level = get_indent_level
+		(inp_indent_list, curr_vasm->line_number);
+	while (curr_vasm->next != NULL)
+	{
+		if (prev_indent_level > curr_indent_level)
+		{
+			VasmInstruction *temp_next = curr_vasm->next;
+			curr_vasm->next = spawn_vasm_op
+				(VASM_FOR_EXIT_LABEL, loop_count--, -1, false,
+				 false, true, curr_vasm->line_number);
+			curr_vasm->next->next = temp_next;
+		}
+		prev_vasm = curr_vasm;
+		curr_vasm = curr_vasm->next;
+	}
+	if (prev_indent_level > curr_indent_level)
+	{
+		VasmInstruction *temp_next = curr_vasm->next;
+		curr_vasm->next = spawn_vasm_op
+			(VASM_FOR_EXIT_LABEL, loop_count--, -1, false,
+			 false, true, curr_vasm->line_number);
+		curr_vasm->next->next = temp_next;
+	}
+	// out_list->next is null, top of list reached.
+	return head;
+}
+
+
+bool
+is_indent_level_dropped (size_t inp_prev, size_t inp_curr)
+{
+	if (inp_prev > inp_curr)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }

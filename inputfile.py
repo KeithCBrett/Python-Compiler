@@ -1,6 +1,2 @@
-x = 5
-
-
-
-
-y = 7
+for i in range(5):
+    print(i)

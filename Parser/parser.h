@@ -38,6 +38,7 @@ TreeNode
 	bool reg;
 	size_t rule_number;
 	size_t register_number;
+	bool is_root;
 }
 TreeNode;
 
@@ -103,12 +104,13 @@ Rule;
 
 /*
  * parse()
- * Input: a right binding power in the form of a precendence, tree object to build on
- * in form of TreeNode*
- * Output: This function will be recursively called to generate ast. equivalent to 
- * parse(rbp) as described in Pratt's paper. We initialize this function with rbp of 2
- * and it will rapidly build up with recursive calls until a weaker operator is encountered.
- * In which case the parser will fold the tree and continue until eof encoutered.
+ * Input: a right binding power in the form of a precendence, tree object to
+ * build on in form of TreeNode *
+ * Output: This function will be recursively called to generate ast. equivalent
+ * to parse(rbp) as described in Pratt's paper. We initialize this function
+ * with rbp of 2 and it will rapidly build up with recursive calls until a
+ * weaker operator is encountered. In which case the parser will fold the tree
+ * and continue until eof encoutered.
  */
 TreeNode *
 parse (Precedence, TreeNode *, bool, IndentLL **);

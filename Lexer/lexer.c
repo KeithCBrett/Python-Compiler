@@ -1455,7 +1455,9 @@ get_next_token (bool was_newline, IndentLL **inp_indent_list)
 		case ',':       return spawn_token (TOKEN_COMMA);
 		case '.':       return spawn_token (TOKEN_PERIOD);
 		case ';':       return spawn_token (TOKEN_SEMI_COLON);
-		case '\n':      return spawn_token (TOKEN_NEWLINE);
+		case '\n':      
+				lex.line_number++;
+				return spawn_token (TOKEN_NEWLINE);
 		// In order to make things straight forward, we strictly
 		// inforce PEP8 4 space indent.
 		case ' ':	return spawn_token (TOKEN_TAB);
@@ -1654,4 +1656,16 @@ get_indent_level (IndentLL *inp_list, size_t inp_line_number)
 		inp_list = inp_list->next;
 	}
 	return inp_list->level;
+}
+
+
+void
+print_indent_list (IndentLL *inp_indent_list)
+{
+	while (inp_indent_list->next != NULL)
+	{
+		fprintf (stdout, "level: %zu\n", inp_indent_list->level);
+		inp_indent_list = inp_indent_list->next;
+	}
+	fprintf (stdout, "level: %zu\n", inp_indent_list->level);
 }
