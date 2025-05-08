@@ -12,16 +12,6 @@ typedef struct {
 } Lexer;
 
 
-// Linked list of indentation levels
-typedef struct
-IndentLL
-{
-	size_t level;
-	struct IndentLL *next;
-}
-IndentLL;
-
-
 typedef enum {
 	TOKEN_ADD, TOKEN_MINUS, TOKEN_MULTIPLICATION,
 	TOKEN_DIVISION, TOKEN_EOF, TOKEN_ERROR,
@@ -90,10 +80,13 @@ static char
 consume_char ();
 
 Token
-get_next_token (bool, IndentLL **);
+get_next_token (bool);
 
 Token
 spawn_token (TokenType);
+
+Token
+spawn_tab ();
 
 static Token
 spawn_error (const char *);
@@ -138,19 +131,7 @@ void
 initialize_lexer (const char *);
 
 static void
-skip_whitespace (bool, IndentLL **);
-
-void
-add_indent_node (IndentLL **, size_t);
-
-void
-kill_indent_list (IndentLL *);
-
-size_t
-get_indent_level (IndentLL *, size_t);
-
-void
-print_indent_list (IndentLL *);
+skip_whitespace (bool);
 
 
 #endif

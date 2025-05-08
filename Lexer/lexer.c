@@ -138,7 +138,7 @@ look_ahead_dont_advance (const char check)
 
 // Breaks out of loop when non whitespace is encountered
 static void
-skip_whitespace (bool inp_was_newline, IndentLL **inp_indent_list)
+skip_whitespace (bool inp_was_newline)
 {
 	size_t count = 0;
 	for (;;)
@@ -151,11 +151,13 @@ skip_whitespace (bool inp_was_newline, IndentLL **inp_indent_list)
 				lex.current_char++;
 				break;
 			case ' ':
+				// if it was a newline, this whitespace is
+				// acting as indentation. return to
+				// get_next_token and let that function handle
+				// it.
 				if (inp_was_newline)
 				{
-					count++;
-					lex.current_char++;
-					break;
+					return;
 				}
 				// Otherwise, skip as usual.
 				else
@@ -164,11 +166,6 @@ skip_whitespace (bool inp_was_newline, IndentLL **inp_indent_list)
 					break;
 				}
 			default:
-				if (inp_was_newline)
-				{
-					add_indent_node (inp_indent_list,
-							count);
-				}
 				return;
 		}
 	}
@@ -1419,9 +1416,9 @@ identifier_or_keyword ()
 // in order to lex a program. (Be sure to initialize Lexer with source
 // code first with initialize_lexer() and get_source_from_file()).
 Token
-get_next_token (bool was_newline, IndentLL **inp_indent_list)
+get_next_token (bool was_newline)
 {
-	skip_whitespace (was_newline, inp_indent_list);
+	skip_whitespace (was_newline);
 	lex.start_char = lex.current_char;
 
 	if (is_at_end ())
@@ -1460,8 +1457,7 @@ get_next_token (bool was_newline, IndentLL **inp_indent_list)
 				return spawn_token (TOKEN_NEWLINE);
 		// In order to make things straight forward, we strictly
 		// inforce PEP8 4 space indent.
-		case ' ':	return spawn_token (TOKEN_TAB);
-		case '\t':	return spawn_token (TOKEN_TAB);
+		case ' ':	return spawn_tab ();
 		// Single lookahead tokens (one or two characters)
 		case '=':       
 			return spawn_token (look_ahead ('=')
@@ -1619,53 +1615,24 @@ peak_twice ()
 }
 
 
-void
-add_indent_node (IndentLL **inp_list, size_t inp_level)
+// We need to progress lexer to swallow entire tab (of whatever length)
+// and return corresponding tab token. Maybe we should keep track of indent
+// level so we can return error for mismatches.
+Token
+spawn_tab ()
 {
-	IndentLL *push_node = malloc (sizeof (IndentLL));
-	push_node->level = inp_level;
-	push_node->next = NULL;
-	// Case I: Empty list
-	if (*inp_list == NULL)
+	// Declare token to return
+	Token return_token;
+	return_token.type = TOKEN_TAB;
+	return_token.first_char = lex.start_char;
+	return_token.line_number = lex.line_number;
+	char c = peak_once ();
+	// eat all spaces
+	while (c == ' ')
 	{
-		// Return pushnode
-		*inp_list = push_node;
+		lex.current_char++;
+		c = peak_once ();
 	}
-	else
-	{
-		IndentLL *head = *inp_list;
-		IndentLL *prev = *inp_list;
-		while ((*inp_list)->next != NULL)
-		{
-			prev = *inp_list;
-			*inp_list = (*inp_list)->next;
-		}
-		(*inp_list)->next = push_node;
-		*inp_list = head;
-	}
-}
-
-
-size_t
-get_indent_level (IndentLL *inp_list, size_t inp_line_number)
-{
-	size_t count = 1;
-	while (count < inp_line_number)
-	{
-		count++;
-		inp_list = inp_list->next;
-	}
-	return inp_list->level;
-}
-
-
-void
-print_indent_list (IndentLL *inp_indent_list)
-{
-	while (inp_indent_list->next != NULL)
-	{
-		fprintf (stdout, "level: %zu\n", inp_indent_list->level);
-		inp_indent_list = inp_indent_list->next;
-	}
-	fprintf (stdout, "level: %zu\n", inp_indent_list->level);
+	return_token.length = (size_t) (lex.current_char - lex.start_char);
+	return return_token;
 }

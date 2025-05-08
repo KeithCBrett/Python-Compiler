@@ -57,7 +57,7 @@ StackNode;
 
 typedef
 TreeNode *
-(*SemanticCode)(TreeNode *, bool, IndentLL **);
+(*SemanticCode)(TreeNode *, bool);
 
 
 // Requirement for TDOP algorithm, now we know that (+ < *) since multiplication
@@ -68,8 +68,9 @@ Precedence
 	Prec_EOF = 0,
 	Prec_Start,
 	Prec_Newline,
-	Prec_Keyword,
 	Prec_Right_Paren,
+	Prec_Tab,
+	Prec_Keyword,
 	Prec_Outcomes,
 	Prec_Integers,
 	Prec_Equals,
@@ -113,7 +114,7 @@ Rule;
  * and continue until eof encoutered.
  */
 TreeNode *
-parse (Precedence, TreeNode *, bool, IndentLL **);
+parse (Precedence, TreeNode *, bool);
 
 
 /*
@@ -164,7 +165,7 @@ kill_node (TreeNode *);
  * found. This is when we fold the tree to get the correct semantic meaning.
  */
 TreeNode *
-led_binary (TreeNode *, bool, IndentLL **);
+led_binary (TreeNode *, bool);
 
 
 /*
@@ -174,40 +175,43 @@ led_binary (TreeNode *, bool, IndentLL **);
  * value as a leaf.
  */
 TreeNode *
-nud_atom (TreeNode *, bool, IndentLL **);
+nud_atom (TreeNode *, bool);
 
 TreeNode *
-nud_newline (TreeNode *, bool, IndentLL **);
+nud_newline (TreeNode *, bool);
 
 TreeNode *
-nud_paren (TreeNode *, bool, IndentLL **);
+nud_tab (TreeNode *, bool);
 
 TreeNode *
-led_paren (TreeNode *, bool, IndentLL **);
+nud_paren (TreeNode *, bool);
 
 TreeNode *
-led_rparen (TreeNode *, bool, IndentLL **);
+led_paren (TreeNode *, bool);
 
 TreeNode *
-nud_print (TreeNode *, bool, IndentLL **);
+led_rparen (TreeNode *, bool);
 
 TreeNode *
-led_comma (TreeNode *, bool, IndentLL **);
+nud_print (TreeNode *, bool);
 
 TreeNode *
-nud_for (TreeNode *, bool, IndentLL **);
+led_comma (TreeNode *, bool);
 
 TreeNode *
-led_atom (TreeNode *, bool, IndentLL **);
+nud_for (TreeNode *, bool);
 
 TreeNode *
-nud_in (TreeNode *, bool, IndentLL **);
+led_atom (TreeNode *, bool);
 
 TreeNode *
-led_range (TreeNode *, bool, IndentLL **);
+nud_in (TreeNode *, bool);
 
 TreeNode *
-led_colon (TreeNode *, bool, IndentLL **);
+led_range (TreeNode *, bool);
+
+TreeNode *
+led_colon (TreeNode *, bool);
 
 
 TreeNode *

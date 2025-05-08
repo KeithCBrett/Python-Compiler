@@ -65,9 +65,24 @@ main (int argc, char **argv)
 	bool was_newline = true;
 
 
-	IndentLL *indent_levels = NULL;
-	IndentLL **p_indent_levels = &indent_levels;
-	root = parse (Prec_Start, root, was_newline, p_indent_levels);
+	root = parse (Prec_Start, root, was_newline);
+
+	// Now that we have our ast, we have to check a couple of invalid
+	// roots. This mainly pertains to one line programs. For example,
+	// if root is TOKEN_FOR, this means we have some for loop without
+	// a body (because loops take up multiple lines, we need atleast one
+	// TOKEN_NEWLINE which will always take precedence over TOKEN_FOR.
+	
+	bool error = false;
+	bool *p_error = &error;
+
+	// Handling for bodyless loop.
+	if (root->contents.type == TOKEN_FOR)
+	{
+		spawn_python_error (ERROR_INDENTATION,
+				root->contents.line_number);
+		*p_error = true;
+	}
 
 	root->is_root = true;
 	// For virtual registers. We start at 100 because the first 100 are
@@ -78,8 +93,7 @@ main (int argc, char **argv)
 	// like print, abs, and whatnot.
 	size_t regcount = 5;
 	size_t *p_regcount = &regcount;
-	size_t loopcount = 0;
-	size_t *p_loopcount = &loopcount;
+	LoopCounts *loopcount = spawn_loopcounts();
 	size_t indent_level = 0;
 	size_t *p_indent_level = &indent_level;
 	size_t line_num = 0;
@@ -92,13 +106,20 @@ main (int argc, char **argv)
 
 	// Perform instruction selection using virtual registers.
 	tile
-		(root, root, p_regcount, symbol_table, p_loopcount, p_vasm,
-		 indent_levels, p_line_num);
+		(root, root, p_regcount, symbol_table, loopcount, p_vasm,
+		 p_line_num, p_error);
 
-	const char *testing = "-vasm";
-	if ((strcmp (argv[1], testing)) == 0)
+	const char *vasm_flag = "-vasm";
+	if ((strcmp (argv[1], vasm_flag)) == 0)
 	{
-		output_vasm_file (ofp, vasm);
+		if (error == 0)
+		{
+			output_vasm_file (ofp, vasm);
+		}
+		else
+		{
+			int del = remove(argv[3]);
+		}
 	}
 
 	kill_tree (root);

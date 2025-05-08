@@ -7,6 +7,6 @@ je		FLE0
 FLM0:
 mov		r(2), r(5)
 call		printstr
-inc		r(5)
-jmp		FLB0
-FLE0:
+mov		r(7), 5
+mov		r(2), r(7)
+call		printstr

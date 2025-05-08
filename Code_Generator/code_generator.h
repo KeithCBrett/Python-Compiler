@@ -22,6 +22,17 @@ LineInfo
 LineInfo;
 
 
+// Here we define the different error codes (like lack of indented block after
+// for loop). We will insert them into spawn_python_error function whenever a
+// incorrect tree pattern is found.
+typedef enum
+ErrorCode
+{
+	ERROR_INDENTATION = 0,
+}
+ErrorCode;
+
+
 typedef struct
 StNode {
 	int contents;
@@ -81,6 +92,19 @@ LabelData
 	size_t id;
 }
 LabelData;
+
+
+typedef struct
+LoopCounts
+{
+	// We format our loops with a beginning, middle and end.
+	// We will need individual counts for each so that we can
+	// be sure to assign labels unique names.
+	size_t beginning_count;
+	size_t middle_count;
+	size_t end_count;
+}
+LoopCounts;
 
 
 typedef struct
@@ -163,16 +187,16 @@ fib_hash (size_t);
 
 
 void
-label (TreeNode *, TreeNode *, size_t *, StNode **, size_t *,
-		VasmInstruction **, IndentLL *, size_t *);
+label (TreeNode *, TreeNode *, size_t *, StNode **, LoopCounts *,
+		VasmInstruction **, size_t *, bool *);
 
 void
-generate_vasm (size_t, TreeNode *, size_t *, StNode **, size_t *,
-		VasmInstruction **, IndentLL *, size_t *);
+generate_vasm (size_t, TreeNode *, size_t *, StNode **, LoopCounts *,
+		VasmInstruction **, size_t *);
 
 void
-tile (TreeNode *, TreeNode *, size_t *, StNode **, size_t *,
-		VasmInstruction **, IndentLL *, size_t *);
+tile (TreeNode *, TreeNode *, size_t *, StNode **, LoopCounts *,
+		VasmInstruction **, size_t *, bool *);
 
 /*
  * is_leftside (TreeNode *AST, TreeNode *node)
@@ -202,5 +226,26 @@ convert_constant (int, const char *);
 
 bool
 is_indent_level_dropped (size_t, size_t);
+
+LoopCounts *
+spawn_loopcounts ();
+
+// Returns the token type of input node. Used for readability/simpler if
+// statements. Same can be said for function check_right_branch ().
+TokenType
+check_left_branch (TreeNode *);
+
+TokenType
+check_right_branch (TreeNode *);
+
+// Takes newline node as input, returns type of token on next line (excluding
+// newline). Used mainly for checking if next line is indented (usually
+// returns TOKEN_TAB if program is written correctly).
+TokenType
+check_next_line (TreeNode *);
+
+void
+spawn_python_error (ErrorCode, size_t);
+
 
 #endif

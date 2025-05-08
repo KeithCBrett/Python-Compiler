@@ -35,26 +35,26 @@
 // a valid instruction in our register to register model.
 void
 tile (TreeNode *n, TreeNode *root, size_t *regcount,
-      StNode **symbol_table, size_t *loopcount, VasmInstruction **vasm,
-      IndentLL *indent_level, size_t *line_num)
+      StNode **symbol_table, LoopCounts *loopcount, VasmInstruction **vasm,
+      size_t *line_num, bool *error)
 {
 	if (is_tree_node_empty (n) == false)
 	{
 		tile
 			(n->left, root, regcount, symbol_table, loopcount,
-			 vasm, indent_level, line_num);
+			 vasm, line_num, error);
 		tile
 			(n->right, root, regcount, symbol_table, loopcount,
-			 vasm, indent_level, line_num);
+			 vasm, line_num, error);
 		label
 			(n, root, regcount, symbol_table, loopcount,
-			 vasm, indent_level, line_num);
+			 vasm, line_num, error);
 	}
 	else
 	{
 		label
 			(n, root, regcount, symbol_table, loopcount,
-			 vasm, indent_level, line_num);
+			 vasm, line_num, error);
 	}
 }
 
@@ -64,8 +64,8 @@ tile (TreeNode *n, TreeNode *root, size_t *regcount,
 // instruction selection is performed).
 void
 label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
-		size_t *loopcount, VasmInstruction **vasm,
-		IndentLL *indent_level, size_t *line_num)
+		LoopCounts *loopcount, VasmInstruction **vasm,
+		size_t *line_num, bool *error)
 {
 	switch (n->contents.type)
 	{
@@ -83,8 +83,7 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 					generate_vasm
 						(n->rule_number, n, regcount,
 						 symbol_table, loopcount,
-						 vasm, indent_level,
-						 line_num);
+						 vasm, line_num);
 					break;
 				}
 				else if (get_parent_type (n, root)
@@ -100,8 +99,7 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 					generate_vasm
 						(n->rule_number, n, regcount,
 						 symbol_table, loopcount,
-						 vasm, indent_level,
-						 line_num);
+						 vasm, line_num);
 					break;
 				}
 			}
@@ -114,7 +112,7 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, regcount,
 					 symbol_table, loopcount,
-					 vasm, indent_level,
+					 vasm,
 					 line_num);
 				break;
 			}
@@ -123,7 +121,7 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 			n->rule_number = ASM_CONSTANT;
 			generate_vasm
 				(n->rule_number, n, regcount, symbol_table,
-				 loopcount, vasm, indent_level,
+				 loopcount, vasm,
 				 line_num);
 			break;
 		case TOKEN_ADD:
@@ -134,7 +132,7 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, regcount,
 					 symbol_table, loopcount,
-					 vasm, indent_level, line_num);
+					 vasm, line_num);
 				break;
 			}
 			else
@@ -151,7 +149,7 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, regcount,
 					 symbol_table, loopcount,
-					 vasm, indent_level, line_num);
+					 vasm, line_num);
 				break;
 			}
 			else
@@ -168,7 +166,7 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, regcount,
 					 symbol_table, loopcount,
-					 vasm, indent_level, line_num);
+					 vasm, line_num);
 				break;
 			}
 			else
@@ -186,7 +184,7 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, regcount,
 					 symbol_table, loopcount,
-					 vasm, indent_level, line_num);
+					 vasm, line_num);
 				break;
 			}
 			else
@@ -203,7 +201,7 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, regcount,
 					 symbol_table, loopcount,
-					 vasm, indent_level, line_num);
+					 vasm, line_num);
 				break;
 			}
 			else
@@ -224,7 +222,7 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, regcount,
 					 symbol_table, loopcount,
-					 vasm, indent_level, line_num);
+					 vasm, line_num);
 				break;
 			}
 			else
@@ -241,7 +239,7 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, regcount,
 					 symbol_table, loopcount,
-					 vasm, indent_level, line_num);
+					 vasm, line_num);
 				break;
 			}
 			break;
@@ -259,7 +257,7 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, regcount,
 					 symbol_table, loopcount,
-					 vasm, indent_level, line_num);
+					 vasm, line_num);
 				break;
 			}
 			else
@@ -276,7 +274,7 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, regcount,
 					 symbol_table, loopcount,
-					 vasm, indent_level, line_num);
+					 vasm, line_num);
 				break;
 			}
 			else
@@ -291,23 +289,23 @@ label (TreeNode *n, TreeNode *root, size_t *regcount, StNode **symbol_table,
 		// multiple things, but for now it definitely sure handles
 		// closing for loops.
 		case TOKEN_NEWLINE:
-			if (((n->left->contents.type == TOKEN_FOR)
-					&& (n->right->contents.type
-						== TOKEN_TAB)
-					|| n->is_root))
+			// Handling for lack of indented body after for loop.
+			if (((check_left_branch (n) == TOKEN_FOR)
+					&& (check_right_branch (n)
+						!= TOKEN_TAB))
+					&&
+					((check_left_branch (n) == TOKEN_FOR)
+					 && (check_next_line (n)
+						 != TOKEN_TAB)))
 			{
-				n->rule_number = ASM_FORCLOSE;
-				n->reg = true;
-				n->left->reg = true;
-				n->right->reg = true;
-				generate_vasm
-					(n->rule_number, n, regcount,
-					 symbol_table, loopcount,
-					 vasm, indent_level, line_num);
+				spawn_python_error (ERROR_INDENTATION,
+						n->contents.line_number);
+				*error = 1;
 				break;
 			}
 			else
 			{
+				// Otherwise, do nothing.
 				break;
 			}
 			break;
@@ -337,21 +335,9 @@ convert_constant (int inp_length, const char *inp_string)
 
 void
 generate_vasm (size_t r, TreeNode *n, size_t *regcount, StNode **symbol_table,
-		size_t *loopcount, VasmInstruction **vasm,
-		IndentLL *indent_list, size_t *prev_line_number)
+		LoopCounts *loopcount, VasmInstruction **vasm,
+		size_t *prev_line_number)
 {
-	size_t prev_indent_level = get_indent_level
-		(indent_list, *prev_line_number);
-	size_t curr_indent_level = get_indent_level
-		(indent_list, n->contents.line_number);
-	if (is_indent_level_dropped (prev_indent_level, curr_indent_level))
-	{
-		*vasm = insert_vasm_instruction
-			(*vasm, spawn_vasm_op
-			 (VASM_FOR_EXIT_LABEL, *loopcount, -1, false, false,
-			  true, n->contents.line_number));
-		*loopcount += 1;
-	}
 	*prev_line_number = n->contents.line_number;
 	switch (r)
 	{
@@ -556,7 +542,8 @@ generate_vasm (size_t r, TreeNode *n, size_t *regcount, StNode **symbol_table,
 				  n->contents.line_number));
 			*vasm = insert_vasm_instruction
 				(*vasm, spawn_vasm_op
-				 (VASM_FOR_ENTRY_LABEL, *loopcount, -1, false,
+				 (VASM_FOR_ENTRY_LABEL,
+				  loopcount->beginning_count++, -1, false,
 				  false, true, n->contents.line_number));
 			*vasm = insert_vasm_instruction
 				(*vasm, spawn_vasm_op
@@ -565,11 +552,12 @@ generate_vasm (size_t r, TreeNode *n, size_t *regcount, StNode **symbol_table,
 				  n->contents.line_number));
 			*vasm = insert_vasm_instruction
 				(*vasm, spawn_vasm_op
-				 (VASM_JE, *loopcount, -1, false, false, false,
-				  n->contents.line_number));
+				 (VASM_JE, loopcount->end_count, -1, false,
+				  false, false, n->contents.line_number));
 			*vasm = insert_vasm_instruction
 				(*vasm, spawn_vasm_op
-				 (VASM_FOR_BODY_LABEL, *loopcount, -1, false,
+				 (VASM_FOR_BODY_LABEL,
+				  loopcount->middle_count++, -1, false,
 				  false, true, n->contents.line_number));
 			n->reg = true;
 			n->register_number = n->left->register_number;
@@ -584,16 +572,15 @@ generate_vasm (size_t r, TreeNode *n, size_t *regcount, StNode **symbol_table,
 					  n->contents.line_number));
 				*vasm = insert_vasm_instruction
 					(*vasm, spawn_vasm_op
-					 (VASM_JMP, *loopcount, -1, false,
+					 (VASM_JMP, loopcount->beginning_count++, -1, false,
 					  false, false,
 					  n->contents.line_number));
 				*vasm = insert_vasm_instruction
 					(*vasm, spawn_vasm_op
-					 (VASM_FOR_EXIT_LABEL, *loopcount, -1,
-					  false, false, true,
+					 (VASM_FOR_EXIT_LABEL,
+					  loopcount->end_count++, -1, false,
+					  false, true,
 					  n->contents.line_number));
-				// loop exit reached, loop done.
-				*loopcount += 1;
 			}
 			else
 			{
@@ -1256,53 +1243,54 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 }
 
 
-VasmInstruction *
-close_loops (IndentLL *inp_indent_list, VasmInstruction *inp_vasm,
-		size_t loop_count)
+LoopCounts *
+spawn_loopcounts ()
 {
-	VasmInstruction *prev_vasm = inp_vasm;
-	VasmInstruction *head = prev_vasm;
-	inp_vasm = inp_vasm->next;
-	VasmInstruction *curr_vasm = inp_vasm;
-	size_t prev_indent_level = get_indent_level
-		(inp_indent_list, prev_vasm->line_number);
-	size_t curr_indent_level = get_indent_level
-		(inp_indent_list, curr_vasm->line_number);
-	while (curr_vasm->next != NULL)
-	{
-		if (prev_indent_level > curr_indent_level)
-		{
-			VasmInstruction *temp_next = curr_vasm->next;
-			curr_vasm->next = spawn_vasm_op
-				(VASM_FOR_EXIT_LABEL, loop_count--, -1, false,
-				 false, true, curr_vasm->line_number);
-			curr_vasm->next->next = temp_next;
-		}
-		prev_vasm = curr_vasm;
-		curr_vasm = curr_vasm->next;
-	}
-	if (prev_indent_level > curr_indent_level)
-	{
-		VasmInstruction *temp_next = curr_vasm->next;
-		curr_vasm->next = spawn_vasm_op
-			(VASM_FOR_EXIT_LABEL, loop_count--, -1, false,
-			 false, true, curr_vasm->line_number);
-		curr_vasm->next->next = temp_next;
-	}
-	// out_list->next is null, top of list reached.
-	return head;
+	LoopCounts *out_count = malloc (sizeof (LoopCounts));
+	out_count->end_count = 0;
+	out_count->middle_count = 0;
+	out_count->beginning_count = 0;
+	return out_count;
 }
 
 
-bool
-is_indent_level_dropped (size_t inp_prev, size_t inp_curr)
+TokenType
+check_left_branch (TreeNode *inp_node)
 {
-	if (inp_prev > inp_curr)
+	return inp_node->left->contents.type;
+}
+
+
+TokenType
+check_right_branch (TreeNode *inp_node)
+{
+	return inp_node->right->contents.type;
+}
+
+
+TokenType
+check_next_line (TreeNode *inp_node)
+{
+	TokenType out_type;
+	out_type = inp_node->right->left->contents.type;
+	return out_type;
+}
+
+
+void
+spawn_python_error (ErrorCode inp_error_code, size_t inp_line_number)
+{
+	switch (inp_error_code)
 	{
-		return true;
-	}
-	else
-	{
-		return false;
+		case ERROR_INDENTATION:
+			fprintf (stderr, "Error Type:\tIndentationError\n");
+			fprintf (stderr, "(Lack of indented block after for ");
+			fprintf (stderr, "statment)\n");
+			fprintf (stderr, "Line Number:\t%zu\n",
+					inp_line_number);
+			break;
+		default:
+			fprintf (stderr, "UNKNOWN ERROR CODE ENTERED\n");
+			break;
 	}
 }

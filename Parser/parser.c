@@ -64,44 +64,58 @@ table[] = {
 		= {Prec_Keyword,	NULL,		led_colon},
 	[TOKEN_RANGE]
 		= {Prec_Identifiers,	NULL,		led_range},
+	[TOKEN_TAB]
+		= {Prec_Tab,		nud_tab,	NULL}
 };
 
 
 TreeNode *
-nud_newline (TreeNode *inp_tree, bool inp_was_newline,
-		IndentLL **inp_indent_list)
+nud_newline (TreeNode *inp_tree, bool inp_was_newline)
 {
-	TreeNode *out_node = parse(Prec_Newline, inp_tree, inp_was_newline,
-			inp_indent_list);
+	TreeNode *out_node = parse (Prec_Newline, inp_tree, inp_was_newline);
 	return out_node;
 }
 
 
+// We want this to spawn a unary tab node, and have its child be the ast for
+// the indented line.
 TreeNode *
-led_colon (TreeNode *tree, bool was_newline, IndentLL **indent_list)
+nud_tab (TreeNode *inp_tree, bool inp_was_newline)
+{
+	TreeNode *return_node = spawn_node (parser.previous);
+	// Unary marker.
+	return_node->left = spawn_node (spawn_token (TOKEN_RIGHT_PAREN));
+	// Should be tab precedence (breaks on newline).
+	return_node->right = parse ((table[parser.previous.type].precedence),
+			inp_tree, inp_was_newline);
+	return return_node;
+}
+
+
+TreeNode *
+led_colon (TreeNode *tree, bool was_newline)
 {
 	parser.previous = parser.current;
-	parser.current = get_next_token (false, indent_list);
+	parser.current = get_next_token (false);
 	return tree;
 }
 
 
 TreeNode *
-led_range (TreeNode *tree, bool was_newline, IndentLL **indent_list)
+led_range (TreeNode *tree, bool was_newline)
 {
 	// prev should be keyword in.
 	TreeNode *return_node = tree;
 	// Curr should be range.
 	return_node->left = spawn_node (parser.current);
 	// Consume integer nested in parens.
-	return_node->right = parse ((Prec_Right_Paren + 1), tree, was_newline,
-			indent_list);
+	return_node->right = parse ((Prec_Right_Paren + 1), tree, was_newline);
 	return return_node;
 }
 
 
 TreeNode *
-nud_in (TreeNode *tree, bool was_newline, IndentLL **indent_list)
+nud_in (TreeNode *tree, bool was_newline)
 {
 	TreeNode *return_node = spawn_node (parser.previous);
 	// We will let some other led handle weaving this correctly.
@@ -111,7 +125,7 @@ nud_in (TreeNode *tree, bool was_newline, IndentLL **indent_list)
 
 
 TreeNode *
-nud_for (TreeNode *tree, bool was_newline, IndentLL **indent_list)
+nud_for (TreeNode *tree, bool was_newline)
 {
 	TreeNode *return_node = spawn_node (parser.previous);
 	return return_node;
@@ -119,31 +133,31 @@ nud_for (TreeNode *tree, bool was_newline, IndentLL **indent_list)
 
 
 TreeNode *
-led_atom (TreeNode *tree, bool was_newline, IndentLL **indent_list)
+led_atom (TreeNode *tree, bool was_newline)
 {
 	// Tree should be for or something like that.
 	TreeNode *return_node = tree;
 	// curr should be identifier.
 	return_node->left = spawn_node (parser.current);
 	return_node->right = parse (table[parser.current.type].precedence,
-			tree, was_newline, indent_list);
+			tree, was_newline);
 	return return_node;
 }
 
 
 TreeNode *
-led_comma (TreeNode *tree, bool was_newline, IndentLL **indent_list)
+led_comma (TreeNode *tree, bool was_newline)
 {
 	TreeNode *return_node = spawn_node (parser.current);
 	return_node->left = parse (table[parser.current.type].precedence,
-			tree, was_newline, indent_list);
+			tree, was_newline);
 	return_node->right = tree;
 	return return_node;
 }
 
 
 TreeNode *
-nud_print (TreeNode *tree, bool was_newline, IndentLL **indent_list)
+nud_print (TreeNode *tree, bool was_newline)
 {
 	TreeNode *return_node = spawn_node (parser.previous);
 	return return_node;
@@ -151,49 +165,47 @@ nud_print (TreeNode *tree, bool was_newline, IndentLL **indent_list)
 
 
 TreeNode *
-led_binary (TreeNode *tree, bool was_newline, IndentLL **indent_list)
+led_binary (TreeNode *tree, bool was_newline)
 {
 	TreeNode *new_node = spawn_node (parser.current);
 	new_node->left = tree;
 	new_node->right = parse (table[parser.current.type].precedence,
-			tree, was_newline, indent_list);
+			tree, was_newline);
 	return new_node;
 }
 
 
 TreeNode *
-led_rparen (TreeNode *tree, bool was_newline, IndentLL **indent_list)
+led_rparen (TreeNode *tree, bool was_newline)
 {
 	parser.previous = parser.current;
-	parser.current = get_next_token (false, indent_list);
+	parser.current = get_next_token (false);
 	return tree;
 }
 
 
 TreeNode *
-nud_paren (TreeNode *tree, bool was_newline, IndentLL **indent_list)
+nud_paren (TreeNode *tree, bool was_newline)
 {
 	// +1 so it breaks on right parens.
-	TreeNode *inner = parse ((Prec_Right_Paren + 1), tree, was_newline,
-			indent_list);
+	TreeNode *inner = parse ((Prec_Right_Paren + 1), tree, was_newline);
 	return inner;
 }
 
 
 TreeNode *
-led_paren (TreeNode *tree, bool was_newline, IndentLL **indent_list)
+led_paren (TreeNode *tree, bool was_newline)
 {
 	TreeNode *return_node = tree;
 	return_node->left = spawn_node (spawn_token (TOKEN_RIGHT_PAREN));
 	// Consume args.
-	return_node->right = parse ((Prec_Right_Paren + 1), tree, was_newline,
-			indent_list);
+	return_node->right = parse ((Prec_Right_Paren + 1), tree, was_newline);
 	return return_node;
 }
 
 
 TreeNode *
-nud_atom (TreeNode *tree, bool was_newline, IndentLL **indent_list)
+nud_atom (TreeNode *tree, bool was_newline)
 {
 	TreeNode *tree_node = spawn_node (parser.previous);
 	return tree_node;
@@ -416,14 +428,13 @@ preorder (TreeNode *root, size_t size)
 
 
 TreeNode *
-parse (Precedence rbp, TreeNode *tree, bool was_newline,
-		IndentLL **indent_list)
+parse (Precedence rbp, TreeNode *tree, bool was_newline)
 {
 	// This boolean helps us to determine whether whitespace is acting as
 	// indentation. (Since python standard is to use spaces instead of
 	// tabs).
 	
-	parser.previous = get_next_token (was_newline, indent_list); // Initialize
+	parser.previous = get_next_token (was_newline); // Initialize
 
 	if (parser.previous.type == TOKEN_NEWLINE)
 	{
@@ -441,9 +452,9 @@ parse (Precedence rbp, TreeNode *tree, bool was_newline,
 		printf ("error in parse()\n");
 	}
 	// c(tree) will return identifier or value itself
-	TreeNode *left = c (tree, was_newline, indent_list);
+	TreeNode *left = c (tree, was_newline);
 	// Slip past identifier or val and get to operator
-	parser.current = get_next_token (was_newline, indent_list);
+	parser.current = get_next_token (was_newline);
 
 	if (parser.current.type == TOKEN_NEWLINE)
 	{
@@ -470,7 +481,7 @@ parse (Precedence rbp, TreeNode *tree, bool was_newline,
 			break;
 		}
 		c = table[parser.current.type].led; // Get infix code
-		left = c (left, was_newline, indent_list); // - run infix code
+		left = c (left, was_newline); // - run infix code
 	}
 
 	return left; // when rbp drops we break the loop and fold our tree
