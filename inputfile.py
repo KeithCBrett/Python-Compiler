@@ -1,2 +1,2 @@
-x in range(5)
-    print(x)
+x = 10
+print(x)

@@ -454,8 +454,10 @@ parse (Precedence rbp, TreeNode *tree, bool was_newline)
 	// c(tree) will return identifier or value itself
 	TreeNode *left = c (tree, was_newline);
 	// Slip past identifier or val and get to operator
-	parser.current = get_next_token (was_newline);
-
+	if (left->contents.type != TOKEN_TAB)
+	{
+		parser.current = get_next_token (was_newline);
+	}
 	if (parser.current.type == TOKEN_NEWLINE)
 	{
 		was_newline = true;
