@@ -22,37 +22,135 @@ tile (TreeNode *n, TreeNode *root, StNode **symbol_table,
 		VasmInstruction **vasm, size_t *line_num, bool *error,
 		CountArray *count_array)
 {
-	if (is_tree_node_empty (n) == false)
+	TreeNode *nearest_newline;
+	size_t indent_level;
+	bool is_loop_body = count_array->loop_body;
+	// Special handling for when we label members of a loop body.
+	if (count_array->loop_body)
 	{
-		tile
-			(n->left, root, symbol_table, vasm, line_num, error,
-			 count_array);
-		tile
-			(n->right, root, symbol_table, vasm, line_num, error,
-			 count_array);
-		label
-			(n, root, symbol_table, vasm, error, count_array);
+		// Annotate newline so that we don't code gen twice.
+		if (calc_type (n) == TOKEN_NEWLINE)
+		{
+			// Check if we have to break loop
+			if (calc_type (n->left) == TOKEN_TAB)
+			{
+				indent_level = n->left->contents.type;
+			}
+			else
+			{
+				indent_level = 0;
+			}
+			if (indent_level < count_array->indent_level)
+			{
+				count_array->loop_body = false;
+				return;
+			}
+			// Special 'boolean' that says we don't code gen for
+			// this branch again.
+			n->register_number = 1;
+		}
+		if (is_tree_node_empty (n) == false)
+		{
+			tile
+				(n->left, root, symbol_table, vasm, line_num,
+				 error, count_array);
+			tile
+				(n->right, root, symbol_table, vasm, line_num,
+				 error, count_array);
+			label
+				(n, root, symbol_table, vasm, line_num,
+				 error, count_array);
+		}
+		else
+		{
+			if (calc_indent_level (root, n)
+					< count_array->indent_level)
+			{
+				return;
+			}
+			label
+				(n, root, symbol_table, vasm, line_num,
+				 error, count_array);
+		}
 	}
+	// Handling for all other cases.
 	else
 	{
-		label
-			(n, root, symbol_table, vasm, error, count_array);
+		if (is_tree_node_empty (n) == false)
+		{
+			tile
+				(n->left, root, symbol_table, vasm, line_num,
+				 error, count_array);
+			tile
+				(n->right, root, symbol_table, vasm, line_num,
+				 error, count_array);
+			// Prevents code gen twice for loop body.
+			nearest_newline = calc_nearest_newline (n, root);
+			if (nearest_newline->register_number != 1)
+			{
+				label
+					(n, root, symbol_table, vasm, line_num,
+					 error, count_array);
+			}
+		}
+		else
+		{
+			// Prevents code gen twice for loop body.
+			nearest_newline = calc_nearest_newline (n, root);
+			if (nearest_newline->register_number != 1)
+			{
+				label
+					(n, root, symbol_table, vasm, line_num,
+					 error, count_array);
+
+			}
+		}
 	}
 }
 
 
-// label() annotates the node passed and then calls generate_asm to generate
-// virtual assembly, i.e. assembly without real registers allocated (only
-// instruction selection is performed).
-// label() should be where all of our tree pattern matching should be done.
+/*
+ * label ()
+ * Input:
+ * 	TreeNode *		<- Node in our A.S.T. to label. Labeling in
+ * 				this context means examining the node's type
+ * 				and choosing the corresponding instruction
+ * 				selection rule.
+ *
+ * 	TreeNode *		<- Root of our A.S.T. so that we can find a
+ * 				node's parent if we need to.
+ *
+ * 	StNode **		<- Symbol table for locating the register
+ * 				number assigned to variables, and other symbol
+ * 				table things if we need.
+ *
+ *	VasmInstruction **	<- A linked list of VASM instructions. In this
+ *				function we eventually get to a call of
+ *				generate_vasm () which will insert
+ *				instructions into our list.
+ * 
+ * 	bool *			<-  A pointer to some bool that describes
+ * 				whether or not an error occured. If an error
+ * 				occurs, we do all of our compiler work but
+ * 				delete our file afterwards. Essentially we
+ * 				emit nothing if this bool is true.
+ *
+ * 	CountArray *		<- A wrapper for various counters who's state
+ * 				must be perserved between function calls.
+ * Output:
+ * 	void			<- We dont emit anything, but the state of
+ * 				our VasmInstruction ** will be altered.
+*/
 void
 label (TreeNode *n, TreeNode *root, StNode **symbol_table,
-		VasmInstruction **vasm, bool *error, CountArray *count_array)
+		VasmInstruction **vasm, size_t *line_num, bool *error,
+		CountArray *count_array)
 {
 	TreeNode *temp_parent;
 	size_t prev_indent_level;
 	size_t curr_indent_level;
 	TreeNode *temp_node;
+	TreeNode *nearest_newline;
 	switch (n->contents.type)
 	{
 		case TOKEN_IDENTIFIER:
@@ -69,7 +167,7 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 					generate_vasm
 						(n->rule_number, n, root,
 						 symbol_table,
-						 vasm, count_array);
+						 vasm, line_num, count_array);
 					break;
 				}
 				else if (get_parent_type (n, root)
@@ -85,7 +183,7 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 					generate_vasm
 						(n->rule_number, n, root,
 						 symbol_table, vasm,
-						 count_array);
+						 line_num, count_array);
 					break;
 				}
 			}
@@ -97,16 +195,26 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 				n->rule_number = ASM_IDENTIFIER;
 				generate_vasm
 					(n->rule_number, n, root,
-					 symbol_table, vasm, count_array);
+					 symbol_table, vasm, line_num,
+					 count_array);
 				break;
 			}
 		case TOKEN_INTEGER:
 			n->reg = true;
-			n->rule_number = ASM_CONSTANT;
+			temp_parent = get_parent(n, root);
+			if (calc_type (temp_parent) == TOKEN_IN)
+			{
+				n->rule_number = ASM_DEFER;
+			}
+			else
+			{
+
+				n->rule_number = ASM_CONSTANT;
+			}
 			generate_vasm
 				(n->rule_number, n, root,
 				 symbol_table,
-				 vasm, count_array);
+				 vasm, line_num, count_array);
 			break;
 		case TOKEN_ADD:
 			if ((n->left->reg == true) && (n->right->reg == true))
@@ -116,7 +224,7 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, root,
 					 symbol_table,
-					 vasm, count_array);
+					 vasm, line_num, count_array);
 				break;
 			}
 			else
@@ -133,7 +241,7 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, root,
 					 symbol_table,
-					 vasm, count_array);
+					 vasm, line_num, count_array);
 				break;
 			}
 			else
@@ -150,7 +258,7 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, root,
 					 symbol_table,
-					 vasm, count_array);
+					 vasm, line_num, count_array);
 				break;
 			}
 			else
@@ -168,7 +276,7 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, root,
 					 symbol_table,
-					 vasm, count_array);
+					 vasm, line_num, count_array);
 				break;
 			}
 			else
@@ -185,7 +293,7 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, root,
 					 symbol_table,
-					 vasm, count_array);
+					 vasm, line_num, count_array);
 				break;
 			}
 			else
@@ -206,7 +314,7 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, root,
 					 symbol_table,
-					 vasm, count_array);
+					 vasm, line_num, count_array);
 				break;
 			}
 			else
@@ -223,18 +331,39 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, root,
 					 symbol_table,
-					 vasm, count_array);
+					 vasm, line_num, count_array);
 				break;
 			}
 			break;
 		case TOKEN_RANGE:
-			// We will let other tokens like FOR and IN handle
-			// this. They are higher up in the tree and thus
-			// have more information to work with.
-			n->rule_number = ASM_DEFER;
-			generate_vasm (n->rule_number, n, root,
-					symbol_table,
-					vasm, count_array);
+			// We will go down different I.S. paths depending
+			// on whether or not the loop has other loops nested
+			// within it.
+			temp_parent = get_parent (n, root);
+			temp_parent = get_parent (temp_parent, root);
+			// Now we are on TOKEN_FOR.
+			prev_indent_level = get_nesting_level
+				(root, temp_parent);
+			// Non-nested loop.
+			if (prev_indent_level == 0)
+			{
+				n->reg = true;
+				n->rule_number = ASM_FOR_INIT;
+				generate_vasm (n->rule_number, n, root,
+						symbol_table,
+						vasm, line_num, count_array);
+				break;
+			}
+			// Nested loop.
+			else
+			{
+				n->reg = true;
+				n->rule_number = ASM_FOR_INIT_NESTED;
+				generate_vasm (n->rule_number, n, root,
+						symbol_table,
+						vasm, line_num, count_array);
+				break;
+			}
 			break;
 		case TOKEN_IN:
 			if ((n->left->reg == true) && (n->right->reg == true))
@@ -244,7 +373,7 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 				generate_vasm
 					(n->rule_number, n, root,
 					 symbol_table,
-					 vasm, count_array);
+					 vasm, line_num, count_array);
 				break;
 			}
 			else
@@ -263,13 +392,12 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 			if ((n->left->reg == true) && (n->right->reg == true))
 			{
 				n->reg = true;
-				// Inits a counter, jumps to bottom of loop,
-				// spawns a label for loop body.
-				n->rule_number = ASM_FOR;
+				// Captures body, then closes loop around body.
+				n->rule_number = ASM_FOR_TERM;
 				generate_vasm
 					(n->rule_number, n, root,
-					 symbol_table,
-					 vasm, count_array);
+					 symbol_table, vasm, line_num,
+					 count_array);
 				break;
 			}
 			else
@@ -278,11 +406,9 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 				fprintf (stderr, "Error, tile(), TOKEN_FOR\n");
 				break;
 			}
+			break;
 		case TOKEN_RIGHT_PAREN:
 			break;
-		// Newline is somewhat important. It will probably handle
-		// multiple things, but for now it definitely sure handles
-		// closing for loops.
 		case TOKEN_NEWLINE:
 			// Handling for lack of indented body after for loop.
 			// ~NOTE~ Extract this into a mneumonic.
@@ -326,29 +452,6 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 			{
 				prev_indent_level = 0;
 			}
-
-			// Handling for the closing of loops.
-			if ((temp_parent == NULL) && (is_for_loop (n)))
-			{
-				n->reg = true;
-				n->rule_number = ASM_CLOSE_LOOP;
-				generate_vasm (n->rule_number, n, root,
-						symbol_table,
-						vasm, count_array);
-				break;
-			}
-			else if ((is_for_loop (n))
-					&& (indent_level_dropped
-						(prev_indent_level,
-						 curr_indent_level)))
-			{
-				n->reg = true;
-				n->rule_number = ASM_CLOSE_LOOP;
-				generate_vasm (n->rule_number, n, root,
-						symbol_table,
-						vasm, count_array);
-				break;
-			}
 			break;
 		case TOKEN_TAB:
 			n->reg = true;
@@ -369,19 +472,23 @@ convert_constant (int inp_length, const char *inp_string)
 		string[i] = inp_string[i];
 	}
 	string[inp_length+1] = 0;
-	size_t return_num = atoi(string);
+	size_t return_num = atoi (string);
 	return return_num;
 }
 
 
 void
 generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
-		VasmInstruction **vasm, CountArray *count_array)
+		VasmInstruction **vasm, size_t *line_num,
+		CountArray *count_array)
 {
 	VasmInstruction *instruction;
-
+	TreeNode *temp_node;
+	size_t label_offset;
+	size_t label_num;
 	// For register numbers associated with variables.
-	size_t register_num;
+	size_t register_num_l;
+	size_t register_num_r;
 	switch (r)
 	{
 		// Identifiers
@@ -397,9 +504,9 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 		// Non-lhs variable assignment
 		case ASM_IDENTIFIER_RS:
 			// MOV reg(i), reg(j)
-			register_num = st_search (symbol_table, n);
+			register_num_l = st_search (symbol_table, n);
 			instruction = spawn_vasm_op (VASM_MOV,
-					count_array->regcount, register_num,
+					count_array->regcount, register_num_l,
 					true, true, false);
 			*vasm = insert_vasm_instruction (*vasm, instruction);
 			n->register_number = count_array->regcount;
@@ -408,10 +515,10 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 		// Constants
 		case ASM_CONSTANT:
 			// MOV reg(i), CONST
-			register_num = convert_constant (n->contents.length,
+			register_num_l = convert_constant (n->contents.length,
 					n->contents.first_char);
 			instruction = spawn_vasm_op (VASM_MOV,
-					count_array->regcount, register_num,
+					count_array->regcount, register_num_l,
 					true, false, false);
 			*vasm = insert_vasm_instruction (*vasm, instruction);
 			n->register_number = count_array->regcount;
@@ -475,7 +582,8 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 			// NULL because div takes one operand
 			*vasm = insert_vasm_instruction
 				(*vasm, spawn_vasm_op
-				 (VASM_DIV, count_array->regcount, -1, true, true, false));
+				 (VASM_DIV, count_array->regcount, -1, true,
+				  true, false));
 			count_array->regcount += 1;
 			break;
 		// Equals
@@ -523,10 +631,10 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 			}
 			else if (n->right->reg == true)
 			{
-				register_num = st_search (symbol_table,
+				register_num_l = st_search (symbol_table,
 						n->right);
 				instruction = spawn_vasm_op (VASM_MOV,
-						REG_RCX, register_num,
+						REG_RCX, register_num_l,
 						true, true, false);
 				*vasm = insert_vasm_instruction
 					(*vasm, instruction);
@@ -567,27 +675,14 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 			count_array->regcount += 1;
 			break;
 		case ASM_IN:
-			// Standard 'for x in range(y):' esque statement.
-			if ((n->left->contents.type == TOKEN_RANGE)
-					&& (n->right->contents.type
-						= TOKEN_INTEGER))
-			{
-				// Get register number from integer already in
-				// register.
-				n->register_number = n->right->register_number;
-				n->reg = true;
-				break;
-			}
+			n->reg = true;
 			break;
-		case ASM_FOR:
-			// Initialize loop counter.
-			instruction = spawn_vasm_op
-				(VASM_XOR, count_array->regcount,
-				 count_array->regcount, true, true, false);
-			*vasm = insert_vasm_instruction (*vasm, instruction);
-
+		case ASM_FOR_INIT:
 			// Associate register id with loop var.
-			symbol_table = st_insert (symbol_table, n->left,
+			temp_node = get_parent(n, root);
+			// We should be on TOKEN_IN
+			symbol_table = st_insert (symbol_table,
+					temp_node->right,
 					count_array->regcount);
 			count_array->regcount += 1;
 
@@ -597,54 +692,131 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 				 false, false, false);
 			*vasm = insert_vasm_instruction (*vasm, instruction);
 
-			// Spawn label for proceeding code block. If the loop
-			// has other loops nested within it, we will need to 
-			// reserve multiple labels. We will us function
-			// check_indent_level () in order to ascertain the
-			// number of labels we need to reserve.
+			label_offset = 0;
 
-			// n should be of type TOKEN_FOR. check_indent_level
-			// expects type TOKEN_NEWLINE so we pass n's parent
-			// instead.
-			size_t label_num;
-			size_t label_offset = get_nesting_level (root, n);
-
-			// Now that we have a nesting level, we can generate
-			// labels according to whether we have a nested loop
-			// or not.
-			if (label_offset == 0)
+			label_num = label_offset
+				+ count_array->header_count + 1;
+			temp_node = get_parent (temp_node, root);
+			temp_node = get_parent (temp_node, root);
+			if (loop_nested (root, temp_node))
 			{
-				label_num = label_offset
-					+ count_array->header_count + 1;
-				count_array->header_count += 2;
+				count_array->header_count += 1;
 			}
 			else
 			{
-				label_num = (label_offset
-						+ count_array->header_count)
-					+ label_offset + 1;
-				count_array->header_count += 1;
+				count_array->header_count += 2;
 			}
 
 			instruction = spawn_vasm_op
 				(VASM_LOOP_CONST, label_num, -1, false, false,
 				 true);
 			*vasm = insert_vasm_instruction (*vasm, instruction);
-
 			n->reg = true;
 			break;
-		case ASM_CLOSE_LOOP:
-			register_num = st_search (symbol_table,
-					n->left->right->left);
-			instruction = spawn_vasm_op (VASM_ADD, register_num, 1,
+		case ASM_FOR_INIT_NESTED:
+			// Below is the same as non-nested.
+			// Associate register id with loop var.
+			temp_node = get_parent (n, root);
+			// We should be on TOKEN_IN
+			symbol_table = st_insert (symbol_table,
+					temp_node->right,
+					count_array->regcount);
+			count_array->regcount += 1;
+
+			// Jump to loop bottom.
+			instruction = spawn_vasm_op
+				(VASM_JMP, count_array->header_count, -1,
+				 false, false, false);
+			*vasm = insert_vasm_instruction (*vasm, instruction);
+
+			// Below differs from non-nested.
+			temp_node = get_parent (temp_node, root);
+			label_offset = get_nesting_level (root, temp_node);
+			label_num = count_array->header_count
+				* (label_offset + 1) + 1;
+			instruction = spawn_vasm_op
+				(VASM_LOOP_CONST, label_num, -1, false, false,
+				 true);
+			*vasm = insert_vasm_instruction (*vasm, instruction);
+			count_array->header_count += 1;
+			n->reg = true;
+			break;
+		case ASM_FOR_TERM:
+			// We must capture the loop body first, then generate
+			// the closure.
+
+			// First, we position our pointer on the next line in
+			// our A.S.T. (pointer should be TreeNode * of type
+			// TOKEN_NEWLINE.
+			// In order to this we first get the node's parent,
+			// excluding tabs. Then we go to the right branch
+			// (next line).
+			temp_node = calc_nearest_newline (n, root);
+			temp_node = temp_node->right;
+			// We should now be on the next line (node should be
+			// of type TOKEN_NEWLINE).
+
+			count_array->indent_level
+				= temp_node->left->contents.length;
+
+			// Now we can call tile () with our special boolean we
+			// placed in our CountArray. This boolean tells tile
+			// to annotate lines that we code gen for the body.
+			// This way, when we resume normal code gen, we won't
+			// perform instruction selection for those sub trees
+			// twice.
+			
+			// This special boolean also tells tile to return as
+			// soon as we leave the loop body.
+			count_array->loop_body = true;
+			tile (temp_node, root, symbol_table, vasm, line_num,
+					NULL, count_array);
+			// If the for loop's body is also EOF, we have to
+			// manually annotate that node so we don't I.S.
+			// again.
+			if (calc_type (temp_node) == TOKEN_TAB)
+			{
+				temp_node = get_parent (temp_node, root);
+				temp_node->register_number = 1;
+				count_array->loop_body = false;
+
+			}
+
+			// Now that we have captured the body, we can close
+			// our loop now.
+
+			// We will start by incrementing our loop var. First,
+			// get loop var's associated register.
+			register_num_l = st_search (symbol_table, n->left);
+			// We will just hardcode 1 for now ~NOTE~.
+			instruction = spawn_vasm_op (VASM_ADD, register_num_l, 1,
 					true, false, false);
 			*vasm = insert_vasm_instruction (*vasm, instruction);
 
-			register_num = get_nesting_level (root, n);
-			register_num += count_array->header_count;
-			instruction = spawn_vasm_op (VASM_LOOP_CONST,
-					register_num, -1, false, false, true);
+			// Now we will spawn our loop label.
+			instruction = spawn_vasm_op
+				(VASM_LOOP_CONST, count_array->footer_count,
+				 -1, false, false, true);
 			*vasm = insert_vasm_instruction (*vasm, instruction);
+			count_array->footer_count += 1;
+
+			// Now we do our cmp and jmp to restart the loop if
+			// necessary.
+			register_num_l = st_search (symbol_table, n->left);
+			temp_node = n->right->right;
+			register_num_r = convert_constant
+				(temp_node->contents.length,
+				 temp_node->contents.first_char);
+			register_num_r--;
+			instruction = spawn_vasm_op (VASM_CMP, register_num_l,
+					register_num_r, true, false, false);
+			*vasm = insert_vasm_instruction (*vasm, instruction);
+
+			instruction = spawn_vasm_op(VASM_JLE,
+					count_array->footer_count, -1, false,
+					false, false);
+			*vasm = insert_vasm_instruction (*vasm, instruction);
+			count_array->footer_count += 1;
 			break;
 		case ASM_DEFER:
 			// ASM_DEFER does nothing, we use it to skip curtain
@@ -1228,6 +1400,24 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 					"Error in output_vasm_file VASM_JMP\n");
 					break;
 				}
+			case VASM_JLE:
+				if (no_registers (inp_vasm))
+				{
+					fprintf (inp_file,
+						"jle\t\tLC%zu\n",
+						inp_vasm->regl);
+					// for jumps, maybe have label data
+					// contain destination info.
+					inp_vasm->label_data.id
+						= inp_vasm->regl;
+					break;
+				}
+				else
+				{
+					fprintf (stderr,
+					"Error in output_vasm_file VASM_JLE\n");
+					break;
+				}
 			case VASM_LOOP_CONST:
 				if (no_registers (inp_vasm))
 				{
@@ -1504,5 +1694,75 @@ spawn_count_array (size_t inp_header_count, size_t inp_regcount,
 	out_arr->header_count = inp_header_count;
 	out_arr->footer_count = inp_footer_count;
 	out_arr->regcount = inp_regcount;
+	out_arr->indent_level = 0;
+	out_arr->loop_body = false;
 	return out_arr;
+}
+
+
+TreeNode *
+calc_nearest_newline (TreeNode *inp_node, TreeNode *inp_root)
+{
+	while (inp_node->contents.type != TOKEN_NEWLINE)
+	{
+		inp_node = get_parent(inp_node, inp_root);
+	}
+	return inp_node;
+}
+
+
+TokenType
+calc_type (TreeNode *inp_node)
+{
+	return inp_node->contents.type;
+}
+
+
+size_t
+calc_loop_num (TreeNode *inp_node)
+{
+	// Assuming node of type TOKEN_FOR.
+	TreeNode *temp_node = inp_node->right->right;
+	size_t out_num = convert_constant (temp_node->contents.length,
+			temp_node->contents.first_char);
+	return out_num;
+}
+
+
+bool
+loop_nested (TreeNode *inp_root, TreeNode *inp_node)
+{
+	TreeNode *temp = get_parent (inp_node, inp_root);
+	if (temp == NULL)
+	{
+		return false;
+	}
+	if (calc_type (temp) == TOKEN_TAB)
+	{
+		// If for is indented, its probably a nested loop.
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+
+size_t
+calc_indent_level (TreeNode *inp_root, TreeNode *inp_node)
+{
+	TreeNode *curr_node = get_parent (inp_node, inp_root);
+	while (true)
+	{
+		if (calc_type (curr_node) == TOKEN_NEWLINE)
+		{
+			return 0;
+		}
+		if (calc_type (curr_node) == TOKEN_TAB)
+		{
+			return curr_node->contents.length;
+		}
+		curr_node = get_parent (curr_node, inp_root);
+	}
 }

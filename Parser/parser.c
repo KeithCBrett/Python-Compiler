@@ -430,10 +430,6 @@ preorder (TreeNode *root, size_t size)
 TreeNode *
 parse (Precedence rbp, TreeNode *tree, bool was_newline)
 {
-	// This boolean helps us to determine whether whitespace is acting as
-	// indentation. (Since python standard is to use spaces instead of
-	// tabs).
-	
 	parser.previous = get_next_token (was_newline); // Initialize
 
 	if (parser.previous.type == TOKEN_NEWLINE)

@@ -33,25 +33,6 @@ ErrorCode
 ErrorCode;
 
 
-typedef struct
-CountArray {
-	size_t header_count;
-	size_t regcount;
-	size_t footer_count;
-}
-CountArray;
-
-
-typedef struct
-StNode {
-	int contents;
-	size_t lexeme;
-	TreeNode *node;
-	struct StNode *next;
-}
-StNode;
-
-
 typedef enum
 AsmRule
 {
@@ -68,8 +49,10 @@ AsmRule
 	ASM_COMMA = 10,
 	ASM_FORLOOPID,
 	ASM_IN,
-	ASM_FOR,
-	ASM_CLOSE_LOOP
+	ASM_FOR_INIT,
+	ASM_FOR_INIT_NESTED,
+	ASM_FOR_TERM,
+	ASM_FOR_TERM_NESTED,
 }
 AsmRule;
 
@@ -90,6 +73,7 @@ VasmOperation
 	VASM_INC = 10,
 	VASM_JE,
 	VASM_JMP,
+	VASM_JLE,
 	VASM_LOOP_CONST
 }
 VasmOperation;
@@ -101,6 +85,30 @@ LabelType
 	LOOP_CONST = 0,
 }
 LabelType;
+
+
+typedef struct
+CountArray {
+	size_t header_count;
+	size_t regcount;
+	size_t footer_count;
+	// For loop I.S..
+	size_t indent_level;
+	bool loop_body;
+}
+CountArray;
+
+
+typedef struct
+StNode {
+	int contents;
+	size_t lexeme;
+	TreeNode *node;
+	struct StNode *next;
+}
+StNode;
+
+
 
 
 typedef struct
@@ -183,19 +191,43 @@ StNode **
 st_spawn_table ();
 
 
-// Input: An array of linked lists spawned by st_spawn_table().
-// Output: Nothing, returns malloced memory back to heap with free.
+/*
+ * st_kill_table ()
+ * Input:
+ * 	StNode **	<- Symbol table we wish to free.
+ * Output:
+ * 	void		<- Nothing, we merely return the memory associated
+ * 			with our table back to the heap.
+*/
 void
 st_kill_table (StNode **);
 
-
-// Input: A symbol table spawned by st_spawn_table(), a AST node (typically of
-// type TOKEN_IDENTIFIER) and some register we wish to associate with said
-// identifer.
-// Output: Symbol table updated with new identifier and register association.
+/*
+ * st_insert ()
+ * Input:
+ * 	StNode **	<- Symbol table.
+ * 	TreeNode *	<- Some node in our A.S.T., typically of type
+ * 			TOKEN_IDENTIFIER. This is the node we are going to
+ * 			associate a VASM register number with.
+ * 	int		<- Register number we wish to associate with input
+ * 			TreeNode *.
+ * Output:
+ * 	StNode **	<- Symbol table, updated with new entry.
+*/
 StNode **
 st_insert (StNode **, TreeNode *, int);
 
+/*
+ * st_search ()
+ * Input:
+ * 	StNode **	<- Symbol table.
+ * 	TreeNode *	<- A node in our A.S.T., typically of type
+ * 			TOKEN_IDENTIFIER. We will return the vasm register
+ * 			number of this node.
+ * Output:
+ * 	size_t		<- The register number associated with input
+ * 			TreeNode *.
+*/
 size_t
 st_search (StNode **, TreeNode *);
 
@@ -233,7 +265,7 @@ fib_hash (size_t);
  *				occured.
 */
 void
-label (TreeNode *, TreeNode *, StNode **, VasmInstruction **, bool *,
+label (TreeNode *, TreeNode *, StNode **, VasmInstruction **, size_t *, bool *,
 		CountArray *);
 
 /*
@@ -248,23 +280,19 @@ label (TreeNode *, TreeNode *, StNode **, VasmInstruction **, bool *,
  *
  * 	TreeNode *		<- Root of A.S.T. proper.
  *
- *	size_t *		<- Register counter for assigning unique virtual
- *				register I.D.'s.
- *
  *	StNode **		<- Symbol table for symbol table things.
- *
- *	size_t *		<- Loop count for generating vasm level loop
- *				labels.
  *
  *	VasmInstruction **	<- Linked list of VASM instructions. This is
  *				is out implicit output.
+ *
+ *	CountArray *		<- Wrapper for counters.
  * Output:
  * 	We implicitly output vasm instructions to the linked list entered in
  * 	the VasmInstruction ** slot.
 */
 void
 generate_vasm (size_t, TreeNode *, TreeNode *, StNode **, VasmInstruction **,
-		CountArray *);
+		size_t *, CountArray *);
 
 /*
  * tile ()
@@ -376,10 +404,11 @@ spawn_python_error (ErrorCode, size_t);
 bool
 loop_nested (TreeNode *, TreeNode *);
 
-
 /*
  * get_nesting_level ()
  * Input:
+ * 	TreeNode *	<- Root of A.S.T..
+ *
  * 	TreeNode *	<- Node of type TOKEN_FOR. We return how deep the
  * 			nesting is within the loop. I.e. if there are no
  * 			nested loops within TreeNode *, we return 0.
@@ -390,7 +419,6 @@ loop_nested (TreeNode *, TreeNode *);
 */
 size_t
 get_nesting_level (TreeNode *, TreeNode *);
-
 
 /*
  * get_parent()
@@ -404,7 +432,6 @@ get_nesting_level (TreeNode *, TreeNode *);
 TreeNode *
 get_parent (TreeNode *, TreeNode *);
 
-
 /*
  * is_for_loop ()
  * Input:
@@ -416,7 +443,6 @@ get_parent (TreeNode *, TreeNode *);
 */
 bool
 is_for_loop (TreeNode *);
-
 
 /*
  * check_indent_level ()
@@ -432,7 +458,6 @@ is_for_loop (TreeNode *);
 size_t
 check_indent_level (TreeNode *);
 
-
 /*
  * spawn_count_array ()
  * Input:
@@ -444,4 +469,54 @@ check_indent_level (TreeNode *);
 */
 CountArray *
 spawn_count_array (size_t, size_t, size_t);
+
+/*
+ * calc_nearest_newline ()
+ * Input:
+ * 	TreeNode *	<- Node in our A.S.T.. We will find the nearest
+ * 			newline parent of this node, and return it.
+ *
+ * 	TreeNode *	<- Root of A.S.T..
+ * Output:
+ * 	TreeNode *	<- The nearest parent of type TOKEN_NEWLINE relative
+ * 			to input TreeNode *. Newlines and there register_num
+ * 			play a crucial role in deciding whether a subtree
+ * 			has code generated for it.
+*/
+TreeNode *
+calc_nearest_newline (TreeNode *, TreeNode *);
+
+TokenType
+calc_type (TreeNode *);
+
+void
+generate_vasm_body ();
+
+/*
+ * calc_loop_num ()
+ * Input:
+ * 	TreeNode *	<- Node of type TOKEN_FOR. We will return the number
+ * 			of times this loop is supposed to execute. I.e. the 10
+ * 			in "for i in range(10):"
+ * Ouput:
+ * 	size_t		<- explained above, we return the loop number (10) in
+ * 			the above scenario.
+*/
+size_t
+calc_loop_num (TreeNode *);
+
+
+/*
+ * calc_indent_level ()
+ * Input:
+ * 	TreeNode *	<- Root of our A.S.T.
+ * 	TreeNode *	<- Some node in our A.S.T.
+ * Output:
+ * 	size_t		<- First we try to find a tab by calling get_parent().
+ * 			If we get to a newline before we get to a tab, we
+ * 			return 0 to indicate lack of indentation. If we find a
+ * 			tab we return it's length.
+*/
+size_t
+calc_indent_level (TreeNode *, TreeNode *);
 #endif

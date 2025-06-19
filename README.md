@@ -57,6 +57,7 @@ result.
         given program.
 
 ## TO DO
+find all occurences of ~NOTE~
 ### Lexer:
 - Handle floating point.
 - Handle strings.
