@@ -23,9 +23,13 @@ tile (TreeNode *n, TreeNode *root, StNode **symbol_table,
 		CountArray *count_array)
 {
 	TreeNode *nearest_newline;
-	size_t indent_level;
+	size_t indent_level, temp_reg;
+	TreeNode *temp;
+	if (count_array->force_break_recursion == true)
+	{
+		return;
+	}
 	bool is_loop_body = count_array->loop_body;
-	// Special handling for when we label members of a loop body.
 	if (count_array->loop_body)
 	{
 		// Annotate newline so that we don't code gen twice.
@@ -34,7 +38,7 @@ tile (TreeNode *n, TreeNode *root, StNode **symbol_table,
 			// Check if we have to break loop
 			if (calc_type (n->left) == TOKEN_TAB)
 			{
-				indent_level = n->left->contents.type;
+				indent_level = n->left->contents.length;
 			}
 			else
 			{
@@ -48,18 +52,59 @@ tile (TreeNode *n, TreeNode *root, StNode **symbol_table,
 			// Special 'boolean' that says we don't code gen for
 			// this branch again.
 			n->register_number = 1;
+			if ((calc_if_last_line (n))
+					&& (count_array->first_entry))
+			{
+				// Handling for when last line is in body.
+				n->register_number = 3;
+				count_array->first_entry = false;
+			}
 		}
 		if (is_tree_node_empty (n) == false)
 		{
 			tile
 				(n->left, root, symbol_table, vasm, line_num,
 				 error, count_array);
+			if (count_array->force_break_recursion == true)
+			{
+				return;
+			}
 			tile
 				(n->right, root, symbol_table, vasm, line_num,
 				 error, count_array);
-			label
-				(n, root, symbol_table, vasm, line_num,
-				 error, count_array);
+			if (count_array->force_break_recursion == true)
+			{
+				return;
+			}
+			nearest_newline = calc_nearest_newline (n, root);
+			switch (nearest_newline->register_number)
+			{
+				case 3:
+					nearest_newline->register_number = 0;
+					tile
+						(nearest_newline->left, root,
+						 symbol_table, vasm, line_num,
+						 error, count_array);
+					nearest_newline->register_number = 2;
+					count_array->force_break_recursion
+						= true;
+					return;
+				case 2:
+					nearest_newline->register_number = 0;
+					tile
+						(nearest_newline->right, root,
+						 symbol_table, vasm, line_num,
+						 error, count_array);
+					nearest_newline->register_number = 1;
+					count_array->force_break_recursion
+						= true;
+					return;
+				default:
+					label
+						(n, root, symbol_table, vasm,
+						 line_num, error, count_array);
+					return;
+			}
 		}
 		else
 		{
@@ -76,33 +121,108 @@ tile (TreeNode *n, TreeNode *root, StNode **symbol_table,
 	// Handling for all other cases.
 	else
 	{
+		if (calc_if_last_line (n)
+				&& (count_array->first_entry))
+		{
+			n->register_number = 3;
+			count_array->first_entry = false;
+		}
 		if (is_tree_node_empty (n) == false)
 		{
 			tile
 				(n->left, root, symbol_table, vasm, line_num,
 				 error, count_array);
+			if (count_array->force_break_recursion == true)
+			{
+				return;
+			}
 			tile
 				(n->right, root, symbol_table, vasm, line_num,
 				 error, count_array);
+			if (count_array->force_break_recursion == true)
+			{
+				return;
+			}
 			// Prevents code gen twice for loop body.
 			nearest_newline = calc_nearest_newline (n, root);
-			if (nearest_newline->register_number != 1)
+			// Check if we have to break due to indented block
+			// ending.
+			if ((check_indent_level (nearest_newline)
+					< count_array->indent_level)
+					&& (nearest_newline->register_number
+						!= 1))
 			{
 				label
-					(n, root, symbol_table, vasm, line_num,
-					 error, count_array);
+					(n, root, symbol_table, vasm,
+					 line_num, error, count_array);
+				count_array->force_break_recursion = true;
+				nearest_newline->register_number = 1;
+				return;
+			}
+			switch (nearest_newline->register_number)
+			{
+				case 0:
+					label
+						(n, root, symbol_table, vasm,
+						 line_num, error, count_array);
+					break;
+				case 2:
+					nearest_newline->register_number = 0;
+					tile
+						(nearest_newline->right, root,
+						 symbol_table, vasm, line_num,
+						 error, count_array);
+					nearest_newline->register_number = 1;
+					count_array->force_break_recursion
+						= true;
+					break;
+				case 3:
+					nearest_newline->register_number = 0;
+					tile
+						(nearest_newline->left, root,
+						 symbol_table, vasm, line_num,
+						 error, count_array);
+					nearest_newline->register_number = 2;
+					count_array->force_break_recursion
+						= true;
+					break;
+				default:
+					return;
 			}
 		}
 		else
 		{
 			// Prevents code gen twice for loop body.
 			nearest_newline = calc_nearest_newline (n, root);
-			if (nearest_newline->register_number != 1)
+			switch (nearest_newline->register_number)
 			{
-				label
-					(n, root, symbol_table, vasm, line_num,
-					 error, count_array);
-
+				case 0:
+					label
+						(n, root, symbol_table, vasm,
+						 line_num, error, count_array);
+					break;
+				case 2:
+					nearest_newline->register_number = 0;
+					tile
+						(nearest_newline->right, root,
+						 symbol_table, vasm, line_num,
+						 error, count_array);
+					nearest_newline->register_number = 1;
+					count_array->force_break_recursion
+						= true;
+					break;
+				case 3:
+					nearest_newline->register_number = 0;
+					tile
+						(nearest_newline->left, root,
+						 symbol_table, vasm, line_num,
+						 error, count_array);
+					nearest_newline->register_number = 2;
+					count_array->force_break_recursion
+						= true;
+					break;
+				default:
+					break;
 			}
 		}
 	}
@@ -115,7 +235,7 @@ tile (TreeNode *n, TreeNode *root, StNode **symbol_table,
  * 	TreeNode *		<- Node in our A.S.T. to label. Labeling in
  * 				this context means examining the node's type
  * 				and choosing the corresponding instruction
- * 				selection rule.
+ * 				selection rule (we match tree patterns).
  *
  * 	TreeNode *		<- Root of our A.S.T. so that we can find a
  * 				node's parent if we need to.
@@ -319,8 +439,10 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 			}
 			else
 			{
-				n->reg = false;
-				printf ("TOKEN_PRINT tile error");
+				// ~NOTE~ For nested loops we sometimes get
+				// to this error.
+				n->reg = true;
+				//printf ("TOKEN_PRINT tile error");
 				break;
 			}
 		case TOKEN_COMMA:
@@ -429,7 +551,7 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 			temp_parent = get_parent (n, root);
 			if (check_left_branch (n) == TOKEN_TAB)
 			{
-				curr_indent_level = n->left->contents.type;
+				curr_indent_level = n->left->contents.length;
 			}
 			else
 			{
@@ -437,7 +559,8 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 			}
 			if (temp_parent != NULL)
 			{
-				if (check_left_branch (temp_parent) == TOKEN_TAB)
+				if (check_left_branch (temp_parent)
+						== TOKEN_TAB)
 				{
 					prev_indent_level
 						= temp_parent->left->
@@ -457,7 +580,7 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 			n->reg = true;
 			break;
 		default:
-			fprintf(stderr, "error in label\n");
+			fprintf (stderr, "error in label\n");
 			break;
 	}
 }
@@ -484,6 +607,7 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 {
 	VasmInstruction *instruction;
 	TreeNode *temp_node;
+	TreeNode *other_temp_node;
 	size_t label_offset;
 	size_t label_num;
 	// For register numbers associated with variables.
@@ -607,8 +731,8 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 				// rooted at comma.
 				TreeNode *arg_array = get_arg_array (n->right);
 				
-				size_t num_nodes = ((count_tree_nodes (n->right)
-							+ 1) / 2);
+				size_t num_nodes = ((count_tree_nodes
+							(n->right) + 1) / 2);
 
 				// Once we have the array of args, we call some
 				// assembly function that combines the args
@@ -756,6 +880,31 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 			// We should now be on the next line (node should be
 			// of type TOKEN_NEWLINE).
 
+			// Special handling for loop body also being eof.
+			if (calc_type (temp_node) == TOKEN_TAB)
+			{
+				other_temp_node = get_parent
+					(temp_node, root);
+				other_temp_node->register_number = 1;
+			}
+
+			// We have to handle degenerate case ii in notebook.
+			// Essentially, when temp_node is a newline with two
+			// tab children, sometimes the length of the left tab
+			// is greater than the right. We handle this case
+			// manually.
+			// We will basically tile n.right and try to break
+			// afterwards.
+			/*
+			if (tree_pattern_match (temp_node, PATTERN_V_LOOP))
+			{
+				temp_node->register_number = 0;
+				tile (temp_node->right, root, symbol_table,
+						vasm, line_num, NULL,
+						count_array);
+				break;
+			}
+			*/
 			count_array->indent_level
 				= temp_node->left->contents.length;
 
@@ -769,17 +918,17 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 			// This special boolean also tells tile to return as
 			// soon as we leave the loop body.
 			count_array->loop_body = true;
+			temp_node->register_number = 1;
 			tile (temp_node, root, symbol_table, vasm, line_num,
 					NULL, count_array);
 			// If the for loop's body is also EOF, we have to
 			// manually annotate that node so we don't I.S.
 			// again.
-			if (calc_type (temp_node) == TOKEN_TAB)
+			if (calc_type (temp_node->right) == TOKEN_TAB)
 			{
 				temp_node = get_parent (temp_node, root);
 				temp_node->register_number = 1;
 				count_array->loop_body = false;
-
 			}
 
 			// Now that we have captured the body, we can close
@@ -789,8 +938,8 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 			// get loop var's associated register.
 			register_num_l = st_search (symbol_table, n->left);
 			// We will just hardcode 1 for now ~NOTE~.
-			instruction = spawn_vasm_op (VASM_ADD, register_num_l, 1,
-					true, false, false);
+			instruction = spawn_vasm_op (VASM_ADD, register_num_l,
+					1, true, false, false);
 			*vasm = insert_vasm_instruction (*vasm, instruction);
 
 			// Now we will spawn our loop label.
@@ -817,6 +966,9 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 					false, false);
 			*vasm = insert_vasm_instruction (*vasm, instruction);
 			count_array->footer_count += 1;
+			// Done consuming loop body
+			count_array->loop_body = false;
+			count_array->force_break_recursion = false;
 			break;
 		case ASM_DEFER:
 			// ASM_DEFER does nothing, we use it to skip curtain
@@ -1076,8 +1228,8 @@ st_spawn_table ()
 size_t
 fib_hash (size_t input)
 {
-	// word size (2^64) * nearest int to phi^-1 * wordsize relativeley prime
-	// to wordsize (0.618...)
+	// word size (2^64) * nearest int to phi^-1 * wordsize relativeley
+	// prime to wordsize (0.618...)
 	size_t a = 11400714819323198485llu;
 	size_t output = a * input;
 	// 64 - 59 = 5 bytes = 31 max hashtable slots.
@@ -1429,7 +1581,9 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 				else
 				{
 					fprintf (stderr,
-					"Error in output_vasm_file VASM_LOOP_CONST\n");
+					"Error in output_vasm_file");
+					fprintf (stderr,
+					" VASM_LOOP_CONST");
 					break;
 				}
 			default:
@@ -1571,14 +1725,16 @@ get_nesting_level (TreeNode *inp_root, TreeNode *inp_node)
 			// it's not we will have to return an error (A for loop
 			// needs a indented body).
 			if ((check_left_branch (temp_root) != TOKEN_TAB)
-					&& temp_root->contents.type != TOKEN_TAB)
+					&& temp_root->contents.type
+					!= TOKEN_TAB)
 			{
 				return 0;
 			}
 			// If temp_root is of type TOKEN_TAB, this implys that
 			// we are at eof.
 			else if ((check_left_branch (temp_root) != TOKEN_TAB)
-					&& temp_root->contents.type == TOKEN_TAB)
+					&& temp_root->contents.type
+					== TOKEN_TAB)
 			{
 				return out_level;
 			}
@@ -1614,8 +1770,10 @@ get_nesting_level (TreeNode *inp_root, TreeNode *inp_node)
 		// After this is done we start the process again with the next
 		// line.
 		if ((check_left_branch (temp_root) == TOKEN_TAB)
-				&& (check_indent_level (temp_root) >= body_indent_level)
-				&& (check_left_branch_tabless (temp_root) == TOKEN_FOR))
+				&& (check_indent_level (temp_root)
+					>= body_indent_level)
+				&& (check_left_branch_tabless (temp_root)
+					== TOKEN_FOR))
 		{
 			out_level++;
 		}
@@ -1696,6 +1854,8 @@ spawn_count_array (size_t inp_header_count, size_t inp_regcount,
 	out_arr->regcount = inp_regcount;
 	out_arr->indent_level = 0;
 	out_arr->loop_body = false;
+	out_arr->force_break_recursion = false;
+	out_arr->first_entry = true;
 	return out_arr;
 }
 
@@ -1764,5 +1924,146 @@ calc_indent_level (TreeNode *inp_root, TreeNode *inp_node)
 			return curr_node->contents.length;
 		}
 		curr_node = get_parent (curr_node, inp_root);
+	}
+}
+
+
+bool
+tree_pattern_match (TreeNode *inp_node, PatternRule inp_rule)
+{
+	size_t left_indent;
+	size_t right_indent;
+	switch (inp_rule)
+	{
+		case PATTERN_V_LOOP:
+			if ((calc_type (inp_node) == TOKEN_NEWLINE)
+					&& (calc_type (inp_node->left)
+						== TOKEN_TAB)
+					&& (calc_type (inp_node->right)
+						== TOKEN_TAB))
+			{
+				left_indent
+					= inp_node->left->contents.length;
+				right_indent
+					= inp_node->right->contents.length;
+				if (left_indent > right_indent)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else if ((calc_type (inp_node) == TOKEN_NEWLINE)
+					&& (calc_type (inp_node->left)
+						== TOKEN_TAB)
+					&& (calc_type (inp_node->right)
+						== TOKEN_NEWLINE)
+					&& (calc_type (inp_node->right->left)
+						== TOKEN_TAB))
+			{
+				left_indent
+					= inp_node->left->contents.length;
+				right_indent
+					= inp_node->right->left
+					->contents.length;
+				if (left_indent > right_indent)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			break;
+		default:
+			return false;
+			break;
+	}
+	return false;
+}
+
+
+TreeNode *
+get_outer_for (TreeNode *inp_node, TreeNode *inp_root)
+{
+	// Parent should be newline after this.
+	TreeNode *parent = get_parent (inp_node, inp_root);
+	size_t indent_level;
+	TreeNode *temp;
+	// If the left branch is of type TOKEN_TAB, we use it's length as the
+	// reference indent_level. Else we
+	if (calc_type (parent->left) == TOKEN_TAB)
+	{
+		indent_level = parent->left->contents.length;
+	}
+	else
+	{
+		indent_level = 0;
+	}
+	while (indent_level != 0)
+	{
+		temp = parent;
+		parent = get_parent (parent, inp_root);
+		if (parent == NULL )
+		{
+			if (calc_type (temp->left) == TOKEN_TAB)
+			{
+				return temp->left->right;
+			}
+			else
+			{
+				return temp->left;
+			}
+		}
+		if ((calc_type (parent->left) == TOKEN_TAB)
+				&& calc_type (parent->left->right)
+				== TOKEN_FOR)
+		{
+			indent_level = parent->left->contents.length;
+		}
+		else
+		{
+			indent_level = 0;
+		}
+	}
+	if (calc_type (parent->left) == TOKEN_TAB)
+	{
+		return parent->left->right;
+	}
+	else
+	{
+		return parent->left;
+	}
+}
+
+
+bool
+calc_if_num_even (size_t inp_num)
+{
+	if ((inp_num % 2) == 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+
+bool
+calc_if_last_line (TreeNode *inp_node)
+{
+	if ((calc_type (inp_node) == TOKEN_NEWLINE)
+			&& (calc_type (inp_node->right) != TOKEN_NEWLINE))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }

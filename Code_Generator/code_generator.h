@@ -22,6 +22,17 @@ LineInfo
 LineInfo;
 
 
+// PatternRules help to match tree patterns with function
+// tree_pattern_match (). Mainly used to simplify the long conditional checks
+// that come with matching subtrees.
+typedef enum
+PatternRule
+{
+	PATTERN_V_LOOP = 0,
+}
+PatternRule;
+
+
 // Here we define the different error codes (like lack of indented block after
 // for loop). We will insert them into spawn_python_error function whenever a
 // incorrect tree pattern is found.
@@ -95,6 +106,10 @@ CountArray {
 	// For loop I.S..
 	size_t indent_level;
 	bool loop_body;
+	// So we can stop when last line encountered.
+	bool force_break_recursion;
+	// for nested loops
+	bool first_entry;
 }
 CountArray;
 
@@ -519,4 +534,63 @@ calc_loop_num (TreeNode *);
 */
 size_t
 calc_indent_level (TreeNode *, TreeNode *);
+
+
+/*
+ * tree_pattern_match ()
+ * Input:
+ * 	TreeNode *		<- A node in our A.S.T.. We will perform the
+ * 				pattern matching at this root.
+ *
+ * 	PatternRule		<- A pattern to match.
+ * Output:
+ * 	bool			<- True if we match the pattern, false
+ * 				otherwise.
+*/
+bool
+tree_pattern_match (TreeNode *, PatternRule);
+
+
+/*
+ * get_outer_for ()
+ * Input:
+ * 	TreeNode *	<- Some node of type NEWLINE (presumably nested within
+ * 			a for loop. The return will be the outermost TOKEN_FOR
+ * 			we can find (TOKEN_FOR with lowest indent_level).
+ * 	TreeNode *	<- Root of A.S.T..
+ * Output:
+ * 	TreeNode *	<- Outermost node of type TOKEN_FOR. We will later
+ * 			calculate the nesting level with get_nesting_level().
+ * 			We will then use that nesting level to know when to
+ * 			stop code-gen for our loop.
+*/
+TreeNode *
+get_outer_for (TreeNode *, TreeNode *);
+
+
+/*
+ * calc_if_num_even ()
+ * Input:
+ * 	size_t		<- Some number, typically a register_num or
+ * 			rule_number.
+ * Output:
+ * 	bool		<- Boolean describing whether the number is even or
+ * 			not. This is an integral helper function for the
+ * 			instruction selection of nested 'v' loops.
+*/
+bool
+calc_if_num_even (size_t);
+
+
+/*
+ * calc_if_last_line ()
+ * Input:
+ * 	TreeNode *	<- Some node of type TOKEN_NEWLINE.
+ *
+ * Output:
+ * 	bool		<- Some boolean describing whether or not the right
+ * 			side is equal to type NEWLINE or not.
+*/
+bool
+calc_if_last_line (TreeNode *);
 #endif
