@@ -1,3 +1,40 @@
+#   What is this file?
+- Below are a collection of python programs. All programs below will execute
+on the python interpreter, meaning that pyco must emit semantically equivilant
+code for all inputs below.
+    - Essentially, we use these as test programs for our compiler.
+    - We also assign each input a Roman numeral to identify said input. This
+    will allow us to write about certain inputs/mark them as problem inputs in
+    my TODO list.
+
+##  LOOPS
+### INPUT I
+for i in range(5):
+    print(i)
+for j in range(10):
+    print(j)
+
+### INPUT II
+for i in range(5):
+    for j in range(10):
+        print(j)
+    print(i)
+
+### INPUT III
+for i in range(5):
+    print(i)
+    for j in range(10):
+        print(j)
+
+### INPUT IV
+for i in range(5):
+    for j in range(10):
+        for x in range(15):
+            print(x)
+        print(j)
+    print(i)
+
+### INPUT V
 for a in range(1):
     for b in range(2):
         for c in range(3):
@@ -24,3 +61,4 @@ for a in range(1):
             print(c)
         print(b)
     print(a)
+
