@@ -1,73 +1,56 @@
 xor		r(5), r(5)
 jmp		LC2
 LC25:
-
 xor		r(7), r(7)
 jmp		LC3
 LC34:
-
 xor		r(9), r(9)
 jmp		LC4
 LC41:
-
 xor		r(11), r(11)
 jmp		LC5
 LC46:
-
 xor		r(13), r(13)
 jmp		LC6
 LC49:
-
 xor		r(15), r(15)
 jmp		LC7
 LC50:
-
 xor		r(17), r(17)
 jmp		LC8
 LC49:
-
 xor		r(19), r(19)
 jmp		LC9
 LC46:
-
 xor		r(21), r(21)
 jmp		LC10
 LC41:
-
 xor		r(23), r(23)
 jmp		LC11
 LC34:
-
 xor		r(25), r(25)
 jmp		LC12
 LC25:
-
 xor		r(27), r(27)
 jmp		LC13
 LC14:
-
 mov		r(2), r(28)
 call		printstr
-
 add		r(28), 1
 LC2:
 cmp		r(28), 12
 jle		LC3
-
 mov		r(2), r(25)
 call		printstr
-
 add		r(25), 1
 LC4:
 cmp		r(25), 11
 jle		LC5
-
-mov		r(2), r(18446744073709551615)
+mov		r(2), r(23)
 call		printstr
-
-add		r(18446744073709551615), 1
+add		r(23), 1
 LC6:
-cmp		r(18446744073709551615), 10
+cmp		r(23), 10
 jle		LC7
 mov		r(2), r(21)
 call		printstr

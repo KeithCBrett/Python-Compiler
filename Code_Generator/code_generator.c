@@ -843,8 +843,9 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 			// Associate register id with loop var.
 			temp_node = get_parent (n, root);
 			// We should be on TOKEN_IN
+			temp_node = get_parent (n, root);
 			symbol_table = st_insert (symbol_table,
-					temp_node->right,
+					temp_node->left,
 					count_array->regcount);
 			count_array->regcount += 1;
 
