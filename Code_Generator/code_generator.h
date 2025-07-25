@@ -589,7 +589,8 @@ calc_if_num_even (size_t);
  *
  * Output:
  * 	bool		<- Some boolean describing whether or not the right
- * 			side is equal to type NEWLINE or not.
+ * 			side is equal to type NEWLINE or not. If the right
+ * 			side is not a newline, current node is last line.
 */
 bool
 calc_if_last_line (TreeNode *);
