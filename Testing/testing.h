@@ -7,15 +7,14 @@
 #include "../Parser/parser.h"
 
 
-// Input: Two AST's, one is the AST parse generated, the other one is the AST
-// we expected parse to generate.
-// Output: A boolean representing whether the tree was as expected or not.
-bool
-test_ast (TreeNode *, TreeNode *);
-
-
-// Input: Nothing.
-// Output: Runs the parser testing aperatus proper. Runs test_ast a whole bunch
-// and displays the results of the tests.
+/*
+ * display_result ()
+ * Input:
+ * 	bool	<- Bool describing whether the test was passed or not.
+ * 	size_t	<- Test number for display purposes.
+ * Output:
+ * 	void	<- Displays the number of the test, as well as whether the
+ * 		test was passed or not to stdout.
+*/
 void
-test_parser ();
+display_result (bool, size_t);

@@ -123,6 +123,9 @@ main (int argc, char **argv)
 		}
 	}
 
+	display_result (true, 1);
+	display_result (false, 2);
+
 	kill_tree (root);
 	root = NULL;
 

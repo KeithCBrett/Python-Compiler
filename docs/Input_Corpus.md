@@ -62,3 +62,13 @@ for a in range(1):
         print(b)
     print(a)
 
+### INPUT VI
+y = 0
+for i in range(5):
+    for j in range(10):
+        print(j)
+        x = 16 + 9
+        print(x)
+    print(i)
+    y = y + i
+print(y)
