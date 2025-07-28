@@ -1,10 +1,8 @@
-for a in range(1):
-    for b in range(2):
-        for c in range(3):
-            for d in range(4):
-                for e in range(5):
-                    print(e)
-                print(d)
-            print(c)
-        print(b)
-    print(a)
+for i in range(5):
+    for j in range(10):
+        print(j)
+    print(i)
+for x in range(15):
+    for y in range(20):
+        print(y)
+    print(x)

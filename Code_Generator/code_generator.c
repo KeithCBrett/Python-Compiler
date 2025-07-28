@@ -806,13 +806,15 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 			n->reg = true;
 			break;
 		case ASM_FOR_INIT:
-			// Associate register id with loop var.
+			// Get register num from symbol table.
 			temp_node = get_parent (n, root);
 			// We should be on TOKEN_IN
 			temp_node = get_parent (temp_node, root);
+			/*
 			symbol_table = st_insert (symbol_table,
 					temp_node->left,
 					count_array->regcount);
+			*/
 			count_array->regcount += 1;
 
 			// Jump to loop bottom.
