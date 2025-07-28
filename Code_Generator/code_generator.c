@@ -150,7 +150,11 @@ tile (TreeNode *n, TreeNode *root, StNode **symbol_table,
 			if ((check_indent_level (nearest_newline)
 					< count_array->indent_level)
 					&& (nearest_newline->register_number
-						!= 1))
+						!= 1)
+					// crude check to see if loop is
+					// nested. ~NOTE~
+					&& (calc_type (nearest_newline->left)
+						== TOKEN_TAB))
 			{
 				label
 					(n, root, symbol_table, vasm,
@@ -2059,8 +2063,33 @@ calc_if_num_even (size_t inp_num)
 bool
 calc_if_last_line (TreeNode *inp_node)
 {
+	if (calc_type (inp_node) != TOKEN_NEWLINE)
+	{
+		return false;
+	}
+	size_t left_indent_level;
+	if (calc_type (inp_node->left) == TOKEN_TAB)
+	{
+		left_indent_level = inp_node->left->contents.length;
+	}
+	else
+	{
+		left_indent_level = 0;
+	}
+
+	size_t right_indent_level;
+	if (calc_type (inp_node->right) == TOKEN_TAB)
+	{
+		right_indent_level = inp_node->right->contents.length;
+	}
+	else
+	{
+		right_indent_level = 0;
+	}
+
 	if ((calc_type (inp_node) == TOKEN_NEWLINE)
-			&& (calc_type (inp_node->right) != TOKEN_NEWLINE))
+			&& (calc_type (inp_node->right) != TOKEN_NEWLINE)
+			&& (left_indent_level > right_indent_level))
 	{
 		return true;
 	}
