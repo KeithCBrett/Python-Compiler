@@ -6,6 +6,7 @@ display_result (bool inp_bool, size_t inp_test_num)
 {
 	fprintf (stdout, "---------------------------\n");
 	fprintf (stdout, "\tTest %zu\n\n", (inp_test_num));
+	fprintf (stdout, "%s\n\n", get_test_string (inp_test_num));
 	if (inp_bool)
 	{
 		fprintf (stdout, "STATUS: PASSED\n");

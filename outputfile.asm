@@ -5,7 +5,7 @@ mov		r(2), r(5)
 call		printstr
 add		r(5), 1
 LC2:
-cmp		r(5), 99
+cmp		r(5), 4
 jle		LC3
 xor		r(7), r(7)
 jmp		LC4
