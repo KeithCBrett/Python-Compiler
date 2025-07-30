@@ -60,7 +60,6 @@ main (int argc, char **argv)
 
 	initialize_lexer (source);
 
-	//test_parser();
 	TreeNode *root = NULL;
 	bool was_newline = true;
 
@@ -95,19 +94,15 @@ main (int argc, char **argv)
 	VasmInstruction *vasm = NULL;
 	VasmInstruction **p_vasm = &vasm;
 
-	// For virtual registers. We start at 100 because the first 100 are
-	// reserved for various things. For one, 0-4 are reserved for rax,
-	// rbx, rcx, rdx. We probably don't need all of them, but we definitely
-	// need atleast rdx and rax for division, even in vasm. The other
-	// reserved names are for primitive functions and helper functions
-	// like print, abs, and whatnot.
+	// We start our virtual register count at 5. This is because 0-4 are
+	// used to reference rax, rcx, etc.
 	CountArray *count_array = spawn_count_array (2, 5, 2);
 
 	// Perform instruction selection using virtual registers.
 	tile
 		(root, root, symbol_table, p_vasm, p_line_num, p_error,
 		 count_array);
-
+	run_tests();
 	const char *vasm_flag = "-vasm";
 	if ((strcmp (argv[1], vasm_flag)) == 0)
 	{
@@ -123,8 +118,6 @@ main (int argc, char **argv)
 		}
 	}
 
-	display_result (true, 1);
-	display_result (false, 2);
 
 	kill_tree (root);
 	root = NULL;

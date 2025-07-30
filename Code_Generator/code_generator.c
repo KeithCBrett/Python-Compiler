@@ -769,7 +769,7 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 
 				instruction = spawn_vasm_op (VASM_CALL,
 						VASM_FUNC_PRINTSTR, -1,
-						true, false, false);
+						false, false, false);
 				*vasm = insert_vasm_instruction
 					(*vasm, instruction);
 				break;
@@ -968,6 +968,7 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 			instruction = spawn_vasm_op (VASM_CMP, register_num_l,
 					register_num_r, true, false, false);
 			*vasm = insert_vasm_instruction (*vasm, instruction);
+			n->right->register_number = register_num_r;
 
 			instruction = spawn_vasm_op(VASM_JLE,
 					count_array->footer_count, -1, false,
