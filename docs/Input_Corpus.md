@@ -43,16 +43,6 @@ for a in range(1):
                     for f in range(6):
                         for g in range(7):
                             for h in range(8):
-                                for i in range(9):
-                                    for j in range(10):
-                                        for k in range(11):
-                                            for l in range(12):
-                                                for m in range(13):
-                                                    print(m)
-                                                print(l)
-                                            print(k)
-                                        print(j)
-                                    print(i)
                                 print(h)
                             print(g)
                         print(f)
