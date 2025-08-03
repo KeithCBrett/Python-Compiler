@@ -8,11 +8,15 @@ code for all inputs below.
     my TODO list.
 
 ##  LOOPS
+---
+
 ### INPUT I
 for i in range(5):
     print(i)
 for j in range(10):
     print(j)
+
+---
 
 ### INPUT II
 for i in range(5):
@@ -20,11 +24,15 @@ for i in range(5):
         print(j)
     print(i)
 
+---
+
 ### INPUT III
 for i in range(5):
     print(i)
     for j in range(10):
         print(j)
+
+---
 
 ### INPUT IV
 for i in range(5):
@@ -33,6 +41,8 @@ for i in range(5):
             print(x)
         print(j)
     print(i)
+
+---
 
 ### INPUT V
 for a in range(1):
@@ -52,6 +62,8 @@ for a in range(1):
         print(b)
     print(a)
 
+---
+
 ### INPUT VI
 y = 0
 for i in range(5):
@@ -62,3 +74,28 @@ for i in range(5):
     print(i)
     y = y + i
 print(y)
+
+---
+
+### INPUT VII
+for i in range(5):
+    for j in range(10):
+        print(j)
+    print(i)
+for x in range(3):
+    print(x)
+for y in range(6):
+    print(y)
+
+---
+
+### INPUT VIII
+for x in range(3):
+    print(x)
+for y in range(6):
+    print(y)
+for i in range(5):
+    for j in range(10):
+        print(j)
+    print(i)
+
