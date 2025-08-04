@@ -409,7 +409,7 @@ spawn_python_error (ErrorCode, size_t);
  * Input:
  * 	TreeNode *	<- Root of A.S.T..
  *
- * 	TreeNode *	<- Node within the A.S.T. of type newline. This is the
+ * 	TreeNode *	<- Node within the A.S.T. of type for. This is the
  * 			node we are checking.
  * Output:
  * 	bool		<- A boolean describing whether or not the node we are
@@ -433,7 +433,24 @@ loop_nested (TreeNode *, TreeNode *);
  * 			assembly labels.
 */
 size_t
-get_nesting_level (TreeNode *, TreeNode *);
+get_nesting_level (TreeNode *inp_root, TreeNode *inp_node);
+
+
+/*
+ * get_reverse_nesting_level ()
+ * Input:
+ * 	TreeNode *	<- Root of A.S.T..
+ *
+ * 	TreeNode *	<- Node of type TOKEN_FOR. We return how deeply nested
+ * 			this node is within other loops. I.e. for input II in
+ * 			the corpus, 'for i in range(5):' should return 0,
+ * 			while 'for j in range(10):' should return 1, since the
+ * 			ladder is nested within the former.
+ * Output:
+ * 	size_t 		<- How deeply nested this loop is within other loops.
+*/
+size_t
+get_reverse_nesting_level (TreeNode *inp_root, TreeNode *inp_node);
 
 /*
  * get_parent()

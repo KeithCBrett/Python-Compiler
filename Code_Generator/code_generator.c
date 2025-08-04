@@ -951,10 +951,26 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 			*vasm = insert_vasm_instruction (*vasm, instruction);
 
 			// Now we will spawn our loop label.
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, count_array->footer_count,
-				 -1, false, false, true);
-			*vasm = insert_vasm_instruction (*vasm, instruction);
+			// First, we need to check whether this for loop is
+			// nested within another for loop (or has a for loop
+			// nested whitin itself). If this is the case, we need
+			// to generate labels differently.
+			if ((loop_nested (root, n))
+					|| (get_nesting_level (root, n) > 0))
+			{
+				instruction = spawn_vasm_op
+					(VASM_LOOP_CONST,
+					 get_reverse_nesting_level (root, n),
+					 -1, false, false, true);
+				*vasm = insert_vasm_instruction (*vasm, instruction);
+			}
+			else
+			{
+				instruction = spawn_vasm_op
+					(VASM_LOOP_CONST, count_array->footer_count,
+					 -1, false, false, true);
+				*vasm = insert_vasm_instruction (*vasm, instruction);
+			}
 			count_array->footer_count += 1;
 
 			// Now we do our cmp and jmp to restart the loop if
@@ -970,11 +986,40 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 			*vasm = insert_vasm_instruction (*vasm, instruction);
 			n->right->register_number = register_num_r;
 
-			instruction = spawn_vasm_op(VASM_JLE,
-					count_array->footer_count, -1, false,
-					false, false);
-			*vasm = insert_vasm_instruction (*vasm, instruction);
-			count_array->footer_count += 1;
+			if ((get_reverse_nesting_level (root, n) > 0)
+					&& (get_nesting_level (root, n) == 0))
+			{
+				count_array->footer_count
+					= count_array->header_count;
+				count_array->footer_count -= 1;
+				instruction = spawn_vasm_op
+					(VASM_JLE, count_array->footer_count,
+					 -1, false, false, false);
+				*vasm = insert_vasm_instruction
+					(*vasm, instruction);
+				count_array->footer_count += 1;
+			}
+			else if ((get_reverse_nesting_level (root, n) > 0)
+					|| (get_nesting_level (root, n)))
+			{
+				count_array->footer_count -= 1;
+				instruction = spawn_vasm_op
+					(VASM_JLE, count_array->footer_count,
+					 -1, false, false, false);
+				*vasm = insert_vasm_instruction
+					(*vasm, instruction);
+				count_array->footer_count += 1;
+			}
+			else
+			{
+				instruction = spawn_vasm_op
+					(VASM_JLE, count_array->footer_count,
+					 -1, false, false, false);
+				*vasm = insert_vasm_instruction
+					(*vasm, instruction);
+				count_array->footer_count += 1;
+			}
+
 			// Done consuming loop body
 			count_array->loop_body = false;
 			count_array->force_break_recursion = false;
@@ -2100,4 +2145,35 @@ calc_if_last_line (TreeNode *inp_node)
 	{
 		return false;
 	}
+}
+
+
+size_t
+get_reverse_nesting_level (TreeNode *inp_root, TreeNode *inp_node)
+{
+	TreeNode *temp = inp_node;
+	size_t indent_level = 0;
+	size_t nesting_level = 0;
+	temp = get_parent (inp_node, inp_root);
+	if (calc_type (temp) == TOKEN_TAB)
+	{
+		indent_level = temp->contents.length;
+	}
+	else
+	{
+		return 2;
+	}
+	// Search until we find unindented for.
+	while ((calc_type (temp->left) != TOKEN_FOR))
+	{
+		if (temp->left->right != NULL)
+		{
+			if (calc_type (temp->left->right) == TOKEN_FOR)
+			{
+				nesting_level++;
+			}
+		}
+		temp = get_parent (temp, inp_root);
+	}
+	return nesting_level + 2;
 }
