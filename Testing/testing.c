@@ -4,7 +4,10 @@
 void
 display_result (bool inp_bool, size_t inp_test_num)
 {
-	fprintf (stdout, "-----------------------------------------------\n");
+	if (inp_bool)
+	{
+		fprintf (stdout, "-----------------------------------------------\n");
+	}
 	fprintf (stdout, "\n");
 	fprintf (stdout, "\tTest %zu\n\n", (inp_test_num));
 	fprintf (stdout, "%s\n\n", get_test_string (inp_test_num));
@@ -1097,6 +1100,14 @@ compare_vasm_list (VasmInstruction *inp_vasm1, VasmInstruction *inp_vasm2)
 		list_equal = compare_vasm_instruction (*inp_vasm1, *inp_vasm2);
 		if (list_equal == false)
 		{
+			fprintf (stderr, "\nExpected: %d  %zu, %zu, (%d, %d)\n",
+					inp_vasm2->op, inp_vasm2->regl,
+					inp_vasm2->regr, inp_vasm2->regl_reg,
+					inp_vasm2->regr_reg);
+			fprintf (stderr, "\nObtained: %d  %zu, %zu, (%d, %d)\n",
+					inp_vasm1->op, inp_vasm1->regl,
+					inp_vasm1->regr, inp_vasm1->regl_reg,
+					inp_vasm1->regr_reg);
 			return false;
 		}
 		inp_vasm1 = inp_vasm1->next;
@@ -1109,6 +1120,14 @@ compare_vasm_list (VasmInstruction *inp_vasm1, VasmInstruction *inp_vasm2)
 	}
 	else
 	{
+		fprintf (stderr, "\nExpected: %d  %zu, %zu, (%d, %d)\n",
+				inp_vasm2->op, inp_vasm2->regl,
+				inp_vasm2->regr, inp_vasm2->regl_reg,
+				inp_vasm2->regr_reg);
+		fprintf (stderr, "\nObtained: %d  %zu, %zu, (%d, %d)\n",
+				inp_vasm1->op, inp_vasm1->regl,
+				inp_vasm1->regr, inp_vasm1->regl_reg,
+				inp_vasm1->regr_reg);
 		return false;
 	}
 }

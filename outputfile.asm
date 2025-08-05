@@ -14,5 +14,5 @@ mov		r(2), r(5)
 call		printstr
 add		r(5), 1
 LC2:
-cmp		r(5), 4
+cmp		r(5), 56
 jle		LC5
