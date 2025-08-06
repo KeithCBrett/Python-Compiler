@@ -128,4 +128,18 @@ VASM_UNIT_jmp (VasmInstruction *, size_t);
 */
 VasmInstruction *
 VASM_UNIT_mov_reg_into_reg (VasmInstruction *, size_t, size_t);
+
+
+/*
+ * VASM_UNIT_call_vasm_func ()
+ * Input:
+ * 	VasmInstruction *	<- Linked list of VASM instructions so far.
+ *
+ * 	size_t			<- Number associate with function.
+ * Output:
+ * 	VasmInstruction *	<- Updated linked list with loop_const op
+ * 				added to end.
+*/
+VasmInstruction *
+VASM_UNIT_call_vasm_func (VasmInstruction *, size_t);
 #endif
