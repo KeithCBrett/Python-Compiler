@@ -97,4 +97,19 @@ VASM_UNIT_loop_const (VasmInstruction *, size_t);
 */
 VasmInstruction *
 VASM_UNIT_zero_register (VasmInstruction *, size_t);
+
+
+/*
+ * VASM_UNIT_jmp ()
+ * Input:
+ * 	VasmInstruction *	<- Linked list of VASM instructions so far.
+ *
+ * 	size_t			<- Const associated with label we want to jmp
+ * 				to.
+ * Output:
+ * 	VasmInstruction *	<- Updated linked list with loop_const op
+ * 				added to end.
+*/
+VasmInstruction *
+VASM_UNIT_jmp (VasmInstruction *, size_t);
 #endif
