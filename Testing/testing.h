@@ -68,4 +68,18 @@ compare_vasm_list (VasmInstruction *, VasmInstruction *);
 */
 char *
 get_test_string (size_t);
+
+
+/*
+ * VASM_spawn_loop_const ()
+ * Input:
+ * 	VasmInstruction *	<- Linked list of VASM instructions so far.
+ *
+ * 	size_t			<- Number to associate with loop const.
+ * Output:
+ * 	VasmInstruction *	<- Updated linked list with loop_const op
+ * 				added to end.
+*/
+VasmInstruction *
+VASM_UNIT_loop_const (VasmInstruction *inp_vasm, size_t inp_const);
 #endif

@@ -77,10 +77,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC3:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 3, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 3);
 			// mov rcx, r(5)
 			instruction = spawn_vasm_op
 				(VASM_MOV, REG_RCX, 5, true, true, false);
@@ -98,10 +96,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC2:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 2, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 2);
 			// cmp r(5), 4
 			instruction = spawn_vasm_op
 				(VASM_CMP, 5, 4, true, false, false);
@@ -123,10 +119,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC5:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 5, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 5);
 			// mov rcx r(7)
 			instruction = spawn_vasm_op
 				(VASM_MOV, REG_RCX, 7, true, true, false);
@@ -144,10 +138,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC4:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 4, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 4);
 			// cmp r(7), 9
 			instruction = spawn_vasm_op
 				(VASM_CMP, 7, 9, true, false, false);
@@ -174,10 +166,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC5:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 5, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 5);
 			// xor r(7), r(7)
 			instruction = spawn_vasm_op
 				(VASM_XOR, 7, 7, true, true, false);
@@ -189,10 +179,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC4:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 4, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 4);
 			// mov rcx, r(7)
 			instruction = spawn_vasm_op
 				(VASM_MOV, REG_RCX, 7, true, true, false);
@@ -210,10 +198,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC3:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 3, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 3);
 			// cmp r(7), 9
 			instruction = spawn_vasm_op
 				(VASM_CMP, 7, 9, true, false, false);
@@ -235,17 +221,14 @@ test_vasm (size_t inp_test_num)
 				 false, false);
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
-
 			// add r(5), 1
 			instruction = spawn_vasm_op
 				(VASM_ADD, 5, 1, true, false, false);
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC2:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 2, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 2);
 			// cmp r(5), 4
 			instruction = spawn_vasm_op
 				(VASM_CMP, 5, 4, true, false, false);
@@ -272,10 +255,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC5:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 5, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 5);
 			// mov rcx, r(5)
 			instruction = spawn_vasm_op
 				(VASM_MOV, REG_RCX, 5, true, true, false);
@@ -298,10 +279,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC4:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 4, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 4);
 			// mov rcx, r(7)
 			instruction = spawn_vasm_op
 				(VASM_MOV, REG_RCX, 7, true, true, false);
@@ -317,10 +296,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC3:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 3, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 3);
 			// cmp r(7), 9
 			instruction = spawn_vasm_op
 				(VASM_CMP, 7, 9, true, false, false);
@@ -337,10 +314,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC2:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 2, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 2);
 			// cmp r(5), 4
 			instruction = spawn_vasm_op
 				(VASM_CMP, 5, 4, true, false, false);
@@ -367,10 +342,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC7:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 7, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 7);
 			// xor r(7), r(7)
 			instruction = spawn_vasm_op
 				(VASM_XOR, 7, 7, true, true, false);
@@ -382,10 +355,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC6:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 6, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 6);
 			// xor r(9), r(9)
 			instruction = spawn_vasm_op
 				(VASM_XOR, 9, 9, true, true, false);
@@ -397,10 +368,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC5:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 5, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 5);
 			// mov rcx, r(9)
 			instruction = spawn_vasm_op
 				(VASM_MOV, REG_RCX, 9, true, true, false);
@@ -416,10 +385,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC4:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 4, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 4);
 			// cmp r(9), 14
 			instruction = spawn_vasm_op
 				(VASM_CMP, 9, 14, true, false, false);
@@ -445,10 +412,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC3:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 3, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 3);
 			// cmp r(7), 9
 			instruction = spawn_vasm_op
 				(VASM_CMP, 7, 9, true, false, false);
@@ -474,10 +439,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC2:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 2, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 2);
 			// cmp r(5), 4
 			instruction = spawn_vasm_op
 				(VASM_CMP, 5, 4, true, false, false);
@@ -504,10 +467,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC17:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 17, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 17);
 			// xor r(7), r(7)
 			instruction = spawn_vasm_op
 				(VASM_XOR, 7, 7, true, true, false);
@@ -519,10 +480,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC16:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 16, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 16);
 			// xor r(9), r(9)
 			instruction = spawn_vasm_op
 				(VASM_XOR, 9, 9, true, true, false);
@@ -534,10 +493,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC15:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 15, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 15);
 			// xor r(11), r(11)
 			instruction = spawn_vasm_op
 				(VASM_XOR, 11, 11, true, true, false);
@@ -549,10 +506,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC14:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 14, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 14);
 			// xor r(13), r(13)
 			instruction = spawn_vasm_op
 				(VASM_XOR, 13, 13, true, true, false);
@@ -564,10 +519,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC13:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 13, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 13);
 			// xor r(15), r(15)
 			instruction = spawn_vasm_op
 				(VASM_XOR, 15, 15, true, true, false);
@@ -579,10 +532,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC12:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 12, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 12);
 			// xor r(17), r(17)
 			instruction = spawn_vasm_op
 				(VASM_XOR, 17, 17, true, true, false);
@@ -594,10 +545,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC11:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 11, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 11);
 			// xor r(19), r(19)
 			instruction = spawn_vasm_op
 				(VASM_XOR, 19, 19, true, true, false);
@@ -609,10 +558,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC10:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 10, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 10);
 			// mov rcx, r(19)
 			instruction = spawn_vasm_op
 				(VASM_MOV, REG_RCX, 19, true, true, false);
@@ -628,10 +575,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC9:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 9, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 9);
 			// cmp r(19), 7
 			instruction = spawn_vasm_op
 				(VASM_CMP, 19, 7, true, false, false);
@@ -657,10 +602,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC8:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 8, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 8);
 			// cmp r(17), 6
 			instruction = spawn_vasm_op
 				(VASM_CMP, 17, 6, true, false, false);
@@ -686,10 +629,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC7:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 7, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 7);
 			// cmp r(15), 5
 			instruction = spawn_vasm_op
 				(VASM_CMP, 15, 5, true, false, false);
@@ -715,10 +656,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC6:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 6, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 6);
 			// cmp r(13), 4
 			instruction = spawn_vasm_op
 				(VASM_CMP, 13, 4, true, false, false);
@@ -744,10 +683,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC5:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 5, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 5);
 			// cmp r(11), 3
 			instruction = spawn_vasm_op
 				(VASM_CMP, 11, 3, true, false, false);
@@ -773,10 +710,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC4:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 4, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 4);
 			// cmp r(9), 2
 			instruction = spawn_vasm_op
 				(VASM_CMP, 9, 2, true, false, false);
@@ -802,10 +737,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC3:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 3, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 3);
 			// cmp r(7), 1
 			instruction = spawn_vasm_op
 				(VASM_CMP, 7, 1, true, false, false);
@@ -831,10 +764,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC2:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 2, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 2);
 			// cmp r(5), 0
 			instruction = spawn_vasm_op
 				(VASM_CMP, 5, 0, true, false, false);
@@ -876,10 +807,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC5:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 5, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 5);
 			// xor r(9), r(9)
 			instruction = spawn_vasm_op
 				(VASM_XOR, 9, 9, true, true, false);
@@ -891,10 +820,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC4:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 4, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 4);
 			// mov r(2), r(9)
 			instruction = spawn_vasm_op
 				(VASM_MOV, 2, 9, true, true, false);
@@ -944,10 +871,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC3:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 3, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 3);
 			// cmp r(9), 9
 			instruction = spawn_vasm_op
 				(VASM_CMP, 9, 9, true, false, false);
@@ -998,10 +923,8 @@ test_vasm (size_t inp_test_num)
 			comparison_output = insert_vasm_instruction
 				(comparison_output, instruction);
 			// LC2:
-			instruction = spawn_vasm_op
-				(VASM_LOOP_CONST, 2, -1, false, false, true);
-			comparison_output = insert_vasm_instruction
-				(comparison_output, instruction);
+			comparison_output = VASM_UNIT_loop_const
+				(comparison_output, 2);
 			// cmp r(7), 4
 			instruction = spawn_vasm_op
 				(VASM_CMP, 7, 4, true, false, false);
@@ -1176,4 +1099,15 @@ get_test_string (size_t inp_rule_num)
 			break;
 	}
 	return NULL;
+}
+
+
+VasmInstruction *
+VASM_UNIT_loop_const (VasmInstruction *inp_vasm, size_t inp_const)
+{
+	VasmInstruction *instruction = spawn_vasm_op
+		(VASM_LOOP_CONST, inp_const, -1, false, false, true);
+	inp_vasm = insert_vasm_instruction
+		(inp_vasm, instruction);
+	return inp_vasm;
 }
