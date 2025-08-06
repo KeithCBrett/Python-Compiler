@@ -471,7 +471,9 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 			prev_indent_level = get_nesting_level
 				(root, temp_parent);
 			// Non-nested loop.
-			if (prev_indent_level == 0)
+			if ((prev_indent_level == 0)
+					&& (get_reverse_nesting_level
+						(root, temp_parent, 0) == 0))
 			{
 				n->reg = true;
 				n->rule_number = ASM_FOR_INIT;
@@ -866,6 +868,21 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 			label_offset = get_nesting_level (root, temp_node);
 			label_num = count_array->header_count
 				* (label_offset + 1) + 1;
+			if (get_reverse_nesting_level (root, temp_node, 0) == 0)
+			{
+				label_num = (get_nesting_level
+						(root, temp_node) + 1) * 2 + 1;
+			}
+			else
+			{
+				other_temp_node = get_outer_for
+					(temp_node, root);
+				label_num = (get_nesting_level
+						(root, other_temp_node) + 1)
+					* 2 + 1;
+				label_num -= get_reverse_nesting_level
+					(root, temp_node, 0);
+			}
 			instruction = spawn_vasm_op
 				(VASM_LOOP_CONST, label_num, -1, false, false,
 				 true);
@@ -958,11 +975,14 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 			if ((loop_nested (root, n))
 					|| (get_nesting_level (root, n) > 0))
 			{
+				label_num = get_reverse_nesting_level
+					(root, n, 0);
+				label_num += 2;
 				instruction = spawn_vasm_op
-					(VASM_LOOP_CONST,
-					 get_reverse_nesting_level (root, n),
-					 -1, false, false, true);
-				*vasm = insert_vasm_instruction (*vasm, instruction);
+					(VASM_LOOP_CONST, label_num, -1, false,
+					 false, true);
+				*vasm = insert_vasm_instruction
+					(*vasm, instruction);
 			}
 			else
 			{
@@ -986,12 +1006,12 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 			*vasm = insert_vasm_instruction (*vasm, instruction);
 			n->right->register_number = register_num_r;
 
-			if ((get_reverse_nesting_level (root, n) > 0)
+			if ((get_reverse_nesting_level (root, n, 0) > 0)
 					&& (get_nesting_level (root, n) == 0))
 			{
 				count_array->footer_count
 					= count_array->header_count;
-				count_array->footer_count -= 1;
+			//	count_array->footer_count -= 1;
 				instruction = spawn_vasm_op
 					(VASM_JLE, count_array->footer_count,
 					 -1, false, false, false);
@@ -999,7 +1019,7 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 					(*vasm, instruction);
 				count_array->footer_count += 1;
 			}
-			else if ((get_reverse_nesting_level (root, n) > 0)
+			else if ((get_reverse_nesting_level (root, n, 0) > 0)
 					|| (get_nesting_level (root, n)))
 			{
 				count_array->footer_count -= 1;
@@ -2044,7 +2064,7 @@ TreeNode *
 get_outer_for (TreeNode *inp_node, TreeNode *inp_root)
 {
 	// Parent should be newline after this.
-	TreeNode *parent = get_parent (inp_node, inp_root);
+	TreeNode *parent = calc_nearest_newline (inp_node, inp_root);
 	size_t indent_level;
 	TreeNode *temp;
 	// If the left branch is of type TOKEN_TAB, we use it's length as the
@@ -2149,31 +2169,51 @@ calc_if_last_line (TreeNode *inp_node)
 
 
 size_t
-get_reverse_nesting_level (TreeNode *inp_root, TreeNode *inp_node)
+get_reverse_nesting_level (TreeNode *inp_root, TreeNode *inp_node,
+		size_t target_indent)
 {
-	TreeNode *temp = inp_node;
-	size_t indent_level = 0;
-	size_t nesting_level = 0;
-	temp = get_parent (inp_node, inp_root);
-	if (calc_type (temp) == TOKEN_TAB)
+	size_t reverse_nesting_level, indent_level;
+	TreeNode *temp, *peak;
+
+	reverse_nesting_level = 0;
+	temp = calc_nearest_newline (inp_node, inp_root);
+	if (calc_type (temp->left) == TOKEN_TAB)
 	{
-		indent_level = temp->contents.length;
+		indent_level = temp->left->contents.type;
+		// We look past the tab.
+		peak = temp->left->right;
 	}
 	else
 	{
-		return 2;
+		indent_level = 0;
+		peak = temp->left;
 	}
-	// Search until we find unindented for.
-	while ((calc_type (temp->left) != TOKEN_FOR))
+	
+	if (indent_level == target_indent)
 	{
-		if (temp->left->right != NULL)
-		{
-			if (calc_type (temp->left->right) == TOKEN_FOR)
-			{
-				nesting_level++;
-			}
-		}
-		temp = get_parent (temp, inp_root);
+		return reverse_nesting_level;
 	}
-	return nesting_level + 2;
+	if (calc_type (peak) == TOKEN_FOR)
+	{
+		reverse_nesting_level++;
+	}
+	while (indent_level != target_indent)
+	{
+		temp = get_parent (temp, inp_root);
+		if (calc_type (temp->left) == TOKEN_TAB)
+		{
+			indent_level = temp->left->contents.length;
+			peak = temp->left->right;
+		}
+		else
+		{
+			indent_level = 0;
+			peak = temp->left;
+		}
+		if (calc_type (peak) == TOKEN_FOR)
+		{
+			reverse_nesting_level++;
+		}
+	}
+	return reverse_nesting_level - 1;
 }

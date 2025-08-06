@@ -446,11 +446,17 @@ get_nesting_level (TreeNode *inp_root, TreeNode *inp_node);
  * 			the corpus, 'for i in range(5):' should return 0,
  * 			while 'for j in range(10):' should return 1, since the
  * 			ladder is nested within the former.
+ *
+ * 	size_t		<- Base indent-level. For cases when loops our within
+ * 			function bodys. If the loop is within a function body,
+ * 			pass the indent level of the function (i.e. the indent
+ * 			level of the body's first line). Otherwise pass 0.
  * Output:
  * 	size_t 		<- How deeply nested this loop is within other loops.
 */
 size_t
-get_reverse_nesting_level (TreeNode *inp_root, TreeNode *inp_node);
+get_reverse_nesting_level (TreeNode *inp_root, TreeNode *inp_node,
+		size_t target_indent);
 
 /*
  * get_parent()
@@ -571,7 +577,7 @@ tree_pattern_match (TreeNode *, PatternRule);
 /*
  * get_outer_for ()
  * Input:
- * 	TreeNode *	<- Some node of type NEWLINE (presumably nested within
+ * 	TreeNode *	<- Some node of type FOR (presumably nested within
  * 			a for loop. The return will be the outermost TOKEN_FOR
  * 			we can find (TOKEN_FOR with lowest indent_level).
  * 	TreeNode *	<- Root of A.S.T..
@@ -582,7 +588,7 @@ tree_pattern_match (TreeNode *, PatternRule);
  * 			stop code-gen for our loop.
 */
 TreeNode *
-get_outer_for (TreeNode *, TreeNode *);
+get_outer_for (TreeNode *inp_node, TreeNode *inp_root);
 
 
 /*
