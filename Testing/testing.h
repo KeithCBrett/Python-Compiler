@@ -81,5 +81,20 @@ get_test_string (size_t);
  * 				added to end.
 */
 VasmInstruction *
-VASM_UNIT_loop_const (VasmInstruction *inp_vasm, size_t inp_const);
+VASM_UNIT_loop_const (VasmInstruction *, size_t);
+
+
+/*
+ * VASM_UNIT_zero_register ()
+ * Input:
+ * 	VasmInstruction *	<- Linked list of VASM instructions so far.
+ *
+ * 	size_t			<- Register number of register we want to
+ * 				zero.
+ * Output:
+ * 	VasmInstruction *	<- Updated linked list with loop_const op
+ * 				added to end.
+*/
+VasmInstruction *
+VASM_UNIT_zero_register (VasmInstruction *, size_t);
 #endif
