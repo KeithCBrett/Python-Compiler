@@ -112,4 +112,20 @@ VASM_UNIT_zero_register (VasmInstruction *, size_t);
 */
 VasmInstruction *
 VASM_UNIT_jmp (VasmInstruction *, size_t);
+
+
+/*
+ * VASM_UNIT_mov_reg_into_reg ()
+ * Input:
+ * 	VasmInstruction *	<- Linked list of VASM instructions so far.
+ *
+ * 	size_t			<- Left register number.
+ *
+ * 	size_t			<- Right register number.
+ * Output:
+ * 	VasmInstruction *	<- Updated linked list with loop_const op
+ * 				added to end.
+*/
+VasmInstruction *
+VASM_UNIT_mov_reg_into_reg (VasmInstruction *, size_t, size_t);
 #endif
