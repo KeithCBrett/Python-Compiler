@@ -77,8 +77,7 @@ get_test_string (size_t);
  *
  * 	size_t			<- Number to associate with loop const.
  * Output:
- * 	VasmInstruction *	<- Updated linked list with loop_const op
- * 				added to end.
+ * 	VasmInstruction *	<- Updated linked list
 */
 VasmInstruction *
 VASM_UNIT_loop_const (VasmInstruction *, size_t);
@@ -92,8 +91,7 @@ VASM_UNIT_loop_const (VasmInstruction *, size_t);
  * 	size_t			<- Register number of register we want to
  * 				zero.
  * Output:
- * 	VasmInstruction *	<- Updated linked list with loop_const op
- * 				added to end.
+ * 	VasmInstruction *	<- Updated linked list
 */
 VasmInstruction *
 VASM_UNIT_zero_register (VasmInstruction *, size_t);
@@ -107,8 +105,7 @@ VASM_UNIT_zero_register (VasmInstruction *, size_t);
  * 	size_t			<- Const associated with label we want to jmp
  * 				to.
  * Output:
- * 	VasmInstruction *	<- Updated linked list with loop_const op
- * 				added to end.
+ * 	VasmInstruction *	<- Updated linked list
 */
 VasmInstruction *
 VASM_UNIT_jmp (VasmInstruction *, size_t);
@@ -123,11 +120,10 @@ VASM_UNIT_jmp (VasmInstruction *, size_t);
  *
  * 	size_t			<- Right register number.
  * Output:
- * 	VasmInstruction *	<- Updated linked list with loop_const op
- * 				added to end.
+ * 	VasmInstruction *	<- Updated linked list
 */
 VasmInstruction *
-VASM_UNIT_mov_reg_into_reg (VasmInstruction *, size_t, size_t);
+VASM_UNIT_mov_reg_to_reg (VasmInstruction *, size_t, size_t);
 
 
 /*
@@ -135,11 +131,97 @@ VASM_UNIT_mov_reg_into_reg (VasmInstruction *, size_t, size_t);
  * Input:
  * 	VasmInstruction *	<- Linked list of VASM instructions so far.
  *
- * 	size_t			<- Number associate with function.
+ * 	size_t			<- Number associated with function.
  * Output:
- * 	VasmInstruction *	<- Updated linked list with loop_const op
- * 				added to end.
+ * 	VasmInstruction *	<- Updated linked list
 */
 VasmInstruction *
 VASM_UNIT_call_vasm_func (VasmInstruction *, size_t);
+
+
+/*
+ * VASM_UNIT_add_const_into_reg ()
+ * Input:
+ * 	VasmInstruction *	<- Linked list of VASM instructions so far.
+ *
+ * 	size_t			<- Left register.
+ *
+ * 	size_t			<- Right const.
+ * Output:
+ * 	VasmInstruction *	<- Updated linked list
+*/
+VasmInstruction *
+VASM_UNIT_add_const_to_reg (VasmInstruction *, size_t, size_t);
+
+
+/*
+ * VASM_UNIT_add_const_into_reg ()
+ * Input:
+ * 	VasmInstruction *	<- Linked list of VASM instructions so far.
+ *
+ * 	size_t			<- Left register.
+ *
+ * 	size_t			<- Right const.
+ * Output:
+ * 	VasmInstruction *	<- Updated linked list
+*/
+VasmInstruction *
+VASM_UNIT_cmp_const_to_reg (VasmInstruction *, size_t, size_t);
+
+
+/*
+ * VASM_UNIT_jle_label ()
+ * Input:
+ * 	VasmInstruction *	<- Linked list of VASM instructions so far.
+ *
+ * 	size_t			<- Label number to jump to.
+ * Output:
+ * 	VasmInstruction *	<- Updated linked list
+*/
+VasmInstruction *
+VASM_UNIT_cmp_const_to_reg (VasmInstruction *, size_t, size_t);
+
+
+/*
+ * VASM_UNIT_jle_label ()
+ * Input:
+ * 	VasmInstruction *	<- Linked list of VASM instructions so far.
+ *
+ * 	size_t			<- Label number to jump to.
+ * Output:
+ * 	VasmInstruction *	<- Updated linked list
+*/
+VasmInstruction *
+VASM_UNIT_jle_label (VasmInstruction *, size_t);
+
+
+/*
+ * VASM_UNIT_mov_const_to_reg ()
+ * Input:
+ * 	VasmInstruction *	<- Linked list of VASM instructions so far.
+ *
+ * 	size_t			<- Left register.
+ *
+ * 	size_t			<- Right const.
+ * Output:
+ * 	VasmInstruction *	<- Updated linked list
+*/
+VasmInstruction *
+VASM_UNIT_mov_const_to_reg (VasmInstruction *, size_t, size_t);
+
+
+
+/*
+ * VASM_UNIT_add_reg_to_reg ()
+ * Input:
+ * 	VasmInstruction *	<- Linked list of VASM instructions so far.
+ *
+ * 	size_t			<- Left register.
+ *
+ * 	size_t			<- Right register.
+ * Output:
+ * 	VasmInstruction *	<- Updated linked list
+*/
+VasmInstruction *
+VASM_UNIT_add_reg_to_reg (VasmInstruction *, size_t, size_t);
 #endif
