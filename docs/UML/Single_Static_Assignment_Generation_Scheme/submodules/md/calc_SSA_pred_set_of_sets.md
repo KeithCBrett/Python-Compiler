@@ -7,7 +7,7 @@ partition calc_SSA_pred_set_of_sets {
     :size_t t_size <- INPUT;
     fork end
     fork
-    :PredLL t_out[t_size];
+    :Size_tLL t_out[t_size];
     fork again
     :size_t t_c <- 0;
     fork end

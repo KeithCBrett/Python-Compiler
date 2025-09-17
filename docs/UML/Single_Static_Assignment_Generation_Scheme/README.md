@@ -51,32 +51,14 @@ CFGNode;
 // the left edge in our scheme.
 
 
-typedef struct
-PredLL
-{
-    size_t contents;
-    struct PredLL *next;
-}
-PredLL;
-// Linked list of a nodes predecessors (Useful in finding dominance
-// information about our graph, which is used to generate not so naive single
-// static assignment form (for more information, refer to the portions about
-// 'semi-pruned' SSA in 'Engineering A Compiler - Keith Cooper, Linda Torczon'
-// (Chapter 9 Section 3)).
-// In practice, we will have an array of these linked lists. The array will be
-// indexed in such a way, that when a CFG nodes post-order number is entered
-// as the index to the array, that same nodes predecessor list will be
-// located at that position.
-
-
-// Linked list to store the dominance frontier of each node in our CFG. In
-// practice we will have a relatively positioned array of these linked list,
-// where the relative position explicity represents which CFG node said list
-// belongs to (based on post-order number).
 typdef struct
-DominanceFrontier
+Size_tLL
 {
     size_t contents;
-    struct DominanceFrontier *next;
+    struct Size_tLL *next;
 }
-DominanceFrontier;
+Size_tLL;
+// Linked list of numbers. Meaning of numbers changes based on context.
+// Used to represent:
+//  - Dominance Frontier Sets.
+//  - Predecessor Sets.

@@ -4,10 +4,10 @@ partition calc_SSA_append_to_df {
     fork
         :size_t t_inp_element <- INPUT;
     fork again
-        :DominanceFrontier t_inp_df <- INPUT;
+        :Size_tLL t_inp_df <- INPUT;
     fork end
     fork
-        :DominanceFrontier *t_head <- &t_inp_df;
+        :Size_tLL *t_head <- &t_inp_df;
     fork again
         :bool duplicate <- false;
     fork end

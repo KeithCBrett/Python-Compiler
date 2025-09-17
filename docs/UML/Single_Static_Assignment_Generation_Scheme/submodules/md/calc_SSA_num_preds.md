@@ -1,12 +1,12 @@
 @startuml
 partition calc_SSA_num_preds {
     fork
-        :PredLL *t_inp_pred_arr <- INPUT;
+        :Size_tLL *t_inp_pred_arr <- INPUT;
     fork again
         :size_t t_inp_index <- INPUT;
     fork end
     fork
-        :PredLL t_list <- t_inp_pred_arr[t_inp_index];
+        :Size_tLL t_list <- t_inp_pred_arr[t_inp_index];
     fork again
         :size_t t_c <- 1;
     fork end

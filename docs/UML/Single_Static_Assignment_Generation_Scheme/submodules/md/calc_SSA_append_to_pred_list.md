@@ -2,11 +2,11 @@
 partition calc_SSA_append_to_pred_list {
     start
     fork
-        :PredLL *t_inp_list <- INPUT;
+        :Size_tLL *t_inp_list <- INPUT;
     fork again
         :size_t t_inp_element <- INPUT;
     fork end
-    :PredLL *t_head <- t_inp_list;
+    :Size_tLL *t_head <- t_inp_list;
     if (t_head = NULL) then (TRUE)
         :t_head <- malloc(sizeof(t_head));
         :t_head.next <- NULL;

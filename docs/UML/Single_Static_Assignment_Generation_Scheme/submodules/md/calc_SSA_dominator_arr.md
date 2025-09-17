@@ -11,7 +11,7 @@ partition calc_SSA_dominator_arr {
     fork again
     :size_t t_c <- 0;
     fork again
-    :PredLL *t_pred <- calc_SSA_pred_set_of_sets
+    :Size_tLL *t_pred <- calc_SSA_pred_set_of_sets
     (t_post_order_CFG, t_size);
     fork end
     while (t_c < t_size)

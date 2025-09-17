@@ -4,7 +4,7 @@ partition calc_SSA_nth_predecessor {
     fork
         :size_t t_inp_index <- INPUT;
     fork again
-        :PredLL t_inp_list <- INPUT;
+        :Size_tLL t_inp_list <- INPUT;
     fork end
     :size_t t_c <- 0;
     while (t_c != t_inp_index)

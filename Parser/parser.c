@@ -481,7 +481,6 @@ parse (Precedence rbp, TreeNode *tree, bool was_newline)
 		c = table[parser.current.type].led; // Get infix code
 		left = c (left, was_newline); // - run infix code
 	}
-
 	return left; // when rbp drops we break the loop and fold our tree
 }
 
