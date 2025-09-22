@@ -18,12 +18,12 @@ partition calc_SSA_pred_set_of_sets {
         if (t_curr.left != NULL) then (TRUE)
             :size_t t_node_index <- calc_SSA_CFG_post_order_index
             (t_post_order_CFG, t_curr.left);
-            :t_out[t_node_index] <- calc_SSA_append_to_pred_list
+            :t_out[t_node_index] <- calc_SSA_append_to_ll
             (t_out[t_node_index], t_i_curr);
         if (t_curr.right != NULL) then (TRUE)
             :size_t t_node_index <- calc_SSA_CFG_post_order_index
             (t_post_order_CFG, t_curr.right);
-            :t_out[t_node_index] <- calc_SSA_append_to_pred_list
+            :t_out[t_node_index] <- calc_SSA_append_to_ll
             (t_out[t_node_index], t_i_curr);
         endif
         endif

@@ -25,7 +25,7 @@ partition calc_SSA_dominance_frontier_sets {
                 :size_t t_runner <- calc_SSA_nth_predecessor
                 (t_inp_pred_arr[t_c], t_sc);
                 while (t_runner != t_inp_doms_arr[t_c])
-                    :t_df[t_runner] <- calc_SSA_append_to_df
+                    :t_df[t_runner] <- calc_SSA_append_to_ll_sparse
                     (t_df[t_runner], t_c);
                     :t_runner <- t_inp_doms[t_runner];
                 endwhile

@@ -1,0 +1,19 @@
+@startuml
+partition calc_SSA_Size_tLL_set_member {
+	start
+	fork
+		:Size_tLL t_inp_set <- INPUT;
+	fork again
+		:size_t t_inp_element <- INPUT;
+	fork end
+	:bool t_out <- false;
+	while (t_inp_set.next != NULL)
+		if (t_inp_element = t_inp_set.contents) then (TRUE)
+			:t_out <- true;
+			break
+		endif
+		:t_inp_set <- t_inp_set.next;
+	endwhile
+	:OUTPUT t_out;
+}
+@enduml

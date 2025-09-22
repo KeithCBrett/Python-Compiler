@@ -1,0 +1,42 @@
+@startuml
+partition calc_CFG_head_arr {
+	start
+	:VasmInstr inp_vasm <- INPUT;
+	fork
+		:size_t s <- calc_CFG_num_blocks(t_inp_vasm);
+	fork again
+		:size_t c <- 0;
+	fork again
+		:size_t curr_index <- 0;
+	fork end
+	:size_t out[s];
+	while (inp_vasm != NULL)
+		if (inp_vasm is head of list) then (TRUE)
+			:out[curr_index] <- c;
+		fork
+			:curr_index <- curr_index + 1;
+		fork again
+			:inp_vasm <- inp_vasm.next;
+		fork end
+		elseif (inp_vasm.type = label) then (TRUE)
+			:out[curr_index] <- c;
+			fork
+				:curr_index <- curr_index + 1;
+			fork again
+				:inp_vasm <- inp_vasm.next;
+			fork end
+		elseif (inp_vasm.type = jle) then (TRUE)
+			fork
+				:inp_vasm <- inp_vasm.next;
+			fork again
+				:c++;
+			fork end
+				:out[curr_index] <- c;
+				:curr_index <- curr_index + 1;
+		else (FALSE)
+		endif
+	endwhile
+	:OUTPUT out;
+	stop
+}
+@enduml

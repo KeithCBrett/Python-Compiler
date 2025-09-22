@@ -1,0 +1,32 @@
+@startuml
+partition calc_SSA_push_to_Size_tLL {
+	start
+	fork
+		:Size_tLL t_inp_stack <- INPUT;
+	fork again
+		:size_t t_inp_element <- INPUT;
+	fork end
+	:Size_tLL *t_head <- &t_inp_stack;
+	if (t_inp_stack = NULL) then (TRUE)
+		:Size_tLL t_push_node <- malloc(sizeof(t_push_node));
+		fork
+			:t_push_node.contents <- t_inp_element;
+		fork again
+			:t_push_node.next <- NULL;
+		fork end
+	else (FALSE)
+		:Size_tLL t_push_node <- malloc(sizeof(t_push_node));
+		fork
+			:t_push_node.next <- NULL;
+		fork again
+			:t_push_node.contents <- t_inp_element;
+		fork end
+		while (t_inp_stack.next != NULL)
+			:t_inp_stack <- t_inp_stack.next;
+		endwhile
+		:t_inp_stack.next <- t_push_node;
+	endif
+	:OUTPUT t_head;
+	stop
+}
+@enduml

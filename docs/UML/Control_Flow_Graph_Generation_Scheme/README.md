@@ -3,6 +3,7 @@
 to generate control flow graphs from a linear I.R. (VASM).
 
 ## This scheme assumes the following data types:
+```
 typedef struct
 CFGNode
 {
@@ -12,6 +13,7 @@ CFGNode
     struct CFGNode *right;
 }
 CFGNode;
+```
 // Node of our control-flow graph. Based off what I have seen of x64,
 // a conditional jump can have at most two targets. Take for example this
 // small VASM snippet:

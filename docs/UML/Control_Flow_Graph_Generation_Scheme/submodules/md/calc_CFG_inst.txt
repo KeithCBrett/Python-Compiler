@@ -1,0 +1,24 @@
+@startuml
+partition calc_CFG_instr {
+	start
+	fork
+		:VasmInst *inp_vasm <- INPUT;
+	fork again
+		:size_t inp_index <- INPUT;
+	fork end
+	fork
+		:VasmInst out <- *inp_vasm;
+	fork again
+		:size_t c <- 0;
+	fork end
+	while (c != inp_index)
+		fork
+			:out <- out.next;
+		fork again
+			:c <- c + 1;
+		fork end
+	endwhile
+	:OUTPUT out;
+	stop
+}
+@enduml

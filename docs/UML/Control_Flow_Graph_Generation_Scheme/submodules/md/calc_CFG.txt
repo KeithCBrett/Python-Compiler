@@ -1,0 +1,28 @@
+@startuml
+partition calc_CFG {
+	start
+	:VasmInst *inp_vasm <- INPUT;
+	fork
+		:size_t s <- calc_CFG_num_blocks(inp_vasm);
+	fork again
+		:size_t *h <- calc_CFG_head_arr(inp_vasm);
+	fork again
+		:size_t *t <- calc_CFG_tail_arr(inp_vasm);
+	fork again
+		:size_t c <- 0;
+	fork end
+	:CFGNode out[s];
+	while (c < s)
+		fork
+			:xh <- calc_CFG_inst(h[c], inp_vasm);
+		fork again
+			:xt <- calc_CFG_inst(t[c], inp_vasm);
+		fork end
+		:out[c] <- calc_CFG_blocks(xh, xt);
+		:c <- c + 1;
+	endwhile
+	:out <- calc_CFG_edges(out);
+	:OUTPUT out;
+	stop
+}
+@enduml

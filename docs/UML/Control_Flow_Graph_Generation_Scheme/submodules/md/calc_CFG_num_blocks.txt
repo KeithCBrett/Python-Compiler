@@ -1,0 +1,32 @@
+@startuml
+partition calc_CFG_num_blocks {
+	start
+	:VasmInstr *inp_vasm <- INPUT;
+	:size_t out <- 0;
+	while (inp_vasm != NULL)
+		if (t_inp_vasm is head of list) then (TRUE)
+			fork
+				:out <- out + 1;
+			fork again
+				:inp_vasm <- inp_vasm.next;
+			fork end
+		elseif (t_inp_vasm.type = label) then (TRUE)
+			fork
+				:out <- out + 1;
+			fork again
+				:inp_vasm <- inp_vasm.next;
+			fork end
+		elseif (inp_vasm.type = jle) then (TRUE)
+			fork
+				:out <- out + 1;
+			fork again
+				:inp_vasm <- inp_vasm.next;
+			fork end
+		else (FALSE)
+			:inp_vasm <- inp_vasm.next;
+		endif
+	endwhile
+	:OUTPUT out;
+	stop
+}
+@enduml

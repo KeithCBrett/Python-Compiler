@@ -1,0 +1,38 @@
+@startuml
+partition calc_SSA_phi_insertion {
+	start
+	fork
+		:Size_tLL t_inp_globals <- INPUT;
+	fork again
+		:Size_tLL *t_inp_blocks <- INPUT;
+	fork again
+		:size_t t_inp_df_size <- INPUT;
+	fork again
+		:Size_tLL *t_inp_df_arr <- INPUT;
+	fork again
+		:CFGNode t_inp_CFG <- INPUT;
+	fork end
+	fork
+		:Size_tLL t_df <- NULL;
+	fork again
+		:bool has_phi <- false;
+	fork end
+	while (t_inp_global.next != NULL)
+		:Size_tLL t_worklist <- t_inp_blocks[t_inp_global.contents];
+		while (t_worklist.next != NULL)
+			:t_df <- t_inp_df_arr[t_worklist.contents];
+			while (t_df.next != NULL)
+				:has_phi <- calc_SSA_check_phi
+				(t_df.contents, t_inp_global.contents);
+				if (has_phi = false) then (TRUE)
+					:
+				endif
+				:t_df <- t_df.next;
+			endwhile
+			:t_worklist <- t_worklist.next;
+		endwhile
+		:t_inp_global <- t_inp_global.next;
+	endwhile
+	stop
+}
+@enduml

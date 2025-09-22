@@ -1,0 +1,21 @@
+@startuml
+partition calc_CFG_tail_arr {
+	start
+	:VasmInstr *inp_vasm <- INPUT;
+	fork
+		:size_t *h <- calc_CFG_head_arr(inp_vasm);
+	fork again
+		:size_t c <- 0;
+	fork again
+		:size_t s <- calc_CFG_num_blocks(inp_vasm);
+	fork end
+	:size_t out[s];
+	while (c != (s-1))
+		:out[c] <- h[c+1]) - 1;
+		:c <- c + 1;
+	endwhile
+	:out[s] <- calc_CFG_num_list_items(inp_vasm);
+	:OUTPUT out;
+	stop
+}
+@enduml

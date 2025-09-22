@@ -1,0 +1,21 @@
+@startuml
+partition calc_CFG_block {
+    start
+    fork
+        :VasmInst head <- INPUT;
+    fork again
+        :VasmInst tail <- INPUT;
+    fork end
+    fork
+        :VasmInst *out <- &head;
+    fork again
+        :VasmInst *temp <- &head;
+    fork end
+    while (temp != tail)
+        :temp <- temp.next;
+    endwhile
+    :temp.next <- NULL;
+    :OUTPUT out;
+    stop
+}
+@enduml

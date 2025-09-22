@@ -1,0 +1,321 @@
+@startuml
+partition calc_CFG {
+	start
+	:VasmInst *inp_vasm <- INPUT;
+	fork
+		partition calc_CFG_num_blocks {
+			:VasmInstr *inp_vasm <- inp_vasm (INPUT);
+			:size_t out <- 0;
+			while (inp_vasm != NULL)
+				if (t_inp_vasm is head of list) then (TRUE)
+					fork
+						:out <- out + 1;
+					fork again
+						:inp_vasm <- inp_vasm.next;
+					fork end
+				elseif (t_inp_vasm.type = label) then (TRUE)
+					fork
+						:out <- out + 1;
+					fork again
+						:inp_vasm <- inp_vasm.next;
+					fork end
+				elseif (inp_vasm.type = jle) then (TRUE)
+					fork
+						:out <- out + 1;
+					fork again
+						:inp_vasm <- inp_vasm.next;
+					fork end
+				else (FALSE)
+					:inp_vasm <- inp_vasm.next;
+				endif
+			endwhile
+			:s <- out (OUTPUT);
+		}
+	fork again
+		partition calc_CFG_head_arr {
+			:VasmInstr inp_vasm <- inp_vasm (INPUT);
+			fork
+				partition calc_CFG_num_blocks {
+					:VasmInstr *inp_vasm <- inp_vasm (INPUT);
+					:size_t out <- 0;
+					while (inp_vasm != NULL)
+						if (t_inp_vasm is head of list) then (TRUE)
+							fork
+								:out <- out + 1;
+							fork again
+								:inp_vasm <- inp_vasm.next;
+							fork end
+						elseif (t_inp_vasm.type = label) then (TRUE)
+							fork
+								:out <- out + 1;
+							fork again
+								:inp_vasm <- inp_vasm.next;
+							fork end
+						elseif (inp_vasm.type = jle) then (TRUE)
+							fork
+								:out <- out + 1;
+							fork again
+								:inp_vasm <- inp_vasm.next;
+							fork end
+						else (FALSE)
+							:inp_vasm <- inp_vasm.next;
+						endif
+					endwhile
+					:s <- out (OUTPUT);
+				}
+			fork again
+				:size_t c <- 0;
+			fork again
+				:size_t curr_index <- 0;
+			fork end
+			:size_t out[s];
+			while (inp_vasm != NULL)
+				if (inp_vasm is head of list) then (TRUE)
+					:out[curr_index] <- c;
+				fork
+					:curr_index <- curr_index + 1;
+				fork again
+					:inp_vasm = inp_vasm.next;
+				fork end
+				elseif (inp_vasm.type == label) then (TRUE)
+					:out[curr_index] <- c;
+					fork
+						:curr_index <- curr_index + 1;
+					fork again
+						:inp_vasm <- inp_vasm.next;
+					fork end
+				elseif (inp_vasm.type == jle) then (TRUE)
+					fork
+						:inp_vasm <- inp_vasm.next;
+					fork again
+						:c <- c + 1;
+					fork end
+						:out[curr_index] <- c;
+						:curr_index <- curr_index + 1;
+				else (FALSE)
+				endif
+			endwhile
+			:h <- out (OUTPUT);
+		}
+	fork again
+		partition calc_CFG_tail_arr {
+			:VasmInstr *inp_vasm <- inp_vasm (INPUT);
+			fork
+				partition calc_CFG_head_arr {
+					:VasmInstr inp_vasm <- inp_vasm (INPUT);
+					fork
+						partition calc_CFG_num_blocks {
+							:VasmInstr *inp_vasm <- inp_vasm (INPUT);
+							:size_t out <- 0;
+							while (inp_vasm != NULL)
+								if (t_inp_vasm is head of list) then (TRUE)
+									fork
+										:out <- out + 1;
+									fork again
+										:inp_vasm <- inp_vasm.next;
+									fork end
+								elseif (t_inp_vasm.type = label) then (TRUE)
+									fork
+										:out <- out + 1;
+									fork again
+										:inp_vasm <- inp_vasm.next;
+									fork end
+								elseif (inp_vasm.type = jle) then (TRUE)
+									fork
+										:out <- out + 1;
+									fork again
+										:inp_vasm <- inp_vasm.next;
+									fork end
+								else (FALSE)
+									:inp_vasm <- inp_vasm.next;
+								endif
+							endwhile
+							:s <- out (OUTPUT);
+						}
+					fork again
+						:size_t c <- 0;
+					fork again
+						:size_t curr_index <- 0;
+					fork end
+					:size_t out[s];
+					while (inp_vasm != NULL)
+						if (inp_vasm is head of list) then (TRUE)
+							:out[curr_index] <- c;
+						fork
+							:curr_index <- curr_index + 1;
+						fork again
+							:inp_vasm = inp_vasm.next;
+						fork end
+						elseif (inp_vasm.type == label) then (TRUE)
+							:out[curr_index] <- c;
+							fork
+								:curr_index <- curr_index + 1;
+							fork again
+								:inp_vasm <- inp_vasm.next;
+							fork end
+						elseif (inp_vasm.type == jle) then (TRUE)
+							fork
+								:inp_vasm <- inp_vasm.next;
+							fork again
+								:c <- c + 1;
+							fork end
+								:out[curr_index] <- c;
+								:curr_index <- curr_index + 1;
+						else (FALSE)
+						endif
+					endwhile
+					:h <- out (OUTPUT);
+				}
+			fork again
+				:size_t c <- 0;
+			fork again
+				partition calc_CFG_num_blocks {
+					:VasmInstr *inp_vasm <- inp_vasm (OUTPUT);
+					:size_t out <- 0;
+					while (inp_vasm != NULL)
+						if (t_inp_vasm is head of list) then (TRUE)
+							fork
+								:out <- out + 1;
+							fork again
+								:inp_vasm <- inp_vasm.next;
+							fork end
+						elseif (t_inp_vasm.type = label) then (TRUE)
+							fork
+								:out <- out + 1;
+							fork again
+								:inp_vasm <- inp_vasm.next;
+							fork end
+						elseif (inp_vasm.type = jle) then (TRUE)
+							fork
+								:out <- out + 1;
+							fork again
+								:inp_vasm <- inp_vasm.next;
+							fork end
+						else (FALSE)
+							:inp_vasm <- inp_vasm.next;
+						endif
+					endwhile
+					:s <- out (OUTPUT);
+				}
+			fork end
+			:size_t out[s];
+			while (c != (s-1))
+				:out[c] <- h[c+1]) - 1;
+				:c <- c + 1;
+			endwhile
+			partition calc_CFG_num_list_items {
+				:VasmInstr *inp_vasm <- inp_vasm (INPUT);
+				:size_t out <- 0;
+				while (inp_vasm.next != NULL)
+					fork
+						:out++;
+					fork again
+						:inp_vasm <- inp_vasm.next;
+					fork end
+				endwhile
+				:out[s] <- out (OUTPUT);
+			}
+			:t <- out (OUTPUT);
+		}
+	fork again
+		:size_t c <- 0;
+	fork end
+	:CFGNode out[s];
+	while (c < s)
+		fork
+			partition calc_CFG_inst {
+				fork
+					:VasmInst *inp_vasm <- inp_vasm (INPUT);
+				fork again
+					:size_t inp_index <- h[c] (INPUT);
+				fork end
+				fork
+					:VasmInst out <- *inp_vasm;
+				fork again
+					:size_t c <- 0;
+				fork end
+				while (c != inp_index)
+					fork
+						:out <- out.next;
+					fork again
+						:c <- c + 1;
+					fork end
+				endwhile
+				:xh <- out (OUTPUT);
+			}
+		fork again
+			partition calc_CFG_inst {
+				fork
+					:VasmInst *inp_vasm <- inp_vasm (INPUT);
+				fork again
+					:size_t inp_index <- t[c] (INPUT);
+				fork end
+				fork
+					:VasmInst out <- *inp_vasm;
+				fork again
+					:size_t c <- 0;
+				fork end
+				while (c != inp_index)
+				fork
+					:out <- out.next;
+					fork again
+						:c <- c + 1;
+					fork end
+				endwhile
+				:xt <- out (OUTPUT);
+			}
+		fork end
+		partition calc_CFG_blocks {
+			fork
+				:VasmInst head <- xh (INPUT);
+			fork again
+				:VasmInst tail <- xt (INPUT);
+			fork end
+			fork
+				:VasmInst *out <- &head;
+			fork again
+				:VasmInst *temp <- &head;
+			fork end
+			while (temp != tail)
+				:temp <- temp.next;
+			endwhile
+			:temp.next <- NULL;
+			:out[c] <- out (OUTPUT);
+		}
+		:c <- c + 1;
+	endwhile
+	partition calc_CFG_edges {
+		fork
+			:CFGNode *inp_node <- out (INPUT);
+		fork again
+			:size_t inp_size <- s (INPUT);
+		end fork
+		fork
+			:size_t c <- 0;
+		fork again
+			:CFGNode *out <- inp_node;
+		end fork
+		:CFGNode *t <- out;
+		while (c != inp_size)
+			:l <- calc_CFG_last_inst(t.contents);
+			:LC <- calc_CFG_loop_const(l.left, inp_node);
+			if (l.type = jmp) then (TRUE)
+				:t.left <- LC;
+				:c <- c + 1;
+				:t <- t + 1;
+			elseif (l.type = jle) then (TRUE)
+				:t.right <- LC;
+				:t.left <- inp_node[c+1];
+				:c <- c + 1;
+				:t <- t + 1;
+			else (FALSE)
+				:c <- c + 1;
+				:t <- t + 1;
+			endif
+		endwhile
+		:out <- out (OUTPUT);
+	}
+	:OUTPUT out;
+	stop
+}
+@enduml

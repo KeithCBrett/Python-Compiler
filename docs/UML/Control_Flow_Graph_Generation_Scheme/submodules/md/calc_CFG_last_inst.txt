@@ -1,0 +1,12 @@
+@startuml
+partition calc_CFG_last_inst {
+	start
+	:VasmInst *inp_vasm <- INPUT;
+	:out <- inp_vasm;
+	while (out.next != NULL)
+		:out <- out.next;
+	endwhile
+	:OUTPUT out;
+	stop
+}
+@enduml

@@ -1,0 +1,35 @@
+@startuml
+partition calc_CFG_edges {
+start
+	fork
+		:CFGNode *inp_node <- INPUT;
+	fork again
+		:size_t inp_size <- INPUT;
+	end fork
+	fork
+		:size_t c <- 0;
+	fork again
+		:CFGNode *out <- inp_node;
+	end fork
+	:CFGNode *t <- out;
+	while (c != inp_size)
+		:l <- calc_CFG_last_inst(t.contents);
+		:LC <- calc_CFG_loop_const(l.left, inp_node);
+		if (l.type = jmp) then (TRUE)
+			:t.left <- LC;
+			:c <- c + 1;
+			:t <- t + 1;
+		elseif (l.type = jle) then (TRUE)
+			:t.right <- LC;
+			:t.left <- inp_node[c+1];
+			:c <- c + 1;
+			:t <- t + 1;
+		else (FALSE)
+			:c <- c + 1;
+			:t <- t + 1;
+		endif
+	endwhile
+	:OUTPUT out;
+	stop
+}
+@enduml

@@ -9,6 +9,7 @@ SSA form).
 https://www.cs.tufts.edu/~nr/cs257/archive/keith-cooper/dom14.pdf
 
 ## This scheme assumes the following data types:
+```
 typedef struct
 CFGNode
 {
@@ -18,6 +19,7 @@ CFGNode
     struct CFGNode *right;
 }
 CFGNode;
+```
 // Node of our control-flow graph. Based off what I have seen of x64,
 // a conditional jump can have at most two targets. Take for example this
 // small VASM snippet:
@@ -51,6 +53,7 @@ CFGNode;
 // the left edge in our scheme.
 
 
+```
 typdef struct
 Size_tLL
 {
@@ -58,6 +61,7 @@ Size_tLL
     struct Size_tLL *next;
 }
 Size_tLL;
+```
 // Linked list of numbers. Meaning of numbers changes based on context.
 // Used to represent:
 //  - Dominance Frontier Sets.

@@ -1,0 +1,19 @@
+@startuml
+partition calc_SSA_pop_from_Size_tLL {
+	start
+	:Size_tLL t_inp_stack <- INPUT;
+	:size_t t_out <- -1;
+	if (t_inp_stack.next = NULL) then (TRUE)
+		:t_out <- t_inp_stack.contents;
+	else (FALSE)
+		while (t_inp_stack.next != NULL)
+			:t_inp_stack <- t_inp_stack.next;
+		endwhile
+		:t_out <- t_inp_stack.contents;
+		:t_inp_stack.next <- NULL;
+		:free(t_inp_stack);
+	endif
+	:OUTPUT t_out;
+	stop
+}
+@enduml

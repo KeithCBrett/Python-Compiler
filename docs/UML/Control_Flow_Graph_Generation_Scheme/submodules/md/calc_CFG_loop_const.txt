@@ -1,0 +1,15 @@
+@startuml
+partition calc_CFG_loop_const {
+	start
+	fork
+		:CFGNode *inp_out <- INPUT;
+	fork again
+		:size_t inp_index <- INPUT;
+	fork end
+	while ((inp_out != label) && (inp_out.left != inp_index))
+		:inp_out <- inp_out.next;
+	endwhile
+	:OUTPUT inp_out;
+stop
+}
+@enduml

@@ -1,0 +1,46 @@
+@startuml
+partition calc_SSA_global_name_set {
+	start
+	fork
+		:CFGNode *t_inp_CFG <- INPUT;
+	fork again
+		:size_t t_inp_CFG_size <- INPUT;
+	fork end
+	fork
+		:size_t t_block_count <- 0;
+	fork again
+		:Size_tLL varkill <- NULL;
+	fork again
+		:bool is_left_in_varkill <- false;
+	fork again
+		:bool is_right_in_varkill <- false;
+	fork again
+		:Size_tLL t_out = NULL;
+	fork end
+	while (t_block_count < t_inp_CFG_size)
+		:calc_SSA_delete_Size_tLL(varkill);
+		while (t_inp_CFG[t_block_count].next != NULL)
+			:is_left_in_varkill <- calc_SSA_Size_tLL_set_member
+			(varkill, t_inp_CFG[t_block_count].contents.regl);
+			:is_right_in_varkill <- calc_SSA_Size_tLL_set_member
+			(varkill, t_inp_ClG[t_block_count].contents.regr);
+			if (t_inp_cfg[t_block_count].contents.regl_reg = true
+			&& is_left_in_varkill = false) then (TRUE)
+				:t_out <- calc_SSA_append_to_ll_sparse
+				(t_out, t_inp_CFG[t_block_count].contents.regl);
+			endif
+			if (t_inp_cfg[t_block_count].contents.regr_reg = true
+			&& is_right_in_varkill = false) then (TRUE)
+				:t_out <- calc_SSA_append_to_ll_sparse
+				(t_out, t_inp_CFG[t_block_count].contents.regr);
+			endif
+			:varkill <- calc_SSA_append_to_ll_sparse
+			(varkill, t_inp_CFG[t_block_count].contents.regl);
+			:t_inp_CFG[t_block_count] <- t_inp_CFG[t_block_count].next;
+		endwhile
+		:t_block_count <- t_block_count + 1;
+	endwhile
+	:OUTPUT t_out;
+	stop
+}
+@enduml

@@ -1,0 +1,22 @@
+@startuml
+partition calc_SSA_delete_Size_tLL {
+	start
+	:Size_tLL t_inp_list <- INPUT;
+	fork
+		:Size_tLL t_stack <- NULL;
+	fork again
+		:Size_tLL temp <- NULL;
+	fork end
+	while (t_inp_list.next != NULL)
+		:t_stack <- calc_SSA_push_to_Size_tLL(t_stack, t_inp_list);
+		:t_inp_list <- t_inp_list.next;
+	endwhile
+	:t_stack <- calc_SSA_push_to_Size_tLL(t_stack, t_inp_list);
+	while (t_stack != NULL)
+		:temp <- calc_SSA_pop_from_Size_tLL(t_stack);
+		:temp.next <- NULL;
+		:free(temp);
+	endwhile
+	stop
+}
+@enduml

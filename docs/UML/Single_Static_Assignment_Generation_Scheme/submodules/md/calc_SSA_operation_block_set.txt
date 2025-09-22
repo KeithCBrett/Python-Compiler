@@ -1,0 +1,30 @@
+@startuml
+partition calc_SSA_operation_block_set {
+    start
+    fork
+        :CFGNode *t_inp_CFG <- INPUT;
+    fork again
+        :size_t t_CFG_size <- INPUT;
+    fork end
+    fork
+        :size_t t_set_size <- calc_SSA_block_set_num_vars
+        (t_inp_CFG, t_CFG_size);
+    fork again
+        :size_t t_block_count <- 0;
+    fork end
+    :Size_tLL t_out[t_set_size];
+    while (t_block_count < t_CFG_size)
+        while (t_inp_CFG[t_block_count].next != NULL)
+            if (t_inp_CFG[t_block_count].regl_reg = true) then (TRUE)
+                :t_out[t_inp_CFG[t_block_count].regl] <-
+		calc_SSA_append_to_ll_sparse
+		(t_block_count, t_out[t_inp_CFG[t_block_count].regl]);
+            endif
+            :t_inp_CFG[t_block_count] <- t_inp_CFG[t_block_count].next;
+        endwhile
+        :t_block_count <- t_block_count + 1;
+    endwhile
+    :OUTPUT t_out;
+    stop
+}
+@enduml
