@@ -3,8 +3,9 @@ pyco: \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o \
   CMakeFiles/pyco.dir/main.c.o \
-  libis.a \
+  libgenerator.a \
   libtesting.a \
+  libpyco_version.a \
   libparser.a \
   liblexer.a \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/libgcc.a \
@@ -37,9 +38,11 @@ pyco: \
 
 CMakeFiles/pyco.dir/main.c.o:
 
-libis.a:
+libgenerator.a:
 
 libtesting.a:
+
+libpyco_version.a:
 
 libparser.a:
 

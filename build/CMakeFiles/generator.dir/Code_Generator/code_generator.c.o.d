@@ -1,7 +1,9 @@
-CMakeFiles/pyco.dir/main.c.o: \
- /home/Connor/Programming/C/Python-Compiler/src/main.c \
+CMakeFiles/generator.dir/Code_Generator/code_generator.c.o: \
+ /home/Connor/Programming/C/Python-Compiler/src/Code_Generator/code_generator.c \
  /usr/include/stdc-predef.h \
- /home/Connor/Programming/C/Python-Compiler/src/Lexer/lexer.h \
+ /home/Connor/Programming/C/Python-Compiler/src/Code_Generator/code_generator.h \
+ /home/Connor/Programming/C/Python-Compiler/src/Code_Generator/../Parser/parser.h \
+ /home/Connor/Programming/C/Python-Compiler/src/Code_Generator/../Parser/../Lexer/lexer.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
  /usr/include/stdlib.h /usr/include/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -34,11 +36,4 @@ CMakeFiles/pyco.dir/main.c.o: \
  /usr/include/bits/stdio_lim.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdbool.h \
  /usr/include/string.h /usr/include/bits/types/locale_t.h \
- /usr/include/bits/types/__locale_t.h /usr/include/strings.h \
- /home/Connor/Programming/C/Python-Compiler/src/Parser/parser.h \
- /home/Connor/Programming/C/Python-Compiler/src/Parser/../Lexer/lexer.h \
- /home/Connor/Programming/C/Python-Compiler/src/Code_Generator/code_generator.h \
- /home/Connor/Programming/C/Python-Compiler/src/Code_Generator/../Parser/parser.h \
- /home/Connor/Programming/C/Python-Compiler/src/Testing/testing.h \
- /home/Connor/Programming/C/Python-Compiler/src/Testing/../Code_Generator/code_generator.h \
- /home/Connor/Programming/C/Python-Compiler/src/Utils/get_version_num.h
+ /usr/include/bits/types/__locale_t.h /usr/include/strings.h

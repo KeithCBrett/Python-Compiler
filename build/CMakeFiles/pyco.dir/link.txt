@@ -1,1 +1,1 @@
-/usr/bin/cc -Wl,--dependency-file=CMakeFiles/pyco.dir/link.d CMakeFiles/pyco.dir/main.c.o -o pyco  libis.a libtesting.a libparser.a liblexer.a
+/usr/bin/cc -Wl,--dependency-file=CMakeFiles/pyco.dir/link.d CMakeFiles/pyco.dir/main.c.o -o pyco  libgenerator.a libtesting.a libpyco_version.a libparser.a liblexer.a

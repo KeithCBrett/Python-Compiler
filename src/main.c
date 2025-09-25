@@ -2,6 +2,7 @@
 #include "Parser/parser.h"
 #include "Code_Generator/code_generator.h"
 #include "Testing/testing.h"
+#include "Utils/get_version_num.h"
 
 
 int
@@ -43,6 +44,11 @@ main (int argc, char **argv)
 		" inputfile.py outputfile.asm\n");
 		return 1;
 	}
+
+	fprintf (stdout, "\nPYCO - A Python Compiler\n");
+	fprintf (stdout, "VERSION: %zu.%zu.%zu\n\n", get_version_major(),
+			get_num_commits_minor(), get_num_commits_patch());
+	fprintf (stdout, "COMPILING...\n\n");
 
 	// Input file (python source to compile)
 	FILE *ifp = fopen (argv[2], "r");
@@ -99,13 +105,18 @@ main (int argc, char **argv)
 	tile
 		(root, root, symbol_table, p_vasm, p_line_num, p_error,
 		 count_array);
-	run_tests();
+
+
+	//run_tests();
+
+
 	const char *vasm_flag = "-vasm";
 	if ((strcmp (argv[1], vasm_flag)) == 0)
 	{
 		if (error == 0)
 		{
 			output_vasm_file (ofp, vasm);
+			fprintf (stdout, "TERMINATE, compilation successful\n\n");
 		}
 		else
 		{

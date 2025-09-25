@@ -1,0 +1,60 @@
+#include "get_version_num.h"
+
+
+size_t
+get_version_major ()
+{
+	return @pyco_VERSION_MAJOR@ +0;
+}
+
+
+size_t
+get_version_minor ()
+{
+	return @pyco_VERSION_MINOR@ +0;
+}
+
+
+size_t
+get_version_patch ()
+{
+	return @pyco_VERSION_PATCH@ +0;
+}
+
+
+size_t
+get_num_commits ()
+{
+	return @pyco_NUM_COMMITS@ +0;
+}
+
+
+size_t
+get_num_commits_patch ()
+{
+	if (@pyco_NUM_COMMITS@ >= 100)
+	{
+		return (@pyco_NUM_COMMITS@ % 100);
+	}
+	else if (@pyco_NUM_COMMITS@ < 100)
+	{
+		return @pyco_NUM_COMMITS@;
+	}
+}
+
+
+size_t
+get_num_commits_minor ()
+{
+	size_t count = 0;
+	size_t curr_commits = @pyco_NUM_COMMITS@;
+	if (@pyco_NUM_COMMITS@ >= 100)
+	{
+		while (curr_commits >= 100)
+		{
+			curr_commits = curr_commits - 100;
+			count = count + 1;
+		}
+		return count;
+	}
+}

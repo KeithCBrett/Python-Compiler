@@ -124,6 +124,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named pyco_version
+
+# Build rule for target.
+pyco_version: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 pyco_version
+.PHONY : pyco_version
+
+# fast build rule for target.
+pyco_version/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pyco_version.dir/build.make CMakeFiles/pyco_version.dir/build
+.PHONY : pyco_version/fast
+
+#=============================================================================
 # Target rules for targets named lexer
 
 # Build rule for target.
@@ -150,17 +163,17 @@ parser/fast:
 .PHONY : parser/fast
 
 #=============================================================================
-# Target rules for targets named is
+# Target rules for targets named generator
 
 # Build rule for target.
-is: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 is
-.PHONY : is
+generator: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 generator
+.PHONY : generator
 
 # fast build rule for target.
-is/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/is.dir/build.make CMakeFiles/is.dir/build
-.PHONY : is/fast
+generator/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/build
+.PHONY : generator/fast
 
 #=============================================================================
 # Target rules for targets named testing
@@ -193,7 +206,7 @@ Code_Generator/code_generator.o: Code_Generator/code_generator.c.o
 
 # target to build an object file
 Code_Generator/code_generator.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/is.dir/build.make CMakeFiles/is.dir/Code_Generator/code_generator.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/Code_Generator/code_generator.c.o
 .PHONY : Code_Generator/code_generator.c.o
 
 Code_Generator/code_generator.i: Code_Generator/code_generator.c.i
@@ -201,7 +214,7 @@ Code_Generator/code_generator.i: Code_Generator/code_generator.c.i
 
 # target to preprocess a source file
 Code_Generator/code_generator.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/is.dir/build.make CMakeFiles/is.dir/Code_Generator/code_generator.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/Code_Generator/code_generator.c.i
 .PHONY : Code_Generator/code_generator.c.i
 
 Code_Generator/code_generator.s: Code_Generator/code_generator.c.s
@@ -209,7 +222,7 @@ Code_Generator/code_generator.s: Code_Generator/code_generator.c.s
 
 # target to generate assembly for a file
 Code_Generator/code_generator.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/is.dir/build.make CMakeFiles/is.dir/Code_Generator/code_generator.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/Code_Generator/code_generator.c.s
 .PHONY : Code_Generator/code_generator.c.s
 
 Lexer/lexer.o: Lexer/lexer.c.o
@@ -284,6 +297,30 @@ Testing/testing.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/testing.dir/build.make CMakeFiles/testing.dir/Testing/testing.c.s
 .PHONY : Testing/testing.c.s
 
+Utils/get_version_num.o: Utils/get_version_num.c.o
+.PHONY : Utils/get_version_num.o
+
+# target to build an object file
+Utils/get_version_num.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pyco_version.dir/build.make CMakeFiles/pyco_version.dir/Utils/get_version_num.c.o
+.PHONY : Utils/get_version_num.c.o
+
+Utils/get_version_num.i: Utils/get_version_num.c.i
+.PHONY : Utils/get_version_num.i
+
+# target to preprocess a source file
+Utils/get_version_num.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pyco_version.dir/build.make CMakeFiles/pyco_version.dir/Utils/get_version_num.c.i
+.PHONY : Utils/get_version_num.c.i
+
+Utils/get_version_num.s: Utils/get_version_num.c.s
+.PHONY : Utils/get_version_num.s
+
+# target to generate assembly for a file
+Utils/get_version_num.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pyco_version.dir/build.make CMakeFiles/pyco_version.dir/Utils/get_version_num.c.s
+.PHONY : Utils/get_version_num.c.s
+
 main.o: main.c.o
 .PHONY : main.o
 
@@ -317,10 +354,11 @@ help:
 	@echo "... codegen"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... is"
+	@echo "... generator"
 	@echo "... lexer"
 	@echo "... parser"
 	@echo "... pyco"
+	@echo "... pyco_version"
 	@echo "... testing"
 	@echo "... Code_Generator/code_generator.o"
 	@echo "... Code_Generator/code_generator.i"
@@ -334,6 +372,9 @@ help:
 	@echo "... Testing/testing.o"
 	@echo "... Testing/testing.i"
 	@echo "... Testing/testing.s"
+	@echo "... Utils/get_version_num.o"
+	@echo "... Utils/get_version_num.i"
+	@echo "... Utils/get_version_num.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

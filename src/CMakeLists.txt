@@ -1,17 +1,43 @@
 cmake_minimum_required(VERSION 4.0)
-
+include(proj_version.cmake)
 
 # Langauges default to C and C++. Since this project only builds from C, we
 # explicity set that as the language.
 project(pyco
-	VERSION 0.0.0
+	VERSION ${pyco_VER}
 	LANGUAGES C
 )
 
 
+# Since our version numbering is automated via commit number, we need git as
+# one of our build dependencies.
+find_package(Git REQUIRED)
+
+
+# This section gets the number of commits from git.
+execute_process(
+	COMMAND ${GIT_EXECUTABLE} rev-list --count main
+	RESULT_VARIABLE result
+	OUTPUT_VARIABLE num_commits
+	ERROR_VARIABLE num_commits
+)
+if (result)
+	message(FATAL_ERROR "failed to get number of commits")
+endif()
+# Supply the output of the above process to function's result.
+set(pyco_NUM_COMMITS ${num_commits})
+
+
+# Allows for us to make us of the version number in our source code.
+# CMake will auto generate get_version_num.c with the correct version numbers
+# so that we can use them in our program.
+configure_file(Utils/get_version_num.c.in
+	${CMAKE_CURRENT_SOURCE_DIR}/Utils/get_version_num.c @ONLY)
+add_library(pyco_version STATIC ${CMAKE_CURRENT_SOURCE_DIR}/Utils/get_version_num.c)
+
 add_library(lexer Lexer/lexer.c)
 add_library(parser Parser/parser.c)
-add_library(is Code_Generator/code_generator.c)
+add_library(generator Code_Generator/code_generator.c)
 add_library(testing Testing/testing.c)
 add_executable(pyco main.c)
 
@@ -19,10 +45,12 @@ add_executable(pyco main.c)
 target_link_libraries(parser PRIVATE lexer)
 
 
-target_link_libraries(is PRIVATE parser)
+target_link_libraries(generator PRIVATE parser)
 
 
 target_link_libraries(pyco
-	PRIVATE is
+	PRIVATE generator
 	PRIVATE testing
+	# For displaying version number when user compiles something.
+	PRIVATE pyco_version
 )

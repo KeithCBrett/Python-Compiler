@@ -96,8 +96,9 @@ pyco_EXTERNAL_OBJECTS =
 pyco: CMakeFiles/pyco.dir/main.c.o
 pyco: CMakeFiles/pyco.dir/build.make
 pyco: CMakeFiles/pyco.dir/compiler_depend.ts
-pyco: libis.a
+pyco: libgenerator.a
 pyco: libtesting.a
+pyco: libpyco_version.a
 pyco: libparser.a
 pyco: liblexer.a
 pyco: CMakeFiles/pyco.dir/link.txt

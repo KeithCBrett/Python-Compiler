@@ -10,6 +10,8 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/4.1.1/CMakeCCompiler.cmake"
   "CMakeFiles/4.1.1/CMakeSystem.cmake"
   "/home/Connor/Programming/C/Python-Compiler/src/CMakeLists.txt"
+  "/home/Connor/Programming/C/Python-Compiler/src/Utils/get_version_num.c.in"
+  "/home/Connor/Programming/C/Python-Compiler/src/proj_version.cmake"
   "/usr/share/cmake/Modules/CMakeCInformation.cmake"
   "/usr/share/cmake/Modules/CMakeCommonLanguageInclude.cmake"
   "/usr/share/cmake/Modules/CMakeGenericSystem.cmake"
@@ -20,6 +22,9 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
   "/usr/share/cmake/Modules/Compiler/GNU-C.cmake"
   "/usr/share/cmake/Modules/Compiler/GNU.cmake"
+  "/usr/share/cmake/Modules/FindGit.cmake"
+  "/usr/share/cmake/Modules/FindPackageHandleStandardArgs.cmake"
+  "/usr/share/cmake/Modules/FindPackageMessage.cmake"
   "/usr/share/cmake/Modules/Internal/CMakeCLinkerInformation.cmake"
   "/usr/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake"
   "/usr/share/cmake/Modules/Linker/GNU-C.cmake"
@@ -42,14 +47,16 @@ set(CMAKE_MAKEFILE_OUTPUTS
 
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
+  "/home/Connor/Programming/C/Python-Compiler/src/Utils/get_version_num.c"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
+  "CMakeFiles/pyco_version.dir/DependInfo.cmake"
   "CMakeFiles/lexer.dir/DependInfo.cmake"
   "CMakeFiles/parser.dir/DependInfo.cmake"
-  "CMakeFiles/is.dir/DependInfo.cmake"
+  "CMakeFiles/generator.dir/DependInfo.cmake"
   "CMakeFiles/testing.dir/DependInfo.cmake"
   "CMakeFiles/pyco.dir/DependInfo.cmake"
   )
