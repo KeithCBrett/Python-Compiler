@@ -1,0 +1,2 @@
+/usr/bin/ar qc librelease.a CMakeFiles/release.dir/Release/release.c.o
+/usr/bin/ranlib librelease.a

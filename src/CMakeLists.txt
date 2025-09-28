@@ -38,19 +38,27 @@ add_library(pyco_version STATIC ${CMAKE_CURRENT_SOURCE_DIR}/Utils/get_version_nu
 add_library(lexer Lexer/lexer.c)
 add_library(parser Parser/parser.c)
 add_library(generator Code_Generator/code_generator.c)
-add_library(testing Testing/testing.c)
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+	add_library(testing Testing/testing.c)
+endif()
 add_executable(pyco main.c)
 
 
 target_link_libraries(parser PRIVATE lexer)
 
-
 target_link_libraries(generator PRIVATE parser)
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+	target_link_libraries(testing PRIVATE generator)
+endif()
 
-target_link_libraries(pyco
-	PRIVATE generator
-	PRIVATE testing
-	# For displaying version number when user compiles something.
-	PRIVATE pyco_version
-)
+# Conditional linking of testing apparatus based on whether we are building
+# for debug or release.
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+	target_link_libraries(pyco PRIVATE testing)
+endif()
+
+# For displaying version number when user compiles something.
+target_link_libraries(pyco PRIVATE pyco_version)
+
+target_link_libraries(pyco PRIVATE generator)

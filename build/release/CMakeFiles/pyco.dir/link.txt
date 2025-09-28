@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG -Wl,--dependency-file=CMakeFiles/pyco.dir/link.d CMakeFiles/pyco.dir/main.c.o -o pyco  libpyco_version.a libgenerator.a libparser.a liblexer.a

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libgenerator.a CMakeFiles/generator.dir/Code_Generator/code_generator.c.o
+/usr/bin/ranlib libgenerator.a
