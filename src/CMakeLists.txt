@@ -1,4 +1,8 @@
-cmake_minimum_required(VERSION 4.0)
+if (MSCV)
+	cmake_minimum_required(VERSION 3.30)
+else ()
+	cmake_minimum_required(VERSION 4.0)
+endif()
 include(proj_version.cmake)
 
 # Langauges default to C and C++. Since this project only builds from C, we
