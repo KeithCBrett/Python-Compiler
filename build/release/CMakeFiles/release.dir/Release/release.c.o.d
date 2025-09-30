@@ -1,3 +1,0 @@
-CMakeFiles/release.dir/Release/release.c.o: \
- /home/Connor/Programming/C/Python-Compiler/src/Release/release.c \
- /usr/include/stdc-predef.h

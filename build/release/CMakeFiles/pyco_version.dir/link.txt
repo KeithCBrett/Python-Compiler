@@ -1,2 +1,0 @@
-/usr/bin/ar qc libpyco_version.a CMakeFiles/pyco_version.dir/Utils/get_version_num.c.o
-/usr/bin/ranlib libpyco_version.a

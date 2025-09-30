@@ -1,8 +1,0 @@
-/home/Connor/Programming/C/Python-Compiler/build/debug/CMakeFiles/pyco_version.dir
-/home/Connor/Programming/C/Python-Compiler/build/debug/CMakeFiles/lexer.dir
-/home/Connor/Programming/C/Python-Compiler/build/debug/CMakeFiles/parser.dir
-/home/Connor/Programming/C/Python-Compiler/build/debug/CMakeFiles/generator.dir
-/home/Connor/Programming/C/Python-Compiler/build/debug/CMakeFiles/testing.dir
-/home/Connor/Programming/C/Python-Compiler/build/debug/CMakeFiles/pyco.dir
-/home/Connor/Programming/C/Python-Compiler/build/debug/CMakeFiles/edit_cache.dir
-/home/Connor/Programming/C/Python-Compiler/build/debug/CMakeFiles/rebuild_cache.dir
