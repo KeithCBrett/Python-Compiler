@@ -1,9 +1,16 @@
+# If we are in a windows enviroment, we use cl as the compiler. Otherwise we
+# will use gcc.
 if (MSCV)
 	cmake_minimum_required(VERSION 3.30)
+	message(STATUS "Building with cl (Windows detected)")
 else ()
 	cmake_minimum_required(VERSION 4.0)
+	message(STATUS "Building with gcc (Linux detected)")
 endif()
+
+
 include(proj_version.cmake)
+
 
 # Langauges default to C and C++. Since this project only builds from C, we
 # explicity set that as the language.
@@ -66,3 +73,11 @@ endif()
 target_link_libraries(pyco PRIVATE pyco_version)
 
 target_link_libraries(pyco PRIVATE generator)
+
+# If we are on Windows, we need to pass special flags to cl to allow
+# compilation for newer C standards.
+# /TC - Forces C compilation as opposed to C++.
+# /std:c11 - Forces C11 support.
+if (MSCV)
+	target_compile_options(pyco PUBLIC "SHELL:/TC" "SHELL:/std:c11")
+endif()
