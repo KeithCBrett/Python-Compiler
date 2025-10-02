@@ -54,7 +54,7 @@ main (int argc, char **argv)
 	FILE *ifp = fopen (argv[2], "rb");
 
 	// Output file (x86-64 assembly source if all goes well)
-	FILE *ofp = fopen (argv[3], "w");
+	FILE *ofp = fopen (argv[3], "wb");
 
 	// Store input file in string.
 	char *source = get_source_from_file (ifp);
