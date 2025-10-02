@@ -591,7 +591,7 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 size_t
 convert_constant (int inp_length, const char *inp_string)
 {
-	char string[inp_length+1];
+	char *string = malloc (sizeof (char) * (inp_length + 1));
 	for (size_t i = 0; i < inp_length ; i++)
 	{
 		string[i] = inp_string[i];
