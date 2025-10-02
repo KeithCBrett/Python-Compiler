@@ -1,2 +1,0 @@
-/usr/bin/ar qc libis.a CMakeFiles/is.dir/Code_Generator/code_generator.c.o
-/usr/bin/ranlib libis.a

@@ -51,7 +51,7 @@ main (int argc, char **argv)
 	fprintf (stdout, "COMPILING...\n\n");
 
 	// Input file (python source to compile)
-	FILE *ifp = fopen (argv[2], "r");
+	FILE *ifp = fopen (argv[2], "rb");
 
 	// Output file (x86-64 assembly source if all goes well)
 	FILE *ofp = fopen (argv[3], "w");
