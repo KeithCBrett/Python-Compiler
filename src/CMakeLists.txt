@@ -1,10 +1,9 @@
 # If we are in a windows enviroment, we use cl as the compiler. Otherwise we
 # will use gcc.
-if (MSCV)
-	cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.30)
+if (WIN32)
 	message(STATUS "Building with cl (Windows detected)")
 else ()
-	cmake_minimum_required(VERSION 4.0)
 	message(STATUS "Building with gcc (Linux detected)")
 endif()
 
@@ -78,6 +77,6 @@ target_link_libraries(pyco PRIVATE generator)
 # compilation for newer C standards.
 # /TC - Forces C compilation as opposed to C++.
 # /std:c11 - Forces C11 support.
-if (MSCV)
+if (WIN32)
 	target_compile_options(pyco PUBLIC "SHELL:/TC" "SHELL:/std:c11")
 endif()
