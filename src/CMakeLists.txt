@@ -3,6 +3,7 @@
 cmake_minimum_required(VERSION 3.30)
 if (WIN32)
 	message(STATUS "Building with cl (Windows detected)")
+	set(RUNTIME_OUTPUT_DIRECTORY "../build/release")
 else ()
 	message(STATUS "Building with gcc (Linux detected)")
 endif()
