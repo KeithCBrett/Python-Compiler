@@ -80,5 +80,5 @@ target_link_libraries(pyco PRIVATE generator)
 # /std:c11 - Forces C11 support.
 # /DEBUG - Adds debugging symbols to executable.
 if (WIN32)
-	target_compile_options(pyco PUBLIC "SHELL:/TC" "SHELL:/std:c11", "SHELL:/DEBUG")
+	target_compile_options(pyco PUBLIC "SHELL:/TC" "SHELL:/std:c11" "SHELL:/DEBUG")
 endif()
