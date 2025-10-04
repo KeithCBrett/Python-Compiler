@@ -78,6 +78,7 @@ target_link_libraries(pyco PRIVATE generator)
 # compilation for newer C standards.
 # /TC - Forces C compilation as opposed to C++.
 # /std:c11 - Forces C11 support.
+# /DEBUG - Adds debugging symbols to executable.
 if (WIN32)
-	target_compile_options(pyco PUBLIC "SHELL:/TC" "SHELL:/std:c11")
+	target_compile_options(pyco PUBLIC "SHELL:/TC" "SHELL:/std:c11", "SHELL:/DEBUG")
 endif()
