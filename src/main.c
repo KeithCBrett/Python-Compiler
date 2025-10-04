@@ -67,7 +67,9 @@ main (int argc, char **argv)
 	bool was_newline = true;
 
 
+	fprintf(stdout, "\tLEXING/PARSING...");
 	root = parse (Prec_Start, root, was_newline);
+	fprintf(stdout, "COMPLETE\n");
 
 	// Now that we have our ast, we have to check a couple of invalid
 	// roots. This mainly pertains to one line programs. For example,
@@ -102,9 +104,11 @@ main (int argc, char **argv)
 	CountArray *count_array = spawn_count_array (2, 5, 2);
 
 	// Perform instruction selection using virtual registers.
+	fprintf(stdout, "\tINSTRUCTION SELECTION...");
 	tile
 		(root, root, symbol_table, p_vasm, p_line_num, p_error,
 		 count_array);
+	fprintf(stdout, "COMPLETE\n");
 
 
 	//run_tests();
