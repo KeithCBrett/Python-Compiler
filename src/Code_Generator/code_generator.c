@@ -222,6 +222,16 @@ tile (TreeNode *n, TreeNode *root, StNode **symbol_table,
 						= true;
 					break;
 				default:
+					if (nearest_newline->is_root)
+					{
+						if (n->contents.type == TOKEN_IDENTIFIER)
+						{
+							label
+								(n, root, symbol_table, vasm,
+								 line_num, error, count_array);
+							break;
+						}
+					}
 					break;
 			}
 		}
@@ -446,7 +456,7 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 				break;
 			}
 		case TOKEN_COMMA:
-			if ((n->left->reg == true) && (n->left->reg == true))
+			if ((n->left->reg == true) && (n->right->reg == true))
 			{
 				n->reg = true;
 				n->rule_number = ASM_COMMA;
@@ -591,13 +601,23 @@ label (TreeNode *n, TreeNode *root, StNode **symbol_table,
 size_t
 convert_constant (int inp_length, const char *inp_string)
 {
-	char *string = malloc (sizeof (char) * (inp_length + 1));
+	char *string = malloc (sizeof (*string) * (inp_length + 2));
 	for (size_t i = 0; i < inp_length ; i++)
 	{
-		string[i] = inp_string[i];
+		if (string != NULL)
+		{
+			string[i] = inp_string[i];
+		}
 	}
-	string[inp_length+1] = 0;
-	size_t return_num = atoi (string);
+	if (string != NULL)
+	{
+		string[inp_length+1] = 0;
+	}
+	size_t return_num = 0;
+	if (string != NULL)
+	{
+		return_num = atoi (string);
+	}
 	return return_num;
 }
 
@@ -1166,9 +1186,12 @@ StNode *
 st_spawn_node (TreeNode *node, int value)
 {
 	StNode *return_node = malloc (sizeof (*return_node));
-	return_node->node = node;
-	return_node->contents = value;
-	return_node->next = NULL;
+	if (return_node != NULL)
+	{
+		return_node->node = node;
+		return_node->contents = value;
+		return_node->next = NULL;
+	}
 	return return_node;
 }
 
@@ -1210,27 +1233,37 @@ st_search (StNode **table, TreeNode *node)
 	size_t string_hash = st_convert_string
 		(node->contents.first_char, node->contents.length);
 	// Check if we are already on target.
-	if (temp[index]->lexeme == string_hash)
+	if (temp[index]->contents != -1)
 	{
-		return temp[index]->contents;
+		if (temp[index]->lexeme == string_hash)
+		{
+			return temp[index]->contents;
+		}
 	}
 	// If not, traverse linked list.
-	while ((temp[index]->next != NULL) && (temp[index]->lexeme
-				!= string_hash))
+	if (temp[index]->contents != -1)
 	{
-		temp[index] = temp[index]->next;
+		while ((temp[index]->next != NULL) && (temp[index]->lexeme
+					!= string_hash))
+		{
+			temp[index] = temp[index]->next;
+		}
 	}
 	// Should be at end of linked list or at target now.
-	if (temp[index]->lexeme == string_hash)
+	if (temp[index]->contents != -1)
 	{
-		// On target, return associated int.
-		return temp[index]->contents;
+		if (temp[index]->lexeme == string_hash)
+		{
+			// On target, return associated int.
+			return temp[index]->contents;
+		}
 	}
 	else
 	{
 		// Item not in table, return special numeric.
 		return -1;
 	}
+	return -1;
 }
 
 
@@ -1285,9 +1318,13 @@ st_spawn_table ()
 {
 	StNode **return_table = malloc (SYMBOL_TABLE_SIZE * sizeof
 			(*return_table));
-	for (int i = 0 ; i < SYMBOL_TABLE_SIZE ; i++)
+	if (return_table != NULL)
 	{
-		return_table[i] = malloc (sizeof (StNode));
+		for (int i = 0 ; i < SYMBOL_TABLE_SIZE ; i++)
+		{
+			return_table[i] = malloc (sizeof (StNode));
+			return_table[i]->contents = -1;
+		}
 	}
 	return return_table;
 }
@@ -1316,17 +1353,23 @@ spawn_vasm_op (VasmOperation inp_op, size_t inp_regl,
 		bool inp_label)
 {
 	VasmInstruction *out_inst = malloc (sizeof (VasmInstruction));
-	out_inst->op = inp_op;
-	out_inst->regl = inp_regl;
-	out_inst->regr = inp_regr;
-	out_inst->regr_reg = inp_regr_reg;
-	out_inst->regl_reg = inp_regl_reg;
+	if (out_inst != NULL)
+	{
+		out_inst->op = inp_op;
+		out_inst->regl = inp_regl;
+		out_inst->regr = inp_regr;
+		out_inst->regr_reg = inp_regr_reg;
+		out_inst->regl_reg = inp_regl_reg;
+	}
 	if (inp_label)
 	{
 		if (inp_op == VASM_LOOP_CONST)
 		{
-			out_inst->label_data.id = inp_regl;
-			out_inst->label_data.type = LOOP_CONST;
+			if (out_inst != NULL)
+			{
+				out_inst->label_data.id = inp_regl;
+				out_inst->label_data.type = LOOP_CONST;
+			}
 		}
 		else
 		{
@@ -1335,10 +1378,16 @@ spawn_vasm_op (VasmOperation inp_op, size_t inp_regl,
 	}
 	else
 	{
-		out_inst->label_data.id = 0;
-		out_inst->label_data.type = 0;
+		if (out_inst != NULL)
+		{
+			out_inst->label_data.id = 0;
+			out_inst->label_data.type = 0;
+		}
 	}
-	out_inst->next = NULL;
+	if (out_inst != NULL)
+	{
+		out_inst->next = NULL;
+	}
 	return out_inst;
 }
 
@@ -1919,13 +1968,16 @@ spawn_count_array (size_t inp_header_count, size_t inp_regcount,
 		size_t inp_footer_count)
 {
 	CountArray *out_arr = malloc (sizeof (CountArray));
-	out_arr->header_count = inp_header_count;
-	out_arr->footer_count = inp_footer_count;
-	out_arr->regcount = inp_regcount;
-	out_arr->indent_level = 0;
-	out_arr->loop_body = false;
-	out_arr->force_break_recursion = false;
-	out_arr->first_entry = true;
+	if (out_arr != NULL)
+	{
+		out_arr->header_count = inp_header_count;
+		out_arr->footer_count = inp_footer_count;
+		out_arr->regcount = inp_regcount;
+		out_arr->indent_level = 0;
+		out_arr->loop_body = false;
+		out_arr->force_break_recursion = false;
+		out_arr->first_entry = true;
+	}
 	return out_arr;
 }
 

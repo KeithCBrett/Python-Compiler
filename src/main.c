@@ -8,6 +8,7 @@
 int
 main (int argc, char **argv)
 {
+	/*
 	if (argc < 4)
 	{
 		if (argv[1][0] != '-')
@@ -44,6 +45,7 @@ main (int argc, char **argv)
 		" inputfile.py outputfile.asm\n");
 		return 1;
 	}
+	*/
 
 	fprintf (stdout, "\nPYCO - A Python Compiler\n");
 	fprintf (stdout, "VERSION: %zu.%zu.%zu\n\n", get_version_major(),
@@ -51,6 +53,8 @@ main (int argc, char **argv)
 	fprintf (stdout, "COMPILING...\n\n");
 
 	// Input file (python source to compile)
+	// ~NOTE~ Change these to be passed on the command line.
+
 	FILE *ifp = fopen (argv[2], "rb");
 
 	// Output file (x86-64 assembly source if all goes well)
@@ -120,7 +124,7 @@ main (int argc, char **argv)
 		if (error == 0)
 		{
 			output_vasm_file (ofp, vasm);
-			fprintf (stdout, "TERMINATE, compilation successful\n\n");
+			fprintf (stdout, "\nTERMINATE,\ncompilation successful\n\n");
 		}
 		else
 		{
