@@ -222,16 +222,6 @@ tile (TreeNode *n, TreeNode *root, StNode **symbol_table,
 						= true;
 					break;
 				default:
-					if (nearest_newline->is_root)
-					{
-						if (n->contents.type == TOKEN_IDENTIFIER)
-						{
-							label
-								(n, root, symbol_table, vasm,
-								 line_num, error, count_array);
-							break;
-						}
-					}
 					break;
 			}
 		}
@@ -1233,7 +1223,7 @@ st_search (StNode **table, TreeNode *node)
 	size_t string_hash = st_convert_string
 		(node->contents.first_char, node->contents.length);
 	// Check if we are already on target.
-	if (temp[index]->contents != -1)
+	if (temp[index] != NULL)
 	{
 		if (temp[index]->lexeme == string_hash)
 		{
@@ -1241,16 +1231,19 @@ st_search (StNode **table, TreeNode *node)
 		}
 	}
 	// If not, traverse linked list.
-	if (temp[index]->contents != -1)
+	if (temp[index] != NULL)
 	{
-		while ((temp[index]->next != NULL) && (temp[index]->lexeme
-					!= string_hash))
+		if (temp[index]->contents != -1)
 		{
-			temp[index] = temp[index]->next;
+			while ((temp[index]->next != NULL) && (temp[index]->lexeme
+						!= string_hash))
+			{
+				temp[index] = temp[index]->next;
+			}
 		}
 	}
 	// Should be at end of linked list or at target now.
-	if (temp[index]->contents != -1)
+	if (temp[index] != NULL)
 	{
 		if (temp[index]->lexeme == string_hash)
 		{

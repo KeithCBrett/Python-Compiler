@@ -69,6 +69,12 @@ TreeNode *
 nud_newline (TreeNode *inp_tree, bool inp_was_newline)
 {
 	TreeNode *out_node = parse (Prec_Newline, inp_tree, inp_was_newline);
+	// Initialize register number of newlines. Should start off as 0, but is
+	// liable to change to store some state needed for nested loop code-gen.
+	if (out_node->contents.type == TOKEN_NEWLINE)
+	{
+		out_node->register_number = 0;
+	}
 	return out_node;
 }
 
@@ -167,6 +173,12 @@ led_binary (TreeNode *tree, bool was_newline)
 	new_node->left = tree;
 	new_node->right = parse (table[parser.current.type].precedence,
 			tree, was_newline);
+	// Initialize register number of newlines. Should start off as 0, but is
+	// liable to change to store some state needed for nested loop code-gen.
+	if (new_node->contents.type == TOKEN_NEWLINE)
+	{
+		new_node->register_number = 0;
+	}
 	return new_node;
 }
 

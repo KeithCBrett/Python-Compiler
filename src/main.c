@@ -8,7 +8,6 @@
 int
 main (int argc, char **argv)
 {
-	/*
 	if (argc < 4)
 	{
 		if (argv[1][0] != '-')
@@ -45,8 +44,6 @@ main (int argc, char **argv)
 		" inputfile.py outputfile.asm\n");
 		return 1;
 	}
-	*/
-
 	fprintf (stdout, "\nPYCO - A Python Compiler\n");
 	fprintf (stdout, "VERSION: %zu.%zu.%zu\n\n", get_version_major(),
 			get_num_commits_minor(), get_num_commits_patch());
@@ -56,9 +53,11 @@ main (int argc, char **argv)
 	// ~NOTE~ Change these to be passed on the command line.
 
 	FILE *ifp = fopen (argv[2], "rb");
+	//FILE *ifp = fopen ("inputfile.py", "rb");
 
 	// Output file (x86-64 assembly source if all goes well)
 	FILE *ofp = fopen (argv[3], "wb");
+	//FILE *ofp = fopen ("outputfile.asm", "wb");
 
 	// Store input file in string.
 	char *source = get_source_from_file (ifp);
