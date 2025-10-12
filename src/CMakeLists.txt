@@ -12,12 +12,29 @@ endif()
 include(proj_version.cmake)
 
 
-# Langauges default to C and C++. Since this project only builds from C, we
-# explicity set that as the language.
 project(pyco
 	VERSION ${pyco_VER}
-	LANGUAGES C
+	LANGUAGES C CXX
 )
+
+
+# We need CXX (C++) for googletest. Googletest requires C++17 or higher, so we
+# enforce that standard here.
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+
+# Here is were we set googletest as a dependency.
+include(FetchContent)
+FetchContent_Declare(
+	googletest
+	GIT_REPOSITORY https://github.com/google/googletest.git
+	GIT_TAG 279f8479469d22fa772adb454068f854472e1eb9 # 1.17.0
+)
+# Required for Windows: Without this googletest can overide the
+# compiler/linker settings we set.
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
 
 # Since our version numbering is automated via commit number, we need git as
@@ -46,33 +63,36 @@ configure_file(Utils/get_version_num.c.in
 	${CMAKE_CURRENT_SOURCE_DIR}/Utils/get_version_num.c @ONLY)
 add_library(pyco_version STATIC ${CMAKE_CURRENT_SOURCE_DIR}/Utils/get_version_num.c)
 
+
 add_library(lexer Lexer/lexer.c)
 add_library(parser Parser/parser.c)
 add_library(generator Code_Generator/code_generator.c)
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-	add_library(testing Testing/testing.c)
+	add_library(testing Testing/unit_tests.cc)
 endif()
 add_executable(pyco main.c)
 
 
 target_link_libraries(parser PRIVATE lexer)
-
 target_link_libraries(generator PRIVATE parser)
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-	target_link_libraries(testing PRIVATE generator)
-endif()
 
 # Conditional linking of testing apparatus based on whether we are building
 # for debug or release.
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+	target_link_libraries(testing PRIVATE generator)
+endif()
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	target_link_libraries(pyco PRIVATE testing)
 endif()
+
 
 # For displaying version number when user compiles something.
 target_link_libraries(pyco PRIVATE pyco_version)
 
+
 target_link_libraries(pyco PRIVATE generator)
+
 
 # If we are on Windows, we need to pass special flags to cl to allow
 # compilation for newer C standards.
@@ -82,3 +102,17 @@ target_link_libraries(pyco PRIVATE generator)
 if (WIN32)
 	target_compile_options(pyco PUBLIC "SHELL:/TC" "SHELL:/std:c11" "SHELL:/DEBUG")
 endif()
+
+
+# Enable googletest testing.
+enable_testing()
+add_executable(
+	unit_tests
+	Testing/unit_tests.cc
+)
+target_link_libraries(
+	unit_tests
+	GTest::gtest_main
+)
+include(GoogleTest)
+gtest_discover_tests(unit_tests)

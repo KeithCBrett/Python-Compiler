@@ -16,5 +16,3 @@ add		r(5), 1
 LC2:
 cmp		r(5), 4
 jle		LC5
-mov		r(2), r(5)
-call		printstr

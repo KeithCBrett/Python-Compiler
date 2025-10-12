@@ -24,7 +24,7 @@ get_source_from_file (FILE *file)
 
 
 	// Store file in string
-	char *source = malloc (source_length + 1);
+	char *source = (char *) malloc (source_length + 1);
 	if (source == NULL)
 	{
 		fprintf (stderr, "Could not allocate enough memory\n");

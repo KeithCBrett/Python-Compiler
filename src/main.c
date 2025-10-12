@@ -1,7 +1,6 @@
 #include "Lexer/lexer.h"
 #include "Parser/parser.h"
 #include "Code_Generator/code_generator.h"
-#include "Testing/testing.h"
 #include "Utils/get_version_num.h"
 
 
