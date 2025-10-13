@@ -334,3 +334,46 @@ TEST (LexerTest, ChechCBranchValidInp)
 	tok = check_c_branch ();
 	EXPECT_EQ (tok.type, TOKEN_CONTINUE);
 }
+
+
+TEST (LexerTest, CheckDBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "delattr";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_d_branch ();
+	EXPECT_EQ (tok.type, TOKEN_DELATTR);
+	
+	const char *str1 = "del";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_d_branch ();
+	EXPECT_EQ (tok.type, TOKEN_DEL);
+
+	const char *str2 = "def";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_d_branch ();
+	EXPECT_EQ (tok.type, TOKEN_DEF);
+
+	const char *str3 = "dict";
+	initialize_lexer (str3);
+	c = consume_char ();
+	tok = check_d_branch ();
+	EXPECT_EQ (tok.type, TOKEN_DICT);
+
+	const char *str4 = "dir";
+	initialize_lexer (str4);
+	c = consume_char ();
+	tok = check_d_branch ();
+	EXPECT_EQ (tok.type, TOKEN_DIR);
+
+	const char *str5 = "divmod";
+	initialize_lexer (str5);
+	c = consume_char ();
+	tok = check_d_branch ();
+	EXPECT_EQ (tok.type, TOKEN_DIVMOD);
+}
