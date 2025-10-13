@@ -111,3 +111,13 @@ TEST(LexerTest, NumberValidInp) {
 	static Token test_token2 = number();
 	EXPECT_EQ(test_token2.type, TOKEN_FLOAT);
 }
+
+
+TEST(LexerTest, IsLetterValidInp) {
+	EXPECT_EQ(is_letter ('a'), true);
+	EXPECT_EQ(is_letter ('z'), true);
+	EXPECT_EQ(is_letter ('l'), true);
+	EXPECT_EQ(is_letter ('0'), false);
+	EXPECT_EQ(is_letter ('9'), false);
+	EXPECT_EQ(is_letter ('5'), false);
+}
