@@ -53,3 +53,12 @@ TEST(LexerTest, SpawnErrorValidInp) {
 	EXPECT_EQ(test_err_token.length, test_err_len);
 	EXPECT_EQ(test_err_token.first_char, test_err);
 }
+
+
+TEST(LexerTest, ConsumeCharValidInp) {
+	Lexer lex;
+	const char *test_string = "for i in range(5):\n    print(i)";
+	initialize_lexer(test_string);
+	static char target_char = 'f';
+	EXPECT_EQ(consume_char (), target_char);
+}
