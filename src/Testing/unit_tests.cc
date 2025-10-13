@@ -98,3 +98,16 @@ TEST(LexerTest, IsDigitValidInp) {
 	EXPECT_EQ(is_digit ('b'), false);
 	EXPECT_EQ(is_digit ('c'), false);
 }
+
+
+TEST(LexerTest, NumberValidInp) {
+	Lexer lex;
+	const char *test_string1 = "100";
+	initialize_lexer(test_string1);
+	static Token test_token1 = number();
+	EXPECT_EQ(test_token1.type, TOKEN_INTEGER);
+	const char *test_string2 = "1.00";
+	initialize_lexer(test_string2);
+	static Token test_token2 = number();
+	EXPECT_EQ(test_token2.type, TOKEN_FLOAT);
+}
