@@ -845,3 +845,28 @@ TEST (LexerTest, CheckSBranchValidInp)
 	tok = check_s_branch ();
 	EXPECT_EQ (tok.type, TOKEN_SUPER);
 }
+
+
+TEST (LexerTest, CheckTBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "tuple";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_t_branch ();
+	EXPECT_EQ (tok.type, TOKEN_TUPLE);
+
+	const char *str1 = "try";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_t_branch ();
+	EXPECT_EQ (tok.type, TOKEN_TRY);
+
+	const char *str2 = "type";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_t_branch ();
+	EXPECT_EQ (tok.type, TOKEN_TYPE);
+}
