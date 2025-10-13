@@ -39,3 +39,17 @@ TEST(LexerTest, SpawnTokenValidInp) {
 	EXPECT_EQ(test_token.length, 0);
 	EXPECT_EQ(test_token.first_char, test_string);
 }
+
+
+TEST(LexerTest, SpawnErrorValidInp) {
+	Lexer lex;
+	const char *test_string = "for i in range(5):\n    print(i)";
+	const char *test_err = "Test error";
+	size_t test_err_len = strlen (test_err);
+	initialize_lexer(test_string);
+	static Token test_err_token = spawn_error (test_err);
+	EXPECT_EQ(test_err_token.line_number, 1);
+	EXPECT_EQ(test_err_token.type, TOKEN_ERROR);
+	EXPECT_EQ(test_err_token.length, test_err_len);
+	EXPECT_EQ(test_err_token.first_char, test_err);
+}
