@@ -242,3 +242,46 @@ TEST (LexerTest, CheckABranchValidInp)
 	tok = check_a_branch ();
 	EXPECT_EQ (tok.type, TOKEN_AWAIT);
 }
+
+
+TEST (LexerTest, CheckBBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "bin";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_b_branch ();
+	EXPECT_EQ (tok.type, TOKEN_BIN);
+
+	const char *str1 = "bool";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_b_branch ();
+	EXPECT_EQ (tok.type, TOKEN_BOOL);
+
+	const char *str2 = "breakpoint";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_b_branch ();
+	EXPECT_EQ (tok.type, TOKEN_BREAKPOINT);
+
+	const char *str3 = "break";
+	initialize_lexer (str3);
+	c = consume_char ();
+	tok = check_b_branch ();
+	EXPECT_EQ (tok.type, TOKEN_BREAK);
+
+	const char *str4 = "bytearray";
+	initialize_lexer (str4);
+	c = consume_char ();
+	tok = check_b_branch ();
+	EXPECT_EQ (tok.type, TOKEN_BYTEARRAY);
+
+	const char *str5 = "bytes";
+	initialize_lexer (str5);
+	c = consume_char ();
+	tok = check_b_branch ();
+	EXPECT_EQ (tok.type, TOKEN_BYTES);
+}
