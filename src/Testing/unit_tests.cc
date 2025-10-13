@@ -654,3 +654,28 @@ TEST (LexerTest, CheckMBranchValidInp)
 	tok = check_m_branch ();
 	EXPECT_EQ(tok.type, TOKEN_MIN);
 }
+
+
+TEST (LexerTest, CheckNBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "next";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_n_branch ();
+	EXPECT_EQ(tok.type, TOKEN_NEXT);
+
+	const char *str1 = "nonlocal";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_n_branch ();
+	EXPECT_EQ(tok.type, TOKEN_NONLOCAL);
+
+	const char *str2 = "not";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_n_branch ();
+	EXPECT_EQ(tok.type, TOKEN_NOT_KEYWORD);
+}
