@@ -883,3 +883,22 @@ TEST (LexerTest, CheckVBranchValidInp)
 	tok = check_v_branch ();
 	EXPECT_EQ (tok.type, TOKEN_VARS);
 }
+
+
+TEST (LexerTest, CheckWBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "while";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_w_branch ();
+	EXPECT_EQ (tok.type, TOKEN_WHILE);
+
+	const char *str1 = "with";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_w_branch ();
+	EXPECT_EQ (tok.type, TOKEN_WITH);
+}
