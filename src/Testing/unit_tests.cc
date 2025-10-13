@@ -902,3 +902,16 @@ TEST (LexerTest, CheckWBranchValidInp)
 	tok = check_w_branch ();
 	EXPECT_EQ (tok.type, TOKEN_WITH);
 }
+
+
+TEST (LexerTest, CheckYBranchValidInp)
+{
+	char c;
+	static Token tok;
+	
+	const char *str0 = "yield";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_y_branch ();
+	EXPECT_EQ (tok.type, TOKEN_YIELD);
+}
