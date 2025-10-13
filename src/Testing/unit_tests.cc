@@ -285,3 +285,52 @@ TEST (LexerTest, CheckBBranchValidInp)
 	tok = check_b_branch ();
 	EXPECT_EQ (tok.type, TOKEN_BYTES);
 }
+
+
+TEST (LexerTest, ChechCBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "callable";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_c_branch ();
+	EXPECT_EQ (tok.type, TOKEN_CALLABLE);
+
+	const char *str1 = "chr";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_c_branch ();
+	EXPECT_EQ (tok.type, TOKEN_CHR);
+
+	const char *str2 = "classmethod";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_c_branch ();
+	EXPECT_EQ (tok.type, TOKEN_CLASSMETHOD);
+
+	const char *str3 = "class";
+	initialize_lexer (str3);
+	c = consume_char ();
+	tok = check_c_branch ();
+	EXPECT_EQ (tok.type, TOKEN_CLASS);
+
+	const char *str4 = "compile";
+	initialize_lexer (str4);
+	c = consume_char ();
+	tok = check_c_branch ();
+	EXPECT_EQ (tok.type, TOKEN_COMPILE);
+
+	const char *str5 = "complex";
+	initialize_lexer (str5);
+	c = consume_char ();
+	tok = check_c_branch ();
+	EXPECT_EQ (tok.type, TOKEN_COMPLEX);
+
+	const char *str6 = "continue";
+	initialize_lexer (str6);
+	c = consume_char ();
+	tok = check_c_branch ();
+	EXPECT_EQ (tok.type, TOKEN_CONTINUE);
+}
