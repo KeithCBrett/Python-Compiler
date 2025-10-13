@@ -870,3 +870,16 @@ TEST (LexerTest, CheckTBranchValidInp)
 	tok = check_t_branch ();
 	EXPECT_EQ (tok.type, TOKEN_TYPE);
 }
+
+
+TEST (LexerTest, CheckVBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "vars";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_v_branch ();
+	EXPECT_EQ (tok.type, TOKEN_VARS);
+}
