@@ -121,3 +121,26 @@ TEST(LexerTest, IsLetterValidInp) {
 	EXPECT_EQ(is_letter ('9'), false);
 	EXPECT_EQ(is_letter ('5'), false);
 }
+
+
+TEST(LexerTest, SpawnIdentifierValidInp) {
+	Lexer lex;
+	const char *test_string1 = "var1 = 10";
+	initialize_lexer(test_string1);
+	char c = consume_char ();
+	static Token test_token = spawn_identifier ();
+	EXPECT_EQ(test_token.line_number, 1);
+	EXPECT_EQ(test_token.first_char, test_string1);
+	EXPECT_EQ(test_token.length, 4);
+	EXPECT_EQ(test_token.type, TOKEN_IDENTIFIER);
+
+	const char *test_string2 = "n = 10";
+	initialize_lexer(test_string2);
+	c = consume_char ();
+	static Token test_token2 = spawn_identifier ();
+	EXPECT_EQ(test_token2.line_number, 1);
+	EXPECT_EQ(test_token2.first_char, test_string2);
+	EXPECT_EQ(test_token2.length, 1);
+	EXPECT_EQ(test_token2.type, TOKEN_IDENTIFIER);
+
+}
