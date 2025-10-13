@@ -915,3 +915,16 @@ TEST (LexerTest, CheckYBranchValidInp)
 	tok = check_y_branch ();
 	EXPECT_EQ (tok.type, TOKEN_YIELD);
 }
+
+
+TEST (LexerTest, CheckZBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "zip";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_z_branch ();
+	EXPECT_EQ (tok.type, TOKEN_ZIP);
+}
