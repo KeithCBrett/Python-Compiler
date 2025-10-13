@@ -941,3 +941,31 @@ TEST (LexerTest, CheckUnderscoreBranchValidInp)
 	tok = check_underscore_branch ();
 	EXPECT_EQ (tok.type, TOKEN_IMPORT_FUNC);
 }
+
+
+TEST (LexerTest, IdentifierOrKeywordValidInp)
+{
+	Lexer lex;
+	char c;
+	static Token tok;
+
+	const char *str0 = "n = 7";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = identifier_or_keyword ();
+	EXPECT_EQ (tok.type, TOKEN_IDENTIFIER);
+	EXPECT_EQ (tok.length, 1);
+
+	const char *str1 = "nvar1 = 7";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = identifier_or_keyword ();
+	EXPECT_EQ (tok.type, TOKEN_IDENTIFIER);
+	EXPECT_EQ (tok.length, 5);
+
+	const char *str2 = "not = 7";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = identifier_or_keyword ();
+	EXPECT_EQ (tok.type, TOKEN_NOT_KEYWORD);
+}
