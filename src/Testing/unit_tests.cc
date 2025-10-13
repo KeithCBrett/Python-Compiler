@@ -134,7 +134,8 @@ TEST (LexerTest, IsLetterValidInp)
 }
 
 
-TEST (LexerTest, SpawnIdentifierValidInp) {
+TEST (LexerTest, SpawnIdentifierValidInp)
+{
 	Lexer lex;
 	const char *test_string1 = "var1 = 10";
 	initialize_lexer (test_string1);
@@ -156,7 +157,8 @@ TEST (LexerTest, SpawnIdentifierValidInp) {
 }
 
 
-TEST (LexerTest, BoolCheckKeywordValidInp) {
+TEST (LexerTest, BoolCheckKeywordValidInp)
+{
 	const char *test_string1 = "for";
 	initialize_lexer (test_string1);
 	char c = consume_char ();
@@ -166,4 +168,77 @@ TEST (LexerTest, BoolCheckKeywordValidInp) {
 	c = consume_char ();
 	// Needs to return false when its not a match.
 	EXPECT_EQ (bool_check_keyword ("or"), false);
+}
+
+
+TEST (LexerTest, CheckABranchValidInp)
+{
+	static Token tok;
+	char c;
+
+	const char *str1 = "abs";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_a_branch ();
+	EXPECT_EQ (tok.type, TOKEN_ABS);
+
+	const char *str2 = "aiter";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_a_branch ();
+	EXPECT_EQ (tok.type, TOKEN_AITER);
+
+	const char *str3 = "all";
+	initialize_lexer (str3);
+	c = consume_char ();
+	tok = check_a_branch ();
+	EXPECT_EQ (tok.type, TOKEN_ALL);
+
+	const char *str4 = "and";
+	initialize_lexer (str4);
+	c = consume_char ();
+	tok = check_a_branch ();
+	EXPECT_EQ (tok.type, TOKEN_AND);
+
+	const char *str5 = "any";
+	initialize_lexer (str5);
+	c = consume_char ();
+	tok = check_a_branch ();
+	EXPECT_EQ (tok.type, TOKEN_ANY);
+
+	const char *str6 = "anext";
+	initialize_lexer (str6);
+	c = consume_char ();
+	tok = check_a_branch ();
+	EXPECT_EQ (tok.type, TOKEN_ANEXT);
+
+	const char *str7 = "as";
+	initialize_lexer (str7);
+	c = consume_char ();
+	tok = check_a_branch ();
+	EXPECT_EQ (tok.type, TOKEN_AS);
+
+	const char *str8 = "assert";
+	initialize_lexer (str8);
+	c = consume_char ();
+	tok = check_a_branch ();
+	EXPECT_EQ (tok.type, TOKEN_ASSERT);
+
+	const char *str9 = "async";
+	initialize_lexer (str9);
+	c = consume_char ();
+	tok = check_a_branch ();
+	EXPECT_EQ (tok.type, TOKEN_ASYNC);
+
+	const char *str10 = "ascii";
+	initialize_lexer (str10);
+	c = consume_char ();
+	tok = check_a_branch ();
+	EXPECT_EQ (tok.type, TOKEN_ASCII);
+
+	const char *str11 = "await";
+	initialize_lexer (str11);
+	c = consume_char ();
+	tok = check_a_branch ();
+	EXPECT_EQ (tok.type, TOKEN_AWAIT);
 }
