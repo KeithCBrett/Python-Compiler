@@ -716,3 +716,34 @@ TEST (LexerTest, CheckOBranchValidInp)
 	tok = check_o_branch ();
 	EXPECT_EQ(tok.type, TOKEN_OPEN);
 }
+
+
+TEST (LexerTest, CheckPBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "pass";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_p_branch ();
+	EXPECT_EQ(tok.type, TOKEN_PASS);
+
+	const char *str1 = "pow";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_p_branch ();
+	EXPECT_EQ(tok.type, TOKEN_POW);
+
+	const char *str2 = "print";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_p_branch ();
+	EXPECT_EQ(tok.type, TOKEN_PRINT);
+
+	const char *str3 = "property";
+	initialize_lexer (str3);
+	c = consume_char ();
+	tok = check_p_branch ();
+	EXPECT_EQ(tok.type, TOKEN_PROPERTY);
+}
