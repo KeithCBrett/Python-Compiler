@@ -88,3 +88,13 @@ TEST(LexerTest, SkipWhitespaceValidInp) {
 	skip_whitespace(false);
 	EXPECT_EQ(peak_once(), 'r');
 }
+
+
+TEST(LexerTest, IsDigitValidInp) {
+	EXPECT_EQ(is_digit ('1'), true);
+	EXPECT_EQ(is_digit ('9'), true);
+	EXPECT_EQ(is_digit ('5'), true);
+	EXPECT_EQ(is_digit ('a'), false);
+	EXPECT_EQ(is_digit ('b'), false);
+	EXPECT_EQ(is_digit ('c'), false);
+}
