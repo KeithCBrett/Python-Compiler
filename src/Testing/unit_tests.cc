@@ -377,3 +377,46 @@ TEST (LexerTest, CheckDBranchValidInp)
 	tok = check_d_branch ();
 	EXPECT_EQ (tok.type, TOKEN_DIVMOD);
 }
+
+
+TEST (LexerTest, CheckEBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "elif";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_e_branch ();
+	EXPECT_EQ (tok.type, TOKEN_ELIF);
+
+	const char *str1 = "else";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_e_branch ();
+	EXPECT_EQ (tok.type, TOKEN_ELSE);
+
+	const char *str2 = "enumerate";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_e_branch ();
+	EXPECT_EQ (tok.type, TOKEN_ENUMERATE);
+
+	const char *str3 = "eval";
+	initialize_lexer (str3);
+	c = consume_char ();
+	tok = check_e_branch ();
+	EXPECT_EQ (tok.type, TOKEN_EVAL);
+
+	const char *str4 = "exec";
+	initialize_lexer (str4);
+	c = consume_char ();
+	tok = check_e_branch ();
+	EXPECT_EQ (tok.type, TOKEN_EXEC);
+
+	const char *str5 = "except";
+	initialize_lexer (str5);
+	c = consume_char ();
+	tok = check_e_branch ();
+	EXPECT_EQ (tok.type, TOKEN_EXCEPT);
+}
