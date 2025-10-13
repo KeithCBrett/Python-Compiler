@@ -62,3 +62,12 @@ TEST(LexerTest, ConsumeCharValidInp) {
 	static char target_char = 'f';
 	EXPECT_EQ(consume_char (), target_char);
 }
+
+
+TEST(LexerTest, LookAheadValidInp) {
+	Lexer lex;
+	const char *test_string = "for i in range(5):\n    print(i)";
+	initialize_lexer(test_string);
+	EXPECT_EQ(look_ahead('f'), true);
+	EXPECT_EQ(look_ahead('x'), false);
+}
