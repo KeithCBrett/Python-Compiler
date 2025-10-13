@@ -64,10 +64,27 @@ TEST(LexerTest, ConsumeCharValidInp) {
 }
 
 
+TEST(LexerTest, PeakOnceValidInp) {
+	Lexer lex;
+	const char *test_string = "for i in range(5):\n    print(i)";
+	initialize_lexer(test_string);
+	EXPECT_EQ(peak_once(), 'f');
+}
+
+
 TEST(LexerTest, LookAheadValidInp) {
 	Lexer lex;
 	const char *test_string = "for i in range(5):\n    print(i)";
 	initialize_lexer(test_string);
 	EXPECT_EQ(look_ahead('f'), true);
-	EXPECT_EQ(look_ahead('x'), false);
+	EXPECT_EQ(peak_once(), 'o');
+}
+
+
+TEST(LexerTest, SkipWhitespaceValidInp) {
+	Lexer lex;
+	const char *test_string = "       range(5):\n    print(i)";
+	initialize_lexer(test_string);
+	skip_whitespace(false);
+	EXPECT_EQ(peak_once(), 'r');
 }

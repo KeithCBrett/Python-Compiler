@@ -118,22 +118,6 @@ look_ahead (const char check)
 }
 
 
-// Like look ahead but we dont advance our character stream
-static bool
-look_ahead_dont_advance (const char check)
-{
-	if (is_at_end ())
-	{
-		return false;
-	}
-	if (lex.current_char[0] != check)
-	{
-		return false;
-	}
-	return true;
-}
-
-
 // Breaks out of loop when non whitespace is encountered
 static void
 skip_whitespace (bool inp_was_newline)
