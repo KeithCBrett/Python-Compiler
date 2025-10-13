@@ -790,3 +790,58 @@ TEST (LexerTest, CheckRBranchValidInp)
 	tok = check_r_branch ();
 	EXPECT_EQ (tok.type, TOKEN_ROUND);
 }
+
+
+TEST (LexerTest, CheckSBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "setattr";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_s_branch ();
+	EXPECT_EQ (tok.type, TOKEN_SETATTR);
+
+	const char *str1 = "set";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_s_branch ();
+	EXPECT_EQ (tok.type, TOKEN_SET);
+
+	const char *str2 = "slice";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_s_branch ();
+	EXPECT_EQ (tok.type, TOKEN_SLICE);
+
+	const char *str3 = "sorted";
+	initialize_lexer (str3);
+	c = consume_char ();
+	tok = check_s_branch ();
+	EXPECT_EQ (tok.type, TOKEN_SORTED);
+
+	const char *str4 = "staticmethod";
+	initialize_lexer (str4);
+	c = consume_char ();
+	tok = check_s_branch ();
+	EXPECT_EQ (tok.type, TOKEN_STATICMETHOD);
+
+	const char *str5 = "str";
+	initialize_lexer (str5);
+	c = consume_char ();
+	tok = check_s_branch ();
+	EXPECT_EQ (tok.type, TOKEN_STR);
+
+	const char *str6 = "sum";
+	initialize_lexer (str6);
+	c = consume_char ();
+	tok = check_s_branch ();
+	EXPECT_EQ (tok.type, TOKEN_SUM);
+
+	const char *str7 = "super";
+	initialize_lexer (str7);
+	c = consume_char ();
+	tok = check_s_branch ();
+	EXPECT_EQ (tok.type, TOKEN_SUPER);
+}
