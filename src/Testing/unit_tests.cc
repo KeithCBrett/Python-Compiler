@@ -623,3 +623,34 @@ TEST (LexerTest, CheckLBranchValidInp)
 	tok = check_l_branch ();
 	EXPECT_EQ(tok.type, TOKEN_LOCALS);
 }
+
+
+TEST (LexerTest, CheckMBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "map";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_m_branch ();
+	EXPECT_EQ(tok.type, TOKEN_MAP);
+
+	const char *str1 = "max";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_m_branch ();
+	EXPECT_EQ(tok.type, TOKEN_MAX);
+
+	const char *str2 = "memoryview";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_m_branch ();
+	EXPECT_EQ(tok.type, TOKEN_MEMORYVIEW);
+
+	const char *str3 = "min";
+	initialize_lexer (str3);
+	c = consume_char ();
+	tok = check_m_branch ();
+	EXPECT_EQ(tok.type, TOKEN_MIN);
+}
