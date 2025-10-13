@@ -25,7 +25,7 @@ get_version_patch ()
 size_t
 get_num_commits ()
 {
-	return 139
+	return 140
  +0;
 }
 
@@ -33,16 +33,16 @@ get_num_commits ()
 size_t
 get_num_commits_patch ()
 {
-	if (139
+	if (140
  >= 100)
 	{
-		return (139
+		return (140
  % 100);
 	}
-	else if (139
+	else if (140
  < 100)
 	{
-		return 139
+		return 140
 ;
 	}
 }
@@ -52,9 +52,9 @@ size_t
 get_num_commits_minor ()
 {
 	size_t count = 0;
-	size_t curr_commits = 139
+	size_t curr_commits = 140
 ;
-	if (139
+	if (140
  >= 100)
 	{
 		while (curr_commits >= 100)

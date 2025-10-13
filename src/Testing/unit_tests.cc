@@ -420,3 +420,52 @@ TEST (LexerTest, CheckEBranchValidInp)
 	tok = check_e_branch ();
 	EXPECT_EQ (tok.type, TOKEN_EXCEPT);
 }
+
+
+TEST (LexerTest, CheckFBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "filter";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_f_branch ();
+	EXPECT_EQ (tok.type, TOKEN_FILTER);
+
+	const char *str1 = "finally";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_f_branch ();
+	EXPECT_EQ (tok.type, TOKEN_FINALLY);
+
+	const char *str2 = "float";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_f_branch ();
+	EXPECT_EQ (tok.type, TOKEN_FLOAT_FUNC);
+
+	const char *str3 = "format";
+	initialize_lexer (str3);
+	c = consume_char ();
+	tok = check_f_branch ();
+	EXPECT_EQ (tok.type, TOKEN_FORMAT);
+
+	const char *str4 = "for";
+	initialize_lexer (str4);
+	c = consume_char ();
+	tok = check_f_branch ();
+	EXPECT_EQ (tok.type, TOKEN_FOR);
+
+	const char *str5 = "frozenset";
+	initialize_lexer (str5);
+	c = consume_char ();
+	tok = check_f_branch ();
+	EXPECT_EQ (tok.type, TOKEN_FROZENSET);
+
+	const char *str6 = "from";
+	initialize_lexer (str6);
+	c = consume_char ();
+	tok = check_f_branch ();
+	EXPECT_EQ (tok.type, TOKEN_FROM);
+}
