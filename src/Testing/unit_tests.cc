@@ -6,7 +6,7 @@
 
 TEST(LexerTest, GetSourceFromFileValidInp) {
 	FILE *inp_test_file = fopen ("inputfile.py", "w");
-	const char *comp_string = "for i in range(5):\n    print(i)";
+	const char *comp_string = "for i in range(5):\n    print(i)\0";
 	fputs (comp_string, inp_test_file);
 	fclose (inp_test_file);
 	// get_source_from_file is for working with files. Since files have a
@@ -16,5 +16,26 @@ TEST(LexerTest, GetSourceFromFileValidInp) {
 	FILE *test_file = fopen ("inputfile.py", "rb");
 	char *out_string = get_source_from_file (test_file);
 	fclose (test_file);
-	EXPECT_STREQ(out_string, comp_string2);
+	EXPECT_STREQ (out_string, comp_string2);
+}
+
+
+TEST(LexerTest, IsAtEndValidInp) {
+	Lexer lex;
+	initialize_lexer ("\0");
+	EXPECT_EQ (is_at_end (), true);
+	initialize_lexer ("etc\0");
+	EXPECT_EQ (is_at_end (), false);
+}
+
+
+TEST(LexerTest, SpawnTokenValidInp) {
+	Lexer lex;
+	const char *test_string = "for i in range(5):\n    print(i)";
+	initialize_lexer(test_string);
+	Token test_token = spawn_token (TOKEN_FOR);
+	EXPECT_EQ(test_token.type, TOKEN_FOR);
+	EXPECT_EQ(test_token.line_number, 1);
+	EXPECT_EQ(test_token.length, 0);
+	EXPECT_EQ(test_token.first_char, test_string);
 }
