@@ -679,3 +679,40 @@ TEST (LexerTest, CheckNBranchValidInp)
 	tok = check_n_branch ();
 	EXPECT_EQ(tok.type, TOKEN_NOT_KEYWORD);
 }
+
+
+TEST (LexerTest, CheckOBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "object";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_o_branch ();
+	EXPECT_EQ(tok.type, TOKEN_OBJECT);
+
+	const char *str1 = "or";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_o_branch ();
+	EXPECT_EQ(tok.type, TOKEN_OR_KEYWORD);
+
+	const char *str2 = "ord";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_o_branch ();
+	EXPECT_EQ(tok.type, TOKEN_ORD);
+
+	const char *str3 = "oct";
+	initialize_lexer (str3);
+	c = consume_char ();
+	tok = check_o_branch ();
+	EXPECT_EQ(tok.type, TOKEN_OCT);
+
+	const char *str4 = "open";
+	initialize_lexer (str4);
+	c = consume_char ();
+	tok = check_o_branch ();
+	EXPECT_EQ(tok.type, TOKEN_OPEN);
+}
