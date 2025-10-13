@@ -525,3 +525,70 @@ TEST (LexerTest, CheckHBranchValidInp)
 	tok = check_h_branch ();
 	EXPECT_EQ(tok.type, TOKEN_HEX);
 }
+
+
+TEST (LexerTest, CheckIBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "id";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_i_branch ();
+	EXPECT_EQ(tok.type, TOKEN_ID);
+
+	const char *str1 = "import";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_i_branch ();
+	EXPECT_EQ(tok.type, TOKEN_IMPORT);
+
+	const char *str2 = "in";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_i_branch ();
+	EXPECT_EQ(tok.type, TOKEN_IN);
+
+	const char *str3 = "input";
+	initialize_lexer (str3);
+	c = consume_char ();
+	tok = check_i_branch ();
+	EXPECT_EQ(tok.type, TOKEN_INPUT);
+
+	const char *str4 = "int";
+	initialize_lexer (str4);
+	c = consume_char ();
+	tok = check_i_branch ();
+	EXPECT_EQ(tok.type, TOKEN_INT);
+
+	const char *str5 = "isinstance";
+	initialize_lexer (str5);
+	c = consume_char ();
+	tok = check_i_branch ();
+	EXPECT_EQ(tok.type, TOKEN_ISINSTANCE);
+
+	const char *str6 = "issubclass";
+	initialize_lexer (str6);
+	c = consume_char ();
+	tok = check_i_branch ();
+	EXPECT_EQ(tok.type, TOKEN_ISSUBCLASS);
+
+	const char *str7 = "is";
+	initialize_lexer (str7);
+	c = consume_char ();
+	tok = check_i_branch ();
+	EXPECT_EQ(tok.type, TOKEN_IS);
+
+	const char *str8 = "if";
+	initialize_lexer (str8);
+	c = consume_char ();
+	tok = check_i_branch ();
+	EXPECT_EQ(tok.type, TOKEN_IF);
+
+	const char *str9 = "iter";
+	initialize_lexer (str9);
+	c = consume_char ();
+	tok = check_i_branch ();
+	EXPECT_EQ(tok.type, TOKEN_ITER);
+}
