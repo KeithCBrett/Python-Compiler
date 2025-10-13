@@ -505,25 +505,25 @@ TEST (LexerTest, CheckHBranchValidInp)
 	initialize_lexer (str0);
 	c = consume_char ();
 	tok = check_h_branch ();
-	EXPECT_EQ(tok.type, TOKEN_HASATTR);
+	EXPECT_EQ (tok.type, TOKEN_HASATTR);
 
 	const char *str1 = "hash";
 	initialize_lexer (str1);
 	c = consume_char ();
 	tok = check_h_branch ();
-	EXPECT_EQ(tok.type, TOKEN_HASH);
+	EXPECT_EQ (tok.type, TOKEN_HASH);
 
 	const char *str2 = "help";
 	initialize_lexer (str2);
 	c = consume_char ();
 	tok = check_h_branch ();
-	EXPECT_EQ(tok.type, TOKEN_HELP);
+	EXPECT_EQ (tok.type, TOKEN_HELP);
 
 	const char *str3 = "hex";
 	initialize_lexer (str3);
 	c = consume_char ();
 	tok = check_h_branch ();
-	EXPECT_EQ(tok.type, TOKEN_HEX);
+	EXPECT_EQ (tok.type, TOKEN_HEX);
 }
 
 
@@ -536,61 +536,61 @@ TEST (LexerTest, CheckIBranchValidInp)
 	initialize_lexer (str0);
 	c = consume_char ();
 	tok = check_i_branch ();
-	EXPECT_EQ(tok.type, TOKEN_ID);
+	EXPECT_EQ (tok.type, TOKEN_ID);
 
 	const char *str1 = "import";
 	initialize_lexer (str1);
 	c = consume_char ();
 	tok = check_i_branch ();
-	EXPECT_EQ(tok.type, TOKEN_IMPORT);
+	EXPECT_EQ (tok.type, TOKEN_IMPORT);
 
 	const char *str2 = "in";
 	initialize_lexer (str2);
 	c = consume_char ();
 	tok = check_i_branch ();
-	EXPECT_EQ(tok.type, TOKEN_IN);
+	EXPECT_EQ (tok.type, TOKEN_IN);
 
 	const char *str3 = "input";
 	initialize_lexer (str3);
 	c = consume_char ();
 	tok = check_i_branch ();
-	EXPECT_EQ(tok.type, TOKEN_INPUT);
+	EXPECT_EQ (tok.type, TOKEN_INPUT);
 
 	const char *str4 = "int";
 	initialize_lexer (str4);
 	c = consume_char ();
 	tok = check_i_branch ();
-	EXPECT_EQ(tok.type, TOKEN_INT);
+	EXPECT_EQ (tok.type, TOKEN_INT);
 
 	const char *str5 = "isinstance";
 	initialize_lexer (str5);
 	c = consume_char ();
 	tok = check_i_branch ();
-	EXPECT_EQ(tok.type, TOKEN_ISINSTANCE);
+	EXPECT_EQ (tok.type, TOKEN_ISINSTANCE);
 
 	const char *str6 = "issubclass";
 	initialize_lexer (str6);
 	c = consume_char ();
 	tok = check_i_branch ();
-	EXPECT_EQ(tok.type, TOKEN_ISSUBCLASS);
+	EXPECT_EQ (tok.type, TOKEN_ISSUBCLASS);
 
 	const char *str7 = "is";
 	initialize_lexer (str7);
 	c = consume_char ();
 	tok = check_i_branch ();
-	EXPECT_EQ(tok.type, TOKEN_IS);
+	EXPECT_EQ (tok.type, TOKEN_IS);
 
 	const char *str8 = "if";
 	initialize_lexer (str8);
 	c = consume_char ();
 	tok = check_i_branch ();
-	EXPECT_EQ(tok.type, TOKEN_IF);
+	EXPECT_EQ (tok.type, TOKEN_IF);
 
 	const char *str9 = "iter";
 	initialize_lexer (str9);
 	c = consume_char ();
 	tok = check_i_branch ();
-	EXPECT_EQ(tok.type, TOKEN_ITER);
+	EXPECT_EQ (tok.type, TOKEN_ITER);
 }
 
 
@@ -603,25 +603,25 @@ TEST (LexerTest, CheckLBranchValidInp)
 	initialize_lexer (str0);
 	c = consume_char ();
 	tok = check_l_branch ();
-	EXPECT_EQ(tok.type, TOKEN_LAMBDA);
+	EXPECT_EQ (tok.type, TOKEN_LAMBDA);
 
 	const char *str1 = "len";
 	initialize_lexer (str1);
 	c = consume_char ();
 	tok = check_l_branch ();
-	EXPECT_EQ(tok.type, TOKEN_LEN);
+	EXPECT_EQ (tok.type, TOKEN_LEN);
 
 	const char *str2 = "list";
 	initialize_lexer (str2);
 	c = consume_char ();
 	tok = check_l_branch ();
-	EXPECT_EQ(tok.type, TOKEN_LIST);
+	EXPECT_EQ (tok.type, TOKEN_LIST);
 
 	const char *str3 = "locals";
 	initialize_lexer (str3);
 	c = consume_char ();
 	tok = check_l_branch ();
-	EXPECT_EQ(tok.type, TOKEN_LOCALS);
+	EXPECT_EQ (tok.type, TOKEN_LOCALS);
 }
 
 
@@ -634,25 +634,25 @@ TEST (LexerTest, CheckMBranchValidInp)
 	initialize_lexer (str0);
 	c = consume_char ();
 	tok = check_m_branch ();
-	EXPECT_EQ(tok.type, TOKEN_MAP);
+	EXPECT_EQ (tok.type, TOKEN_MAP);
 
 	const char *str1 = "max";
 	initialize_lexer (str1);
 	c = consume_char ();
 	tok = check_m_branch ();
-	EXPECT_EQ(tok.type, TOKEN_MAX);
+	EXPECT_EQ (tok.type, TOKEN_MAX);
 
 	const char *str2 = "memoryview";
 	initialize_lexer (str2);
 	c = consume_char ();
 	tok = check_m_branch ();
-	EXPECT_EQ(tok.type, TOKEN_MEMORYVIEW);
+	EXPECT_EQ (tok.type, TOKEN_MEMORYVIEW);
 
 	const char *str3 = "min";
 	initialize_lexer (str3);
 	c = consume_char ();
 	tok = check_m_branch ();
-	EXPECT_EQ(tok.type, TOKEN_MIN);
+	EXPECT_EQ (tok.type, TOKEN_MIN);
 }
 
 
@@ -665,19 +665,19 @@ TEST (LexerTest, CheckNBranchValidInp)
 	initialize_lexer (str0);
 	c = consume_char ();
 	tok = check_n_branch ();
-	EXPECT_EQ(tok.type, TOKEN_NEXT);
+	EXPECT_EQ (tok.type, TOKEN_NEXT);
 
 	const char *str1 = "nonlocal";
 	initialize_lexer (str1);
 	c = consume_char ();
 	tok = check_n_branch ();
-	EXPECT_EQ(tok.type, TOKEN_NONLOCAL);
+	EXPECT_EQ (tok.type, TOKEN_NONLOCAL);
 
 	const char *str2 = "not";
 	initialize_lexer (str2);
 	c = consume_char ();
 	tok = check_n_branch ();
-	EXPECT_EQ(tok.type, TOKEN_NOT_KEYWORD);
+	EXPECT_EQ (tok.type, TOKEN_NOT_KEYWORD);
 }
 
 
@@ -690,31 +690,31 @@ TEST (LexerTest, CheckOBranchValidInp)
 	initialize_lexer (str0);
 	c = consume_char ();
 	tok = check_o_branch ();
-	EXPECT_EQ(tok.type, TOKEN_OBJECT);
+	EXPECT_EQ (tok.type, TOKEN_OBJECT);
 
 	const char *str1 = "or";
 	initialize_lexer (str1);
 	c = consume_char ();
 	tok = check_o_branch ();
-	EXPECT_EQ(tok.type, TOKEN_OR_KEYWORD);
+	EXPECT_EQ (tok.type, TOKEN_OR_KEYWORD);
 
 	const char *str2 = "ord";
 	initialize_lexer (str2);
 	c = consume_char ();
 	tok = check_o_branch ();
-	EXPECT_EQ(tok.type, TOKEN_ORD);
+	EXPECT_EQ (tok.type, TOKEN_ORD);
 
 	const char *str3 = "oct";
 	initialize_lexer (str3);
 	c = consume_char ();
 	tok = check_o_branch ();
-	EXPECT_EQ(tok.type, TOKEN_OCT);
+	EXPECT_EQ (tok.type, TOKEN_OCT);
 
 	const char *str4 = "open";
 	initialize_lexer (str4);
 	c = consume_char ();
 	tok = check_o_branch ();
-	EXPECT_EQ(tok.type, TOKEN_OPEN);
+	EXPECT_EQ (tok.type, TOKEN_OPEN);
 }
 
 
@@ -727,23 +727,66 @@ TEST (LexerTest, CheckPBranchValidInp)
 	initialize_lexer (str0);
 	c = consume_char ();
 	tok = check_p_branch ();
-	EXPECT_EQ(tok.type, TOKEN_PASS);
+	EXPECT_EQ (tok.type, TOKEN_PASS);
 
 	const char *str1 = "pow";
 	initialize_lexer (str1);
 	c = consume_char ();
 	tok = check_p_branch ();
-	EXPECT_EQ(tok.type, TOKEN_POW);
+	EXPECT_EQ (tok.type, TOKEN_POW);
 
 	const char *str2 = "print";
 	initialize_lexer (str2);
 	c = consume_char ();
 	tok = check_p_branch ();
-	EXPECT_EQ(tok.type, TOKEN_PRINT);
+	EXPECT_EQ (tok.type, TOKEN_PRINT);
 
 	const char *str3 = "property";
 	initialize_lexer (str3);
 	c = consume_char ();
 	tok = check_p_branch ();
-	EXPECT_EQ(tok.type, TOKEN_PROPERTY);
+	EXPECT_EQ (tok.type, TOKEN_PROPERTY);
+}
+
+
+TEST (LexerTest, CheckRBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "raise";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_r_branch ();
+	EXPECT_EQ (tok.type, TOKEN_RAISE);
+
+	const char *str1 = "range";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_r_branch ();
+	EXPECT_EQ (tok.type, TOKEN_RANGE);
+
+	const char *str2 = "repr";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_r_branch ();
+	EXPECT_EQ (tok.type, TOKEN_REPR);
+
+	const char *str3 = "return";
+	initialize_lexer (str3);
+	c = consume_char ();
+	tok = check_r_branch ();
+	EXPECT_EQ (tok.type, TOKEN_RETURN);
+
+	const char *str4 = "reversed";
+	initialize_lexer (str4);
+	c = consume_char ();
+	tok = check_r_branch ();
+	EXPECT_EQ (tok.type, TOKEN_REVERSED);
+
+	const char *str5 = "round";
+	initialize_lexer (str5);
+	c = consume_char ();
+	tok = check_r_branch ();
+	EXPECT_EQ (tok.type, TOKEN_ROUND);
 }
