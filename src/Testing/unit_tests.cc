@@ -469,3 +469,28 @@ TEST (LexerTest, CheckFBranchValidInp)
 	tok = check_f_branch ();
 	EXPECT_EQ (tok.type, TOKEN_FROM);
 }
+
+
+TEST (LexerTest, CheckGBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "getattr";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_g_branch ();
+	EXPECT_EQ (tok.type, TOKEN_GETATTR);
+
+	const char *str1 = "globals";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_g_branch ();
+	EXPECT_EQ (tok.type, TOKEN_GLOBALS);
+
+	const char *str2 = "global";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_g_branch ();
+	EXPECT_EQ (tok.type, TOKEN_GLOBAL);
+}
