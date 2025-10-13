@@ -494,3 +494,34 @@ TEST (LexerTest, CheckGBranchValidInp)
 	tok = check_g_branch ();
 	EXPECT_EQ (tok.type, TOKEN_GLOBAL);
 }
+
+
+TEST (LexerTest, CheckHBranchValidInp)
+{
+	char c;
+	static Token tok;
+	
+	const char *str0 = "hasattr";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_h_branch ();
+	EXPECT_EQ(tok.type, TOKEN_HASATTR);
+
+	const char *str1 = "hash";
+	initialize_lexer (str1);
+	c = consume_char ();
+	tok = check_h_branch ();
+	EXPECT_EQ(tok.type, TOKEN_HASH);
+
+	const char *str2 = "help";
+	initialize_lexer (str2);
+	c = consume_char ();
+	tok = check_h_branch ();
+	EXPECT_EQ(tok.type, TOKEN_HELP);
+
+	const char *str3 = "hex";
+	initialize_lexer (str3);
+	c = consume_char ();
+	tok = check_h_branch ();
+	EXPECT_EQ(tok.type, TOKEN_HEX);
+}
