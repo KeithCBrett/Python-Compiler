@@ -928,3 +928,16 @@ TEST (LexerTest, CheckZBranchValidInp)
 	tok = check_z_branch ();
 	EXPECT_EQ (tok.type, TOKEN_ZIP);
 }
+
+
+TEST (LexerTest, CheckUnderscoreBranchValidInp)
+{
+	char c;
+	static Token tok;
+
+	const char *str0 = "__import__";
+	initialize_lexer (str0);
+	c = consume_char ();
+	tok = check_underscore_branch ();
+	EXPECT_EQ (tok.type, TOKEN_IMPORT_FUNC);
+}
