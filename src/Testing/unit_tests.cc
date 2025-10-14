@@ -1011,3 +1011,16 @@ TEST (LexerTest, PeakTwiceValidInp)
 	initialize_lexer (str1);
 	EXPECT_EQ ('e', peak_twice ());
 }
+
+
+TEST (LexerTest, SpawnTabValidInp)
+{
+	const char *str0 = "    print(i)";
+	initialize_lexer (str0);
+	static Token tok;
+	tok = spawn_tab ();
+	// Tests if we capture the indent level correctly.
+	EXPECT_EQ (4, tok.length);
+	// Test if type is correct.
+	EXPECT_EQ (TOKEN_TAB, tok.type);
+}
