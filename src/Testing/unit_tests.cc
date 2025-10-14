@@ -969,3 +969,34 @@ TEST (LexerTest, IdentifierOrKeywordValidInp)
 	tok = identifier_or_keyword ();
 	EXPECT_EQ (tok.type, TOKEN_NOT_KEYWORD);
 }
+
+
+TEST (LexerTest, GetNextTokenValidInp)
+{
+	const char *str0 = "for i in range(5):\n    print(i)";
+	initialize_lexer (str0);
+	static Token tok;
+
+	Token *target_array = (Token *) (malloc (sizeof (*target_array) * 13));
+	target_array[0] = spawn_token (TOKEN_FOR);
+	target_array[1] = spawn_token (TOKEN_IDENTIFIER);
+	target_array[2] = spawn_token (TOKEN_IN);
+	target_array[3] = spawn_token (TOKEN_RANGE);
+	target_array[4] = spawn_token (TOKEN_LEFT_PAREN);
+	target_array[5] = spawn_token (TOKEN_INTEGER);
+	target_array[6] = spawn_token (TOKEN_RIGHT_PAREN);
+	target_array[7] = spawn_token (TOKEN_COLON);
+	target_array[8] = spawn_token (TOKEN_NEWLINE);
+	target_array[9] = spawn_token (TOKEN_PRINT);
+	target_array[10] = spawn_token (TOKEN_LEFT_PAREN);
+	target_array[11] = spawn_token (TOKEN_IDENTIFIER);
+	target_array[12] = spawn_token (TOKEN_RIGHT_PAREN);
+
+	tok = get_next_token (false);
+	while (tok.type != TOKEN_EOF)
+	{
+		EXPECT_EQ (tok.type, target_array->type);
+		tok = get_next_token (false);
+		target_array++;
+	}
+}
