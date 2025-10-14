@@ -1000,3 +1000,14 @@ TEST (LexerTest, GetNextTokenValidInp)
 		target_array++;
 	}
 }
+
+
+TEST (LexerTest, PeakTwiceValidInp)
+{
+	const char *str0 = "etc";
+	const char *str1 = "testing";
+	initialize_lexer (str0);
+	EXPECT_EQ ('t', peak_twice ());
+	initialize_lexer (str1);
+	EXPECT_EQ ('e', peak_twice ());
+}
