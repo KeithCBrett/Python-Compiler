@@ -67,9 +67,13 @@ add_library(pyco_version STATIC ${CMAKE_CURRENT_SOURCE_DIR}/Utils/get_version_nu
 add_library(lexer Lexer/lexer.c)
 add_library(parser Parser/parser.c)
 add_library(generator Code_Generator/code_generator.c)
+
+
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_library(testing Testing/unit_tests.cc)
 endif()
+
+
 add_executable(pyco main.c)
 
 
@@ -80,7 +84,11 @@ target_link_libraries(generator PRIVATE parser)
 # Conditional linking of testing apparatus based on whether we are building
 # for debug or release.
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-	target_link_libraries(testing PRIVATE generator)
+	target_link_libraries(testing
+		PRIVATE lexer
+		PRIVATE parser
+		PRIVATE generator
+	)
 endif()
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	target_link_libraries(pyco PRIVATE testing)
@@ -112,6 +120,8 @@ add_executable(
 )
 target_link_libraries(
 	unit_tests
+	PRIVATE lexer
+	PRIVATE parser
 	GTest::gtest_main
 )
 include(GoogleTest)
