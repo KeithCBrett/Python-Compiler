@@ -52,7 +52,7 @@ initialize_lexer (const char *source)
 }
 
 
-static bool
+bool
 is_at_end ()
 {
 	if (*lex.current_char == '\0')
@@ -78,7 +78,7 @@ spawn_token (TokenType type)
 }
 
 
-static Token
+Token
 spawn_error (const char *error_message)
 {
 	Token return_token;
@@ -92,7 +92,7 @@ spawn_error (const char *error_message)
 
 // Returns the current character and increments the character stream.
 // We use this function to traverse our string (source code).
-static char
+char
 consume_char ()
 {
 	lex.current_char++;
@@ -102,7 +102,7 @@ consume_char ()
 
 // Checks if input is the next char in stream, used for checking
 // if lexeme is two character (==) or one (=)
-static bool
+bool
 look_ahead (const char check)
 {
 	if (is_at_end ())
@@ -119,7 +119,7 @@ look_ahead (const char check)
 
 
 // Breaks out of loop when non whitespace is encountered
-static void
+void
 skip_whitespace (bool inp_was_newline)
 {
 	size_t count = 0;
@@ -154,7 +154,7 @@ skip_whitespace (bool inp_was_newline)
 }
 
 
-static bool
+bool
 is_digit (char c)
 {
 	if ((c >= '0') && (c <= '9'))
@@ -168,7 +168,7 @@ is_digit (char c)
 }
 
 
-static Token
+Token
 number ()
 {
 	while (is_digit (peak_once ()))
@@ -188,7 +188,7 @@ number ()
 }
 
 
-static bool
+bool
 is_letter (char c)
 {
 	if ((c >= 'a' && c <= 'z')
@@ -204,7 +204,7 @@ is_letter (char c)
 }
 
 
-static Token
+Token
 spawn_identifier ()
 {
 	// This switch is for single character identifiers, i.e. n = 6
@@ -225,7 +225,7 @@ spawn_identifier ()
 }
 
 
-static bool
+bool
 bool_check_keyword (char *string)
 {
 	size_t string_length = strlen (string);
@@ -256,7 +256,7 @@ bool_check_keyword (char *string)
 
 // This is the 'a' branch for our keyword/default function trie
 // -- default function as in print(), abs(), etc.
-static Token
+Token
 check_a_branch ()
 {
 	char c = consume_char ();
@@ -355,7 +355,7 @@ check_a_branch ()
 
 
 // This is the 'b' branch for our keyword/default function trie
-static Token
+Token
 check_b_branch ()
 {
 	char c = consume_char ();
@@ -418,7 +418,7 @@ check_b_branch ()
 }
 
 
-static Token
+Token
 check_c_branch ()
 {
 	char c = consume_char ();
@@ -479,7 +479,7 @@ check_c_branch ()
 }
 
 
-static Token
+Token
 check_d_branch ()
 {
 	char c = consume_char ();
@@ -526,7 +526,7 @@ check_d_branch ()
 }
 
 
-static Token
+Token
 check_e_branch ()
 {
 	char c = consume_char ();
@@ -583,7 +583,7 @@ check_e_branch ()
 }
 
 
-static Token
+Token
 check_f_branch ()
 {
 	char c = consume_char ();
@@ -644,7 +644,7 @@ check_f_branch ()
 }
 
 
-static Token
+Token
 check_g_branch ()
 {
 	char c = consume_char ();
@@ -679,7 +679,7 @@ check_g_branch ()
 }
 
 
-static Token
+Token
 check_h_branch ()
 {
 	char c = consume_char ();
@@ -718,7 +718,7 @@ check_h_branch ()
 }
 
 
-static Token
+Token
 check_i_branch ()
 {
 	char c = consume_char ();
@@ -801,7 +801,7 @@ check_i_branch ()
 }
 
 
-static Token
+Token
 check_l_branch ()
 {
 	char c = consume_char ();
@@ -850,7 +850,7 @@ check_l_branch ()
 }
 
 
-static Token
+Token
 check_m_branch ()
 {
 	char c = consume_char ();
@@ -894,7 +894,7 @@ check_m_branch ()
 }
 
 
-static Token
+Token
 check_n_branch ()
 {
 	char c = consume_char ();
@@ -929,7 +929,7 @@ check_n_branch ()
 }
 
 
-static Token
+Token
 check_o_branch ()
 {
 	char c = consume_char ();
@@ -982,7 +982,7 @@ check_o_branch ()
 }
 
 
-static Token
+Token
 check_p_branch ()
 {
 	char c = consume_char ();
@@ -1026,7 +1026,7 @@ check_p_branch ()
 }
 
 
-static Token
+Token
 check_r_branch ()
 {
 	char c = consume_char ();
@@ -1078,7 +1078,7 @@ check_r_branch ()
 }
 
 
-static Token
+Token
 check_s_branch ()
 {
 	char c = consume_char ();
@@ -1148,7 +1148,7 @@ check_s_branch ()
 }
 
 
-static Token
+Token
 check_t_branch ()
 {
 	char c = consume_char ();
@@ -1188,7 +1188,7 @@ check_t_branch ()
 }
 
 
-static Token
+Token
 check_v_branch ()
 {
 	char c = consume_char ();
@@ -1210,7 +1210,7 @@ check_v_branch ()
 }
 
 
-static Token
+Token
 check_w_branch ()
 {
 	char c = consume_char ();
@@ -1241,7 +1241,7 @@ check_w_branch ()
 }
 
 
-static Token
+Token
 check_y_branch ()
 {
 	char c = consume_char ();
@@ -1263,7 +1263,7 @@ check_y_branch ()
 }
 
 
-static Token
+Token
 check_z_branch ()
 {
 	char c = consume_char ();
@@ -1285,7 +1285,7 @@ check_z_branch ()
 }
 
 
-static Token
+Token
 check_underscore_branch ()
 {
 	char c = consume_char ();
@@ -1309,7 +1309,7 @@ check_underscore_branch ()
 
 // Checks if string of characters is a keyword and returns the corresponding token.
 // If not keyword, capture lexeme and return identifier token.
-static Token
+Token
 identifier_or_keyword ()
 {
 	switch (lex.current_char[-1])
@@ -1583,14 +1583,14 @@ get_next_token (bool was_newline)
 }
 
 
-static char
+char
 peak_once ()
 {
 	return lex.current_char[0];
 }
 
 
-static char
+char
 peak_twice ()
 {
 	return lex.current_char[1];

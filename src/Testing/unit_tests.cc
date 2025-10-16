@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
 #include <string>
+extern "C" {
 #include "../Lexer/lexer.h"
-#include "../Lexer/lexer.c"
+}
 
 
 TEST (LexerTest, GetSourceFromFileValidInp)

@@ -195,7 +195,7 @@ get_source_from_file (FILE *);
 char *
 print_type (int);
 
-static char
+char
 consume_char ();
 
 Token
@@ -207,109 +207,109 @@ spawn_token (TokenType);
 Token
 spawn_tab ();
 
-static Token
+Token
 spawn_error (const char *);
 
-static Token
+Token
 number ();
 
-static Token
+Token
 identifier_or_keyword ();
 
-static Token
+Token
 spawn_identifier ();
 
-static Token
+Token
 check_a_branch ();
 
-static Token
+Token
 check_b_branch ();
 
-static Token
+Token
 check_c_branch ();
 
-static Token
+Token
 check_d_branch ();
 
-static Token
+Token
 check_e_branch ();
 
-static Token
+Token
 check_f_branch ();
 
-static Token
+Token
 check_g_branch ();
 
-static Token
+Token
 check_h_branch ();
 
-static Token
+Token
 check_i_branch ();
 
-static Token
+Token
 check_l_branch ();
 
-static Token
+Token
 check_m_branch ();
 
-static Token
+Token
 check_n_branch ();
 
-static Token
+Token
 check_o_branch ();
 
-static Token
+Token
 check_p_branch ();
 
-static Token
+Token
 check_r_branch ();
 
-static Token
+Token
 check_s_branch ();
 
-static Token
+Token
 check_t_branch ();
 
-static Token
+Token
 check_v_branch ();
 
-static Token
+Token
 check_w_branch ();
 
-static Token
+Token
 check_y_branch ();
 
-static Token
+Token
 check_z_branch ();
 
-static Token
+Token
 check_underscore_branch ();
 
-static bool
+bool
 is_at_end ();
 
-static bool
+bool
 look_ahead (char);
 
-static bool
+bool
 is_digit (char);
 
-static bool
+bool
 is_letter (char);
 
-static bool
+bool
 bool_check_keyword (char *);
 
-static char
+char
 peak_once ();
 
-static char
+char
 peak_twice ();
 
 void
 initialize_lexer (const char *);
 
-static void
+void
 skip_whitespace (bool);
 
 
