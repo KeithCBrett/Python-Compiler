@@ -225,6 +225,66 @@ check_a_branch ();
 static Token
 check_b_branch ();
 
+static Token
+check_c_branch ();
+
+static Token
+check_d_branch ();
+
+static Token
+check_e_branch ();
+
+static Token
+check_f_branch ();
+
+static Token
+check_g_branch ();
+
+static Token
+check_h_branch ();
+
+static Token
+check_i_branch ();
+
+static Token
+check_l_branch ();
+
+static Token
+check_m_branch ();
+
+static Token
+check_n_branch ();
+
+static Token
+check_o_branch ();
+
+static Token
+check_p_branch ();
+
+static Token
+check_r_branch ();
+
+static Token
+check_s_branch ();
+
+static Token
+check_t_branch ();
+
+static Token
+check_v_branch ();
+
+static Token
+check_w_branch ();
+
+static Token
+check_y_branch ();
+
+static Token
+check_z_branch ();
+
+static Token
+check_underscore_branch ();
+
 static bool
 is_at_end ();
 
