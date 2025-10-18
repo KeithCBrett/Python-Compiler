@@ -1,7 +1,9 @@
 #include <gtest/gtest.h>
 #include <string>
+
 extern "C" {
 #include "../Lexer/lexer.h"
+#include "../Parser/parser.h"
 }
 
 
@@ -1024,4 +1026,25 @@ TEST (LexerTest, SpawnTabValidInp)
 	EXPECT_EQ (4, tok.length);
 	// Test if type is correct.
 	EXPECT_EQ (TOKEN_TAB, tok.type);
+}
+
+
+TEST (ParserTest, NudNewlineValidInp)
+{
+	TreeNode *node;
+	bool was_newline = false;
+
+	const char *str0 = "for i in range(5):\n    print(i)";
+	initialize_lexer (str0);
+
+	node = nud_newline (node, was_newline);
+	EXPECT_EQ (node->contents.type, TOKEN_NEWLINE);
+	EXPECT_EQ (node->left->contents.type, TOKEN_FOR);
+	EXPECT_EQ (node->left->left->contents.type, TOKEN_IDENTIFIER);
+	EXPECT_EQ (node->left->right->contents.type, TOKEN_IN);
+	EXPECT_EQ (node->left->right->left->contents.type, TOKEN_RANGE);
+	EXPECT_EQ (node->left->right->right->contents.type, TOKEN_INTEGER);
+	EXPECT_EQ (node->right->contents.type, TOKEN_TAB);
+	EXPECT_EQ (node->right->right->contents.type, TOKEN_PRINT);
+	EXPECT_EQ (node->right->right->right->contents.type, TOKEN_IDENTIFIER);
 }
