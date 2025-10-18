@@ -122,6 +122,7 @@ target_link_libraries(
 	unit_tests
 	PRIVATE lexer
 	PRIVATE parser
+	PRIVATE generator
 	GTest::gtest_main
 )
 include(GoogleTest)

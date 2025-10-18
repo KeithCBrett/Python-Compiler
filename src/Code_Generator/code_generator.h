@@ -3,14 +3,17 @@
 #include "../Parser/parser.h"
 
 
-// Even though its vasm, due to div we need some way to refer these.
-#define REG_RAX 0
-#define REG_RBX 1
-#define REG_RCX 2
-#define REG_RDX 3
-// We also need to reserve space for primitive python functions like print.
-#define VASM_FUNC_PRINTSTR 4
-#define VASM_FUNC_CAT_ARGS 5
+typedef enum
+AsmPrimitive
+{
+	PRIMITVE_REG_RAX = 0,
+	PRIMITVE_REG_RBX,
+	PRIMITVE_REG_RCX,
+	PRIMITVE_REG_RDX,
+	PRIMITIVE_FUNC_PRINTSTR,
+	PRIMITIVE_FUNC_CAT_ARGS
+}
+AsmPrimitive;
 
 
 typedef struct

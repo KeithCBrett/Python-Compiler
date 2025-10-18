@@ -4,6 +4,7 @@
 extern "C" {
 #include "../Lexer/lexer.h"
 #include "../Parser/parser.h"
+#include "../Code_Generator/code_generator.h"
 }
 
 
@@ -1038,13 +1039,21 @@ TEST (ParserTest, NudNewlineValidInp)
 	initialize_lexer (str0);
 
 	node = nud_newline (node, was_newline);
-	EXPECT_EQ (node->contents.type, TOKEN_NEWLINE);
-	EXPECT_EQ (node->left->contents.type, TOKEN_FOR);
-	EXPECT_EQ (node->left->left->contents.type, TOKEN_IDENTIFIER);
-	EXPECT_EQ (node->left->right->contents.type, TOKEN_IN);
-	EXPECT_EQ (node->left->right->left->contents.type, TOKEN_RANGE);
-	EXPECT_EQ (node->left->right->right->contents.type, TOKEN_INTEGER);
-	EXPECT_EQ (node->right->contents.type, TOKEN_TAB);
-	EXPECT_EQ (node->right->right->contents.type, TOKEN_PRINT);
-	EXPECT_EQ (node->right->right->right->contents.type, TOKEN_IDENTIFIER);
+	EXPECT_EQ (calc_type (node), TOKEN_NEWLINE);
+	EXPECT_EQ (calc_type (node->left), TOKEN_FOR);
+	EXPECT_EQ (calc_type (node->left->left), TOKEN_IDENTIFIER);
+	EXPECT_EQ (calc_type (node->left->right), TOKEN_IN);
+	EXPECT_EQ (calc_type (node->left->right->left), TOKEN_RANGE);
+	EXPECT_EQ (calc_type (node->left->right->right), TOKEN_INTEGER);
+	EXPECT_EQ (calc_type (node->right), TOKEN_TAB);
+	EXPECT_EQ (calc_type (node->right->right), TOKEN_PRINT);
+	EXPECT_EQ (calc_type (node->right->right->right), TOKEN_IDENTIFIER);
+}
+
+
+TEST (IsTest, CalcTypeValidInp)
+{
+	TreeNode *node;
+	node = spawn_node (spawn_token (TOKEN_FOR));
+	EXPECT_EQ (TOKEN_FOR, calc_type (node));
 }

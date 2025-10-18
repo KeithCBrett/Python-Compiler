@@ -755,7 +755,7 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 
 				// We can call our concatenation function now
 				instruction = spawn_vasm_op (VASM_CALL,
-						VASM_FUNC_CAT_ARGS, -1,
+						PRIMITIVE_FUNC_CAT_ARGS, -1,
 						false, false, false);
 				*vasm = insert_vasm_instruction (*vasm,
 						instruction);
@@ -770,13 +770,13 @@ generate_vasm (size_t r, TreeNode *n, TreeNode *root, StNode **symbol_table,
 				register_num_l = st_search (symbol_table,
 						n->right);
 				instruction = spawn_vasm_op (VASM_MOV,
-						REG_RCX, register_num_l,
+						PRIMITVE_REG_RCX, register_num_l,
 						true, true, false);
 				*vasm = insert_vasm_instruction
 					(*vasm, instruction);
 
 				instruction = spawn_vasm_op (VASM_CALL,
-						VASM_FUNC_PRINTSTR, -1,
+						PRIMITIVE_FUNC_PRINTSTR, -1,
 						false, false, false);
 				*vasm = insert_vasm_instruction
 					(*vasm, instruction);
@@ -1545,7 +1545,7 @@ output_vasm_file (FILE *inp_file, VasmInstruction *inp_vasm)
 					break;
 				}
 			case VASM_CALL:
-				if (inp_vasm->regl == VASM_FUNC_PRINTSTR)
+				if (inp_vasm->regl == PRIMITIVE_FUNC_PRINTSTR)
 				{
 					fprintf (inp_file,
 					"call\t\tprintstr\n");
