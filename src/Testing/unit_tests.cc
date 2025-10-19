@@ -1051,6 +1051,28 @@ TEST (ParserTest, NudNewlineValidInp)
 }
 
 
+TEST (ParserTest, NudTabValidInp)
+{
+	TreeNode *node;
+	bool newline = false;
+	Parser parser;
+
+	const char *str = "\n    print(i)";
+	initialize_lexer (str);
+	parser.previous = get_next_token (false);
+	EXPECT_EQ (parser.previous.type, TOKEN_NEWLINE);
+	parser.previous = get_next_token (true);
+	EXPECT_EQ (parser.previous.type, TOKEN_TAB);
+
+	node = nud_tab (node, false);
+	EXPECT_EQ (calc_type (node), TOKEN_RIGHT_PAREN);
+	EXPECT_EQ (calc_type (node->left), TOKEN_RIGHT_PAREN);
+	EXPECT_EQ (calc_type (node->right), TOKEN_PRINT);
+	EXPECT_EQ (calc_type (node->right->left), TOKEN_RIGHT_PAREN);
+	EXPECT_EQ (calc_type (node->right->right), TOKEN_IDENTIFIER);
+}
+
+
 TEST (IsTest, CalcTypeValidInp)
 {
 	TreeNode *node;
