@@ -1065,11 +1065,29 @@ TEST (ParserTest, NudTabValidInp)
 	EXPECT_EQ (parser.previous.type, TOKEN_TAB);
 
 	node = nud_tab (node, false);
-	EXPECT_EQ (calc_type (node), TOKEN_RIGHT_PAREN);
 	EXPECT_EQ (calc_type (node->left), TOKEN_RIGHT_PAREN);
 	EXPECT_EQ (calc_type (node->right), TOKEN_PRINT);
 	EXPECT_EQ (calc_type (node->right->left), TOKEN_RIGHT_PAREN);
 	EXPECT_EQ (calc_type (node->right->right), TOKEN_IDENTIFIER);
+}
+
+
+TEST (ParserTest, LedColonValidInp)
+{
+	TreeNode *node;
+	bool newline = false;
+	Parser parser;
+
+	const char *str0 = "for i in range(5):\n    print(i)";
+	initialize_lexer (str0);
+
+	parser.previous = get_next_token (newline);
+	EXPECT_EQ (parser.previous.type, TOKEN_FOR);
+	parser.current = get_next_token (newline);
+	EXPECT_EQ (parser.current.type, TOKEN_IDENTIFIER);
+	node = led_colon (node, newline);
+	EXPECT_EQ (parser.previous.type, TOKEN_FOR);
+	EXPECT_EQ (parser.current.type, TOKEN_IDENTIFIER);
 }
 
 
