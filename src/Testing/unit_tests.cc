@@ -1030,7 +1030,7 @@ TEST (LexerTest, SpawnTabValidInp)
 }
 
 
-TEST (ParserTest, NudNewlineValidInp)
+TEST (ParserTest, ForLoopValidInp)
 {
 	TreeNode *node;
 	bool was_newline = false;
@@ -1038,56 +1038,16 @@ TEST (ParserTest, NudNewlineValidInp)
 	const char *str0 = "for i in range(5):\n    print(i)";
 	initialize_lexer (str0);
 
-	node = nud_newline (node, was_newline);
-	EXPECT_EQ (calc_type (node), TOKEN_NEWLINE);
-	EXPECT_EQ (calc_type (node->left), TOKEN_FOR);
-	EXPECT_EQ (calc_type (node->left->left), TOKEN_IDENTIFIER);
-	EXPECT_EQ (calc_type (node->left->right), TOKEN_IN);
-	EXPECT_EQ (calc_type (node->left->right->left), TOKEN_RANGE);
-	EXPECT_EQ (calc_type (node->left->right->right), TOKEN_INTEGER);
-	EXPECT_EQ (calc_type (node->right), TOKEN_TAB);
-	EXPECT_EQ (calc_type (node->right->right), TOKEN_PRINT);
-	EXPECT_EQ (calc_type (node->right->right->right), TOKEN_IDENTIFIER);
-}
-
-
-TEST (ParserTest, NudTabValidInp)
-{
-	TreeNode *node;
-	bool newline = false;
-	Parser parser;
-
-	const char *str = "\n    print(i)";
-	initialize_lexer (str);
-	parser.previous = get_next_token (false);
-	EXPECT_EQ (parser.previous.type, TOKEN_NEWLINE);
-	parser.previous = get_next_token (true);
-	EXPECT_EQ (parser.previous.type, TOKEN_TAB);
-
-	node = nud_tab (node, false);
-	EXPECT_EQ (calc_type (node->left), TOKEN_RIGHT_PAREN);
-	EXPECT_EQ (calc_type (node->right), TOKEN_PRINT);
-	EXPECT_EQ (calc_type (node->right->left), TOKEN_RIGHT_PAREN);
-	EXPECT_EQ (calc_type (node->right->right), TOKEN_IDENTIFIER);
-}
-
-
-TEST (ParserTest, LedColonValidInp)
-{
-	TreeNode *node;
-	bool newline = false;
-	Parser parser;
-
-	const char *str0 = "for i in range(5):\n    print(i)";
-	initialize_lexer (str0);
-
-	parser.previous = get_next_token (newline);
-	EXPECT_EQ (parser.previous.type, TOKEN_FOR);
-	parser.current = get_next_token (newline);
-	EXPECT_EQ (parser.current.type, TOKEN_IDENTIFIER);
-	node = led_colon (node, newline);
-	EXPECT_EQ (parser.previous.type, TOKEN_FOR);
-	EXPECT_EQ (parser.current.type, TOKEN_IDENTIFIER);
+	node = parse (Prec_Start, node, was_newline);
+	EXPECT_EQ (TOKEN_NEWLINE, calc_type (node));
+	EXPECT_EQ (TOKEN_FOR, calc_type (node->left));
+	EXPECT_EQ (TOKEN_IDENTIFIER, calc_type (node->left->left));
+	EXPECT_EQ (TOKEN_IN, calc_type (node->left->right));
+	EXPECT_EQ (TOKEN_RANGE, calc_type (node->left->right->left));
+	EXPECT_EQ (TOKEN_INTEGER, calc_type (node->left->right->right));
+	EXPECT_EQ (TOKEN_TAB, calc_type (node->right));
+	EXPECT_EQ (TOKEN_PRINT, calc_type (node->right->right));
+	EXPECT_EQ (TOKEN_IDENTIFIER, calc_type (node->right->right->right));
 }
 
 
