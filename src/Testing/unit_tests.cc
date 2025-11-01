@@ -1095,6 +1095,38 @@ TEST (ParserTest, NestedForLoopValidInp)
 }
 
 
+TEST (ParserTest, StraightlineValidInp)
+{
+	TreeNode *node;
+	bool newline = false;
+
+	const char *str0 = "x = 5\ny = 10\nz = x + y\nprint(z)";
+	initialize_lexer (str0);
+
+	node = parse (Prec_Start, node, newline);
+	EXPECT_EQ (calc_type (node), TOKEN_NEWLINE);
+	EXPECT_EQ (calc_type (node->left), TOKEN_EQUALS);
+	EXPECT_EQ (calc_type (node->left->left), TOKEN_IDENTIFIER);
+	EXPECT_EQ (calc_type (node->left->right), TOKEN_INTEGER);
+
+	EXPECT_EQ (calc_type (node->right), TOKEN_NEWLINE);
+	EXPECT_EQ (calc_type (node->right->left), TOKEN_EQUALS);
+	EXPECT_EQ (calc_type (node->right->left->left), TOKEN_IDENTIFIER);
+	EXPECT_EQ (calc_type (node->right->left->right), TOKEN_INTEGER);
+
+	EXPECT_EQ (calc_type (node->right->right), TOKEN_NEWLINE);
+	EXPECT_EQ (calc_type (node->right->right->left), TOKEN_EQUALS);
+	EXPECT_EQ (calc_type (node->right->right->left->left), TOKEN_IDENTIFIER);
+	EXPECT_EQ (calc_type (node->right->right->left->right), TOKEN_ADD);
+	EXPECT_EQ (calc_type (node->right->right->left->right->left), TOKEN_IDENTIFIER);
+	EXPECT_EQ (calc_type (node->right->right->left->right->right), TOKEN_IDENTIFIER);
+
+	EXPECT_EQ (calc_type (node->right->right->right), TOKEN_PRINT);
+	EXPECT_EQ (calc_type (node->right->right->right->left), TOKEN_RIGHT_PAREN);
+	EXPECT_EQ (calc_type (node->right->right->right->right), TOKEN_IDENTIFIER);
+}
+
+
 TEST (IsTest, CalcTypeValidInp)
 {
 	TreeNode *node;
