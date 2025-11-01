@@ -1051,6 +1051,50 @@ TEST (ParserTest, ForLoopValidInp)
 }
 
 
+TEST (ParserTest, NestedForLoopValidInp)
+{
+	TreeNode *node;
+	bool newline = false;
+
+	const char *str0 = "for i in range(5):\n    for j in ran"
+			   "ge(10):\n        print(j)\n    print(i)";
+	initialize_lexer (str0);
+
+	node = parse (Prec_Start, node, newline);
+	EXPECT_EQ (TOKEN_NEWLINE, calc_type (node));
+
+	EXPECT_EQ (TOKEN_FOR, calc_type (node->left));
+	EXPECT_EQ (TOKEN_IDENTIFIER, calc_type (node->left->left));
+	EXPECT_EQ (TOKEN_IN, calc_type (node->left->right));
+	EXPECT_EQ (TOKEN_RANGE, calc_type (node->left->right->left));
+	EXPECT_EQ (TOKEN_INTEGER, calc_type (node->left->right->right));
+	EXPECT_EQ (TOKEN_NEWLINE, calc_type (node->right));
+
+	EXPECT_EQ (TOKEN_TAB, calc_type (node->right->left));
+	EXPECT_EQ (4, node->right->left->contents.length);
+	EXPECT_EQ (TOKEN_RIGHT_PAREN, calc_type (node->right->left->left));
+	EXPECT_EQ (TOKEN_FOR, calc_type (node->right->left->right));
+	EXPECT_EQ (TOKEN_IDENTIFIER, calc_type (node->right->left->right->left));
+	EXPECT_EQ (TOKEN_IN, calc_type (node->right->left->right->right));
+	EXPECT_EQ (TOKEN_RANGE, calc_type (node->right->left->right->right->left));
+	EXPECT_EQ (TOKEN_INTEGER, calc_type (node->right->left->right->right->right));
+
+	EXPECT_EQ (TOKEN_NEWLINE, calc_type (node->right->right));
+	EXPECT_EQ (TOKEN_TAB, calc_type (node->right->right->left));
+	EXPECT_EQ (8, node->right->right->left->contents.length);
+	EXPECT_EQ (TOKEN_RIGHT_PAREN, calc_type (node->right->right->left->left));
+	EXPECT_EQ (TOKEN_PRINT, calc_type (node->right->right->left->right));
+	EXPECT_EQ (TOKEN_RIGHT_PAREN, calc_type (node->right->right->left->right->left));
+	EXPECT_EQ (TOKEN_IDENTIFIER, calc_type (node->right->right->left->right->right));
+
+	EXPECT_EQ (TOKEN_TAB, calc_type (node->right->right->right));
+	EXPECT_EQ (TOKEN_RIGHT_PAREN, calc_type (node->right->right->right->left));
+	EXPECT_EQ (TOKEN_PRINT, calc_type (node->right->right->right->right));
+	EXPECT_EQ (TOKEN_RIGHT_PAREN, calc_type (node->right->right->right->right->left));
+	EXPECT_EQ (TOKEN_IDENTIFIER, calc_type (node->right->right->right->right->right));
+}
+
+
 TEST (IsTest, CalcTypeValidInp)
 {
 	TreeNode *node;
